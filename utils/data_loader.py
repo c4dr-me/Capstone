@@ -23,51 +23,70 @@ class ResolveOneAccessor:
         return df
 
 def load_sample_data():
-    """Load sample data or raw data dynamically from data directories if available."""
+    """Load data dynamically from /home/labuser/Desktop/Persistent_Folder/Capstone/data/raw or fallback."""
     import os
     
-    # Try multiple common paths where raw or processed data might reside
-    possible_paths = [
+    raw_dir = "data/raw"
+    possible_files = [
+        os.path.join(raw_dir, "transactions_data.csv"),
+        os.path.join(raw_dir, "cards_data.csv"),
         "data/samples/sample_critical.csv",
-        "data/raw/transactions.csv",
-        "data/processed/gold_exceptions.csv",
-        "data/gold_exceptions.csv",
-        "data/transactions.csv"
+        "data/samples/sample_10pct.csv"
     ]
     
     df = None
-    for path in possible_paths:
-        if os.path.exists(path):
+    for file_path in possible_files:
+        if os.path.exists(file_path):
             try:
-                df = pd.read_csv(path)
+                df = pd.read_csv(file_path, nrows=5000) # Load subset for fast UI performance
                 break
             except Exception:
                 continue
                 
     if df is not None:
-        # Normalize columns if necessary
-        column_mapping = {
+        # Standardize columns based on raw dataset structure
+        rename_map = {
             'timestamp': 'date',
+            'date_time': 'date',
+            'transaction_date': 'date',
             'error_code': 'exception_type',
+            'failure_reason': 'exception_type',
             'merchant_category': 'merchant_category',
             'masked_client_id': 'client_id',
-            'masked_card_id': 'card_id'
+            'masked_card_id': 'card_id',
+            'transaction_amount': 'amount',
+            'txn_amount': 'amount'
         }
-        df = df.rename(columns=column_mapping)
+        df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
         
-        if 'date' in df.columns:
+        # Ensure date column exists and is parsed correctly
+        date_cols = [c for c in df.columns if 'date' in c.lower() or 'time' in c.lower()]
+        if date_cols and 'date' not in df.columns:
+            df['date'] = pd.to_datetime(df[date_cols[0]], errors='coerce')
+        elif 'date' in df.columns:
             df['date'] = pd.to_datetime(df['date'], errors='coerce')
         else:
             df['date'] = datetime.now() - timedelta(days=1)
             
-        if 'amount' not in df.columns:
-            df['amount'] = 0.0
-        else:
+        df['date'] = df['date'].fillna(datetime.now())
+
+        # Ensure amount column exists and is numeric
+        amount_cols = [c for c in df.columns if 'amount' in c.lower() or 'amt' in c.lower()]
+        if amount_cols and 'amount' not in df.columns:
+            df['amount'] = pd.to_numeric(df[amount_cols[0]], errors='coerce').fillna(0.0)
+        elif 'amount' in df.columns:
             df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
-            
-        # Ensure all standard schema attributes exist
+        else:
+            df['amount'] = np.random.uniform(10, 1000, len(df))
+
+        # Fill/map required application schema fields if absent
         if 'exception_id' not in df.columns:
             df['exception_id'] = [f'EXC-{i:06d}' for i in range(len(df))]
+        if 'transaction_id' not in df.columns:
+            if 'txn_id' in df.columns:
+                df['transaction_id'] = df['txn_id']
+            else:
+                df['transaction_id'] = [f'TXN-{i:08d}' for i in range(len(df))]
         if 'customer_name' not in df.columns:
             df['customer_name'] = 'Customer ' + df.index.astype(str)
         if 'priority' not in df.columns:
@@ -79,7 +98,7 @@ def load_sample_data():
         if 'exception_type' not in df.columns:
             df['exception_type'] = 'TECHNICAL_GLITCH'
         if 'root_cause' not in df.columns:
-            df['root_cause'] = 'System error'
+            df['root_cause'] = 'System timeout'
         if 'business_impact' not in df.columns:
             df['business_impact'] = 'Medium'
         if 'assigned_team' not in df.columns:
@@ -92,11 +111,9 @@ def load_sample_data():
             df['merchant_name'] = 'Merchant ' + df.index.astype(str)
         if 'merchant_city' not in df.columns:
             df['merchant_city'] = 'New York'
-        if 'mcc_code' not in df.columns:
-            df['mcc_code'] = 5411
         if 'currency' not in df.columns:
             df['currency'] = 'USD'
-            
+
         return df
     else:
         return generate_mock_data()
