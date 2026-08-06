@@ -23,81 +23,82 @@ class ResolveOneAccessor:
         return df
 
 def load_sample_data():
-    """Load sample data from CSV."""
-    try:
-        # Check if file exists first to avoid exception propagation if needed, or let it fall back
-        import os
-        if not os.path.exists("data/samples/sample_critical.csv"):
-            return generate_mock_data()
-        df = pd.read_csv("data/samples/sample_critical.csv")
-        
-        if 'amount' not in df.columns:
-            df['amount'] = 0.0
-        else:
-            df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
-
-        # Rename columns to match expected format
-        df = df.rename(columns={
+    """Load sample data or raw data dynamically from data directories if available."""
+    import os
+    
+    # Try multiple common paths where raw or processed data might reside
+    possible_paths = [
+        "data/samples/sample_critical.csv",
+        "data/raw/transactions.csv",
+        "data/processed/gold_exceptions.csv",
+        "data/gold_exceptions.csv",
+        "data/transactions.csv"
+    ]
+    
+    df = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            try:
+                df = pd.read_csv(path)
+                break
+            except Exception:
+                continue
+                
+    if df is not None:
+        # Normalize columns if necessary
+        column_mapping = {
             'timestamp': 'date',
             'error_code': 'exception_type',
             'merchant_category': 'merchant_category',
             'masked_client_id': 'client_id',
             'masked_card_id': 'card_id'
-        })
-
-        # Convert date
-        df['date'] = pd.to_datetime(df['date'], errors='coerce')
-
-        # Add missing columns with defaults
+        }
+        df = df.rename(columns=column_mapping)
+        
+        if 'date' in df.columns:
+            df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        else:
+            df['date'] = datetime.now() - timedelta(days=1)
+            
+        if 'amount' not in df.columns:
+            df['amount'] = 0.0
+        else:
+            df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
+            
+        # Ensure all standard schema attributes exist
         if 'exception_id' not in df.columns:
             df['exception_id'] = [f'EXC-{i:06d}' for i in range(len(df))]
-
         if 'customer_name' not in df.columns:
             df['customer_name'] = 'Customer ' + df.index.astype(str)
-
         if 'priority' not in df.columns:
             priorities = ['Critical', 'High', 'Medium', 'Low']
             df['priority'] = np.random.choice(priorities, len(df))
-
         if 'status' not in df.columns:
             statuses = ['Pending', 'In Review', 'Resolved', 'Escalated']
             df['status'] = np.random.choice(statuses, len(df))
-
+        if 'exception_type' not in df.columns:
+            df['exception_type'] = 'TECHNICAL_GLITCH'
         if 'root_cause' not in df.columns:
-            causes = ['System timeout', 'Insufficient balance', 'Card issue', 'Network error', 'Validation failure']
-            df['root_cause'] = np.random.choice(causes, len(df))
-
+            df['root_cause'] = 'System error'
         if 'business_impact' not in df.columns:
-            impacts = ['High', 'Medium', 'Low']
-            df['business_impact'] = np.random.choice(impacts, len(df))
-
+            df['business_impact'] = 'Medium'
         if 'assigned_team' not in df.columns:
-            teams = ['Team A', 'Team B', 'Team C', 'Team D']
-            df['assigned_team'] = np.random.choice(teams, len(df))
-
+            df['assigned_team'] = 'Team A'
         if 'department' not in df.columns:
-            depts = ['Payment Processing', 'Card Services', 'Risk Management', 'Customer Support']
-            df['department'] = np.random.choice(depts, len(df))
-
+            df['department'] = 'Payment Processing'
         if 'card_brand' not in df.columns:
-            brands = ['Visa', 'Mastercard', 'American Express']
-            df['card_brand'] = np.random.choice(brands, len(df))
-
+            df['card_brand'] = 'Visa'
         if 'merchant_name' not in df.columns:
             df['merchant_name'] = 'Merchant ' + df.index.astype(str)
-
         if 'merchant_city' not in df.columns:
-            cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix']
-            df['merchant_city'] = np.random.choice(cities, len(df))
-
+            df['merchant_city'] = 'New York'
         if 'mcc_code' not in df.columns:
-            df['mcc_code'] = np.random.randint(1000, 9999, len(df))
-
+            df['mcc_code'] = 5411
         if 'currency' not in df.columns:
             df['currency'] = 'USD'
-
+            
         return df
-    except FileNotFoundError:
+    else:
         return generate_mock_data()
 
 def generate_mock_data():
