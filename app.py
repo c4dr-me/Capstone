@@ -1,479 +1,667 @@
-import streamlit as st
+"""ResolveOne operations interface backed by the governed Gold data product."""
+
+from __future__ import annotations
+
+from html import escape
+from pathlib import Path
+from typing import Any
+
 import pandas as pd
 import plotly.graph_objects as go
-from utils.data_loader import load_sample_data
+import streamlit as st
 
-# Professional Banking Theme
+from utils.agent_adapter import run_investigation
+from utils.data_loader import (
+    DEFAULT_GOLD_PATH,
+    display_exception_type,
+    get_case,
+    load_gold_data,
+    load_quality_results,
+    reason_codes_for_case,
+    search_cases,
+)
+from utils.runtime_store import RuntimeStore
+
+
 st.set_page_config(
-    page_title="ResolveOne AI - Exception Management",
-    page_icon="⚠️",
+    page_title="ResolveOne | Exception Operations",
+    page_icon="◆",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto",
 )
 
-# Professional CSS
-st.markdown("""
-<style>
-    * { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-    body { background-color: #f8f9fa; }
+def _load_css() -> None:
+    css_path = Path(__file__).resolve().parent / "styles" / "style.css"
+    st.markdown(f"<style>{css_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
-    /* Sidebar */
-    [data-testid="stSidebar"] { background: linear-gradient(180deg, #1e3a5f 0%, #2a4a7c 100%); }
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { color: white; }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label { color: #e0e0e0; font-weight: 500; }
-    [data-testid="stSidebar"] [role="radio"]:checked + label { color: white; background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 6px; }
 
-    /* Main content */
-    .main { background-color: #f8f9fa; }
+@st.cache_data(show_spinner=False)
+def _get_data() -> pd.DataFrame:
+    return load_gold_data()
 
-    /* Cards */
-    [data-testid="stMetric"] { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    [data-testid="stMetricLabel"] { font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    [data-testid="stMetricValue"] { font-size: 28px; color: #1e3a5f; font-weight: 700; }
 
-    /* Dataframe */
-    [data-testid="stDataFrame"] { border-radius: 8px; border: 1px solid #e5e7eb; }
-    [data-testid="stDataFrame"] thead { background-color: #f0f1f3; }
-    [data-testid="stDataFrame"] thead th { color: #1e3a5f; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #2a4a7c; }
-    [data-testid="stDataFrame"] tbody td { color: #374151; font-size: 13px; }
+@st.cache_data(show_spinner=False)
+def _get_quality_results() -> dict[str, Any]:
+    return load_quality_results()
 
-    /* Buttons */
-    button { border-radius: 6px; border: 1px solid #2a4a7c; padding: 10px 16px; font-weight: 500; transition: all 0.2s; }
-    button:hover { background-color: #1e3a5f; color: white; box-shadow: 0 4px 12px rgba(30,58,95,0.2); }
 
-    /* Input fields */
-    input { border-radius: 6px; border: 1px solid #d1d5db; padding: 10px 12px; }
-    input:focus { border-color: #2a4a7c; box-shadow: 0 0 0 3px rgba(42,74,124,0.1); }
+@st.cache_resource
+def _get_runtime_store() -> RuntimeStore:
+    return RuntimeStore()
 
-    /* Divider */
-    hr { border-color: #e5e7eb; }
 
-    /* Headers */
-    h1 { color: #1e3a5f; font-size: 28px; font-weight: 700; }
-    h2 { color: #1e3a5f; font-size: 20px; font-weight: 600; }
-    h3 { color: #1e3a5f; font-size: 16px; font-weight: 600; }
+def _format_value(value: Any, fallback: str = "—") -> str:
+    if value is None or (not isinstance(value, (list, dict)) and pd.isna(value)):
+        return fallback
+    return str(value)
 
-    /* Info boxes */
-    [data-testid="stAlert"] { border-radius: 8px; border-left: 4px solid #2a4a7c; }
 
-    /* Tabs */
-    [role="tab"] { color: #666; font-weight: 500; border-radius: 6px 6px 0 0; }
-    [role="tab"][aria-selected="true"] { color: #1e3a5f; border-bottom: 3px solid #2a4a7c; }
-</style>
-""", unsafe_allow_html=True)
+def _money(value: Any) -> str:
+    return "—" if pd.isna(value) else f"${float(value):,.2f}"
 
-# Load data
-@st.cache_data
-def get_data():
-    return load_sample_data()
 
-df = get_data()
+def _page_header(kicker: str, title: str, description: str) -> None:
+    st.markdown(
+        f"""
+        <section class="command-header">
+            <div class="command-kicker">{escape(kicker)}</div>
+            <h1>{escape(title)}</h1>
+            <p>{escape(description)}</p>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
-# ============================================================================
-# SIDEBAR
-# ============================================================================
-st.sidebar.markdown("### 🤖 ResolveOne AI")
-st.sidebar.markdown("#### Automation Exception Management")
-st.sidebar.divider()
 
-page = st.sidebar.radio("Navigation", [
-    "🏠 Dashboard",
-    "⚠️ Exception Management",
-    "🤖 AI Assistant",
-    "📊 Analytics",
-    "📋 Audit & Governance",
-    "⚙️ Settings"
-])
+def _badge(text: str, tone: str = "neutral") -> str:
+    return f'<span class="signal signal-{tone}">{escape(text)}</span>'
 
-st.sidebar.divider()
-st.sidebar.markdown(f"""
-**Status:** ✓ Online
-**Data:** {len(df):,} transactions
-**Exceptions:** {len(df)} active
-**Version:** 1.0.0
-""")
 
-# ============================================================================
-# PAGE 1: DASHBOARD
-# ============================================================================
-if page == "🏠 Dashboard":
-    st.title("📊 Dashboard")
-    st.markdown("Real-time exception monitoring and key performance indicators")
-    st.divider()
+def _severity_tone(severity: str) -> str:
+    return {
+        "CRITICAL": "critical",
+        "HIGH": "high",
+        "MEDIUM": "medium",
+        "LOW": "low",
+    }.get(severity, "neutral")
 
-    # KPI Cards
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric(
-            "Total Exceptions",
-            f"{len(df):,}",
-            delta="+145 this week",
-            delta_color="inverse"
+
+def _navigate(page_name: str, exception_id: str | None = None) -> None:
+    if exception_id:
+        st.session_state.selected_exception_id = exception_id
+    st.session_state.workspace_page = page_name
+
+
+def _run_selected_investigation(exception_id: str) -> dict[str, Any]:
+    with st.spinner("Running governed evidence, severity, policy, and safety checks..."):
+        result = run_investigation(exception_id)
+    st.session_state.investigation_results[exception_id] = result
+    st.session_state.last_agent_mode = result.get("source_mode", "unknown")
+    return result
+
+
+def _with_runtime_status(data: pd.DataFrame, store: RuntimeStore) -> pd.DataFrame:
+    status_map = store.status_by_exception()
+    frame = data.copy()
+    frame["case_status"] = frame["exception_id"].map(status_map).fillna("NEW")
+    return frame
+
+
+def _case_selector(data: pd.DataFrame, label: str = "Find a governed case") -> str:
+    selected = st.session_state.selected_exception_id
+    query = st.text_input(
+        label,
+        placeholder="Exception ID, transaction ID, masked client or masked card",
+        key=f"case_search_{st.session_state.workspace_page}",
+    )
+    candidates = search_cases(data, query, limit=75)
+    current = get_case(data, selected)
+    if current is not None and selected not in set(candidates["exception_id"]):
+        candidates = pd.concat([current.to_frame().T, candidates], ignore_index=True)
+    options = candidates["exception_id"].astype(str).tolist()
+    if not options:
+        st.warning("No governed cases match that search.")
+        return selected
+    index = options.index(selected) if selected in options else 0
+    lookup = candidates.set_index("exception_id")
+
+    def label_case(exception_id: str) -> str:
+        row = lookup.loc[exception_id]
+        return (
+            f"{exception_id}  ·  {display_exception_type(str(row['primary_exception_type']))}"
+            f"  ·  {_money(row['amount'])}"
         )
-    with col2:
-        critical = len(df[df['priority'] == 'Critical'])
-        st.metric("Critical Priority", critical, delta="Requires attention", delta_color="inverse")
-    with col3:
-        resolved = len(df[df['status'] == 'Resolved'])
-        st.metric("Resolved", resolved, delta="+12% week-over-week")
-    with col4:
-        st.metric("Avg Resolution Time", "87 min", delta="-12% improvement")
 
-    st.divider()
+    selected = st.selectbox(
+        "Case",
+        options,
+        index=index,
+        format_func=label_case,
+        label_visibility="collapsed",
+    )
+    st.session_state.selected_exception_id = selected
+    return selected
 
-    # Charts
-    col1, col2 = st.columns(2)
 
-    with col1:
-        st.subheader("📈 Exception Trends (30-Day View)")
-        daily = df.groupby(df['date'].dt.date).size()
-        chart_data = pd.DataFrame({'Count': daily.values}, index=daily.index)
-        st.line_chart(chart_data, color="#2a4a7c", height=350)
+def _render_queue(data: pd.DataFrame, store: RuntimeStore) -> None:
+    _page_header(
+        "01 / INTAKE",
+        "Exception Queue",
+        "Search and prioritize the governed payment-exception inventory.",
+    )
+    status_data = _with_runtime_status(data, store)
 
-    with col2:
-        st.subheader("🎯 Exception Distribution")
-        counts = df['exception_type'].value_counts()
-        fig = go.Figure(data=[go.Pie(
-            labels=counts.index,
-            values=counts.values,
-            marker=dict(colors=['#1e3a5f', '#2a4a7c', '#3b5998', '#5a7abc', '#7a96d6', '#9ab1e0', '#bdd1f4']),
-            textposition='inside',
-            textinfo='label+percent'
-        )])
-        fig.update_layout(height=350, showlegend=True, margin=dict(l=0, r=0, t=0, b=0))
-        st.plotly_chart(fig, use_container_width=True)
+    metric_columns = st.columns(4)
+    metric_columns[0].metric("Governed cases", f"{len(status_data):,}")
+    metric_columns[1].metric(
+        "Critical", f"{status_data['severity'].eq('CRITICAL').sum():,}"
+    )
+    metric_columns[2].metric(
+        "Fraud context", f"{status_data['fraud_label'].eq('Yes').sum():,}"
+    )
+    metric_columns[3].metric(
+        "Multi-error", f"{status_data['is_multi_error'].sum():,}"
+    )
 
-    st.divider()
-    st.subheader("📋 Recent Exceptions")
-    cols_to_show = ['exception_id', 'transaction_id', 'customer_name', 'amount', 'exception_type', 'priority', 'status', 'date']
-    available = [c for c in cols_to_show if c in df.columns]
-    if 'date' in df.columns:
-        st.dataframe(df[available].sort_values('date', ascending=False).head(15), use_container_width=True, hide_index=True)
-    else:
-        st.dataframe(df[available].head(15), use_container_width=True, hide_index=True)
+    st.markdown('<div class="section-label">Queue controls</div>', unsafe_allow_html=True)
+    search = st.text_input(
+        "Search queue",
+        placeholder="Exception ID, transaction ID, masked client or masked card",
+    )
+    filter_columns = st.columns([1, 1.2, 1.2, 1])
+    with filter_columns[0]:
+        severity_filter = st.multiselect(
+            "Severity", ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        )
+    with filter_columns[1]:
+        type_filter = st.multiselect(
+            "Exception type",
+            sorted(status_data["primary_exception_type"].dropna().unique()),
+            format_func=display_exception_type,
+        )
+    with filter_columns[2]:
+        queue_filter = st.multiselect(
+            "Recommended queue",
+            sorted(status_data["recommended_queue"].dropna().unique()),
+        )
+    with filter_columns[3]:
+        status_filter = st.multiselect(
+            "Decision state", ["NEW", "APPROVED", "REJECTED"]
+        )
 
-# ============================================================================
-# PAGE 2: EXCEPTION MANAGEMENT
-# ============================================================================
-elif page == "⚠️ Exception Management":
-    st.title("⚠️ Exception Management")
-    st.markdown("Search, filter, and manage exceptions across your organization")
-    st.divider()
-
-    # Search and controls
-    col1, col2, col3 = st.columns([2, 1, 1])
-    with col1:
-        search = st.text_input("🔍 Search exceptions", placeholder="Enter Exception ID or Customer Name...")
-    with col2:
-        sort_by = st.selectbox("Sort by", ["Date (Newest)", "Date (Oldest)", "Amount (High to Low)", "Priority"])
-    with col3:
-        view_type = st.radio("View", ["Table", "Details"], horizontal=True)
-
-    st.divider()
-
-    # Filters
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        priority_f = st.multiselect("Priority Level", ["Critical", "High", "Medium", "Low"], default=None)
-    with col2:
-        status_f = st.multiselect("Status", ["Pending", "In Review", "Resolved", "Escalated"], default=None)
-    with col3:
-        type_f = st.multiselect("Exception Type", sorted(df['exception_type'].unique().tolist())[:7], default=None)
-    with col4:
-        dept_f = st.multiselect("Department", sorted(df['department'].unique().tolist()), default=None)
-    with col5:
-        team_f = st.multiselect("Assigned Team", sorted(df['assigned_team'].unique().tolist()), default=None)
-
-    # Apply filters
-    filtered = df.copy()
-
+    filtered = status_data
     if search:
-        filtered = filtered[
-            filtered['exception_id'].astype(str).str.contains(search, case=False, na=False) |
-            filtered['transaction_id'].astype(str).str.contains(search, case=False, na=False) |
-            filtered['customer_name'].astype(str).str.contains(search, case=False, na=False)
-        ]
+        filtered = search_cases(filtered, search, limit=len(filtered))
+    if severity_filter:
+        filtered = filtered.loc[filtered["severity"].isin(severity_filter)]
+    if type_filter:
+        filtered = filtered.loc[filtered["primary_exception_type"].isin(type_filter)]
+    if queue_filter:
+        filtered = filtered.loc[filtered["recommended_queue"].isin(queue_filter)]
+    if status_filter:
+        filtered = filtered.loc[filtered["case_status"].isin(status_filter)]
+    severity_rank = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
+    filtered = filtered.assign(
+        _severity_rank=filtered["severity"].map(severity_rank)
+    ).sort_values(["_severity_rank", "transaction_timestamp"], ascending=[True, False])
 
-    if priority_f:
-        filtered = filtered[filtered['priority'].isin(priority_f)]
-    if status_f:
-        filtered = filtered[filtered['status'].isin(status_f)]
-    if type_f:
-        filtered = filtered[filtered['exception_type'].isin(type_f)]
-    if dept_f:
-        filtered = filtered[filtered['department'].isin(dept_f)]
-    if team_f:
-        filtered = filtered[filtered['assigned_team'].isin(team_f)]
+    st.caption(
+        f"Showing up to 250 of {len(filtered):,} matching governed cases. "
+        "Only masked identifiers are exposed."
+    )
+    queue_columns = [
+        "exception_id",
+        "transaction_timestamp",
+        "error_types",
+        "severity",
+        "amount",
+        "recommended_queue",
+        "case_status",
+    ]
+    st.dataframe(
+        filtered[queue_columns].head(250),
+        width="stretch",
+        hide_index=True,
+        height=390,
+        column_config={
+            "exception_id": "Exception",
+            "transaction_timestamp": st.column_config.DatetimeColumn(
+                "Occurred", format="YYYY-MM-DD HH:mm"
+            ),
+            "error_types": "Observed error",
+            "severity": "Severity",
+            "amount": st.column_config.NumberColumn("Amount", format="$%.2f"),
+            "recommended_queue": "Queue",
+            "case_status": "Decision",
+        },
+    )
 
-    # Sort
-    if sort_by == "Date (Newest)":
-        filtered = filtered.sort_values('date', ascending=False)
-    elif sort_by == "Date (Oldest)":
-        filtered = filtered.sort_values('date', ascending=True)
-    elif sort_by == "Amount (High to Low)":
-        filtered = filtered.sort_values('amount', ascending=False)
-    elif sort_by == "Priority":
-        priority_order = {'Critical': 0, 'High': 1, 'Medium': 2, 'Low': 3}
-        filtered = filtered['priority'].map(priority_order).argsort()
-        filtered = filtered.iloc[filtered]
+    open_options = filtered["exception_id"].head(100).astype(str).tolist()
+    if open_options:
+        action_columns = st.columns([3, 1])
+        with action_columns[0]:
+            open_id = st.selectbox("Select a case to investigate", open_options)
+        with action_columns[1]:
+            st.write("")
+            st.write("")
+            st.button(
+                "Open case →",
+                type="primary",
+                width="stretch",
+                on_click=_navigate,
+                args=("Case Investigation", open_id),
+            )
+    else:
+        st.info("No cases match the current filters.")
 
-    st.info(f"**{len(filtered)}** exceptions found | **{len(df) - len(filtered)}** filtered out")
 
-    cols_to_show = ['exception_id', 'transaction_id', 'customer_name', 'amount', 'exception_type', 'priority', 'status', 'assigned_team']
-    available = [c for c in cols_to_show if c in filtered.columns]
+def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
+    _page_header(
+        "02 / EVIDENCE",
+        "Case Investigation",
+        "Inspect masked evidence, explain severity, and run the ResolveOne agent with policy RAG.",
+    )
+    exception_id = _case_selector(data)
+    case = get_case(data, exception_id)
+    if case is None:
+        st.error("The selected exception is not present in the Gold product.")
+        return
 
-    if available:
-        st.dataframe(filtered[available].head(100), use_container_width=True, hide_index=True)
+    decision_status = store.status_by_exception().get(exception_id, "NEW")
+    st.markdown(
+        " ".join(
+            [
+                _badge(str(case["severity"]), _severity_tone(str(case["severity"]))),
+                _badge(decision_status, "neutral"),
+                _badge(str(case["recommended_queue"]), "queue"),
+            ]
+        ),
+        unsafe_allow_html=True,
+    )
 
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("📥 Export to CSV", use_container_width=True):
-            csv = filtered[available].to_csv(index=False)
-            st.download_button("⬇️ Download CSV", csv, "exceptions.csv", "text/csv")
-    with col2:
-        st.metric("Total Amount", f"${filtered['amount'].sum():.2f}")
+    metrics = st.columns(4)
+    metrics[0].metric("Amount", _money(case["amount"]))
+    metrics[1].metric("Observed error", _format_value(case["error_types"]))
+    metrics[2].metric("Card history", f"{int(case['card_exception_count']):,} exceptions")
+    metrics[3].metric("Fraud label", _format_value(case["fraud_label"]))
 
-# ============================================================================
-# PAGE 3: AI ASSISTANT
-# ============================================================================
-elif page == "🤖 AI Assistant":
-    st.title("🤖 AI Assistant")
-    st.markdown("Intelligent exception analysis and recommendation engine")
-    st.divider()
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        st.subheader("💡 Quick Analysis")
-        if st.button("Why did this exception occur?", use_container_width=True):
-            st.session_state.ai_question = "Why"
-        if st.button("Show similar cases", use_container_width=True):
-            st.session_state.ai_question = "Similar"
-        if st.button("What should I do next?", use_container_width=True):
-            st.session_state.ai_question = "Next"
-        if st.button("What's the policy?", use_container_width=True):
-            st.session_state.ai_question = "Policy"
-
-    with col2:
-        st.subheader("📊 Current Status")
-        st.metric("Total Exceptions", f"{len(df):,}")
-        st.metric("Critical Cases", len(df[df['priority'] == 'Critical']))
-        st.metric("Pending Review", len(df[df['status'] == 'Pending']))
-
-    st.divider()
-    st.subheader("💬 Conversation")
-
-    if "chat_messages" not in st.session_state:
-        st.session_state.chat_messages = []
-
-    for role, message in st.session_state.chat_messages:
-        with st.chat_message(role):
-            st.write(message)
-
-    user_input = st.chat_input("Ask a question about your exceptions...")
-    if user_input:
-        st.session_state.chat_messages.append(("user", user_input))
-
-        # AI responses
-        responses = {
-            "why": "Based on exception analysis: This exception occurred due to insufficient balance in the customer's account. The transaction amount exceeded available funds.",
-            "similar": "I identified 47 similar cases in the last 30 days. Pattern: 85% related to insufficient balance, 10% technical issues, 5% validation failures.",
-            "next": "Recommended workflow: 1) Send account balance notification, 2) Offer deposit options, 3) Monitor for retry attempts, 4) Follow up within 24 hours.",
-            "policy": "Per Policy EXC-2024-001: Exceptions require resolution within 24 hours. Critical cases: 4 hours. Escalation available after 2 hours without customer contact.",
+    evidence_tab, history_tab, lineage_tab = st.tabs(
+        ["Governed evidence", "Related card history", "Lineage"]
+    )
+    with evidence_tab:
+        left, right = st.columns(2)
+        with left:
+            st.markdown("#### Transaction")
+            st.write("**Exception ID**", case["exception_id"])
+            st.write("**Transaction ID**", int(case["transaction_id"]))
+            st.write("**Timestamp**", case["transaction_timestamp"])
+            st.write("**Channel**", case["transaction_channel"])
+            st.write("**Merchant category**", case["merchant_category"])
+            st.write(
+                "**Merchant location**",
+                ", ".join(
+                    part
+                    for part in [
+                        _format_value(case.get("merchant_city"), ""),
+                        _format_value(case.get("merchant_state"), ""),
+                    ]
+                    if part
+                )
+                or "—",
+            )
+        with right:
+            st.markdown("#### Protected payment profile")
+            st.write("**Masked client**", case["masked_client_id"])
+            st.write("**Masked card**", case["masked_card_id"])
+            st.write("**Card**", f"{case['card_brand']} · {case['card_type']}")
+            st.write("**Chip support**", "Yes" if bool(case["has_chip"]) else "No")
+            st.write("**Credit limit**", _money(case["credit_limit"]))
+            st.write(
+                "**Dark-web indicator**",
+                "Flagged" if bool(case["card_on_dark_web"]) else "Not flagged",
+            )
+        st.markdown("#### Explainable reason codes")
+        st.markdown(
+            " ".join(_badge(code, "reason") for code in reason_codes_for_case(case)),
+            unsafe_allow_html=True,
+        )
+    with history_tab:
+        related = data.loc[data["masked_card_id"].eq(case["masked_card_id"])].sort_values(
+            "transaction_timestamp", ascending=False
+        )
+        st.caption(
+            f"{len(related):,} governed exception records share this masked card ID."
+        )
+        st.dataframe(
+            related[
+                [
+                    "exception_id",
+                    "transaction_timestamp",
+                    "error_types",
+                    "severity",
+                    "amount",
+                ]
+            ].head(50),
+            width="stretch",
+            hide_index=True,
+        )
+    with lineage_tab:
+        lineage = {
+            "source_file": case["_source_file"],
+            "pipeline_run_id": case["_pipeline_run_id"],
+            "ingested_at_utc": case["_ingested_at_utc"],
+            "bronze_row_number": int(case["_bronze_row_num"]),
+            "gold_product": "finance_exception_case_gold",
+            "grain": "one record per payment-exception case",
         }
+        st.json(lineage)
+        st.success("Identifiers are masked; full card number and CVV are absent from Gold.")
 
-        response = "I'm here to help analyze exceptions. Ask me about causes, patterns, recommendations, or policies."
-        for key, resp in responses.items():
-            if key.lower() in user_input.lower():
-                response = resp
-                break
+    st.markdown(
+        """
+        <section class="agent-lane">
+            <div>
+                <span>AGENT + RAG ENTRY POINT</span>
+                <h3>ResolveOne Investigation Agent</h3>
+                <p>LangGraph orchestrates the case workflow. The live service retrieves approved
+                policy chunks from PostgreSQL + pgvector before producing a cited recommendation.</p>
+            </div>
+            <strong>HUMAN-GATED</strong>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
-        st.session_state.chat_messages.append(("assistant", response))
-        st.rerun()
+    action_columns = st.columns([1, 1])
+    with action_columns[0]:
+        if st.button(
+            "Run ResolveOne agent + policy RAG",
+            type="primary",
+            width="stretch",
+        ):
+            result = _run_selected_investigation(exception_id)
+            if result.get("source_mode") == "langgraph_pgvector":
+                st.success("ResolveOne agent completed with live pgvector policy RAG.")
+            else:
+                st.warning(
+                    "Policy RAG is offline because the VM PostgreSQL/pgvector service is unavailable. "
+                    "The agent returned its approved-policy deterministic fallback; vector retrieval "
+                    "was not scored."
+                )
+    with action_columns[1]:
+        st.button(
+            "Review recommendation →",
+            width="stretch",
+            on_click=_navigate,
+            args=("Recommendation & Approval", exception_id),
+        )
 
-# ============================================================================
-# PAGE 4: ANALYTICS
-# ============================================================================
-elif page == "📊 Analytics":
-    st.title("📊 Analytics & Performance")
-    st.markdown("Comprehensive metrics and trend analysis")
-    st.divider()
+    result = st.session_state.investigation_results.get(exception_id)
+    if result:
+        with st.expander("Latest structured investigation result", expanded=True):
+            st.json(result)
 
-    # KPIs
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Avg Resolution Time", "87 min", delta="-12% (improvement)", delta_color="normal")
-    with col2:
-        st.metric("SLA Compliance", "92%", delta="↑ On track")
-    with col3:
-        st.metric("AI Accuracy", "94%")
-    with col4:
-        st.metric("Team Throughput", "234/day")
 
-    st.divider()
+def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
+    _page_header(
+        "03 / CONTROL",
+        "Recommendation & Approval",
+        "Review cited policy guidance and record a human decision before action.",
+    )
+    exception_id = _case_selector(data, "Choose the case awaiting decision")
+    case = get_case(data, exception_id)
+    if case is None:
+        st.error("The selected exception is not present in the Gold product.")
+        return
 
-    # Charts
-    col1, col2 = st.columns(2)
+    result = st.session_state.investigation_results.get(exception_id)
+    if result is None:
+        st.info("Run the governed investigation to produce a reviewable recommendation.")
+        if st.button("Run investigation now", type="primary"):
+            result = _run_selected_investigation(exception_id)
 
-    with col1:
-        st.subheader("📈 Resolution Trend (7 Days)")
-        trend = pd.DataFrame({
-            'Day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            'Resolved': [45, 52, 48, 61, 58, 42, 50]
-        })
-        st.line_chart(trend.set_index('Day')['Resolved'], color="#2a4a7c", height=300)
+    if result is None:
+        return
+    if result.get("blocked"):
+        st.error(f"Recommendation blocked: {result.get('block_reason', 'safety check failed')}")
+        st.json(result)
+        return
 
-    with col2:
-        st.subheader("🎯 Exception Distribution by Type")
-        counts = df['exception_type'].value_counts()
-        st.bar_chart(counts, color="#2a4a7c", height=300)
+    source_mode = result.get("source_mode", "unknown")
+    if source_mode == "approved_policy_fallback":
+        st.warning(
+            "Approved-policy fallback active: severity and policy are deterministic, "
+            "but live pgvector retrieval could not be evaluated."
+        )
+    else:
+        st.success("LangGraph + pgvector result available.")
 
-    st.divider()
+    summary_columns = st.columns(4)
+    summary_columns[0].metric("Severity", result.get("severity") or "—")
+    summary_columns[1].metric("Route", result.get("recommended_queue") or "—")
+    summary_columns[2].metric("Policy", result.get("policy_id") or "—")
+    confidence = result.get("confidence")
+    summary_columns[3].metric(
+        "Retrieval confidence",
+        "Not scored" if confidence is None else f"{float(confidence):.0%}",
+    )
 
-    col1, col2 = st.columns(2)
+    with st.container(border=True):
+        st.markdown("### Recommended next action")
+        st.write(result.get("recommended_action") or "No action was produced.")
+        st.markdown("**Reason codes**")
+        st.markdown(
+            " ".join(_badge(code, "reason") for code in result.get("reason_codes", [])),
+            unsafe_allow_html=True,
+        )
+        st.markdown("**Policy citations**")
+        for citation in result.get("citations", []):
+            st.code(citation, language=None)
 
-    with col1:
-        st.subheader("👥 Team Performance")
-        teams = df['assigned_team'].value_counts()
-        st.bar_chart(teams, color="#3b5998", height=300)
+    if result.get("limitations"):
+        with st.expander("Known limitations", expanded=source_mode != "langgraph_pgvector"):
+            for limitation in result["limitations"]:
+                st.write(f"- {limitation}")
 
-    with col2:
-        st.subheader("📊 SLA Compliance Status")
-        sla = pd.DataFrame({'Status': ['Met', 'Violated'], 'Count': [245, 20]})
-        fig = go.Figure(data=[go.Pie(
-            labels=sla['Status'],
-            values=sla['Count'],
-            marker=dict(colors=['#2a4a7c', '#e74c3c']),
-            textinfo='label+percent'
-        )])
-        fig.update_layout(height=300, showlegend=True, margin=dict(l=0, r=0, t=0, b=0))
-        st.plotly_chart(fig, use_container_width=True)
+    st.markdown('<div class="approval-rail">Human approval checkpoint</div>', unsafe_allow_html=True)
+    st.caption(
+        "No payment retry, reversal, refund, balance change, or card action is executed by this UI."
+    )
+    current_status = store.status_by_exception().get(exception_id)
+    if current_status:
+        st.info(f"Latest recorded decision for {exception_id}: {current_status}")
 
-    st.divider()
+    with st.form("analyst_decision_form", clear_on_submit=True):
+        decision = st.radio("Decision", ["APPROVED", "REJECTED"], horizontal=True)
+        reason = st.text_area(
+            "Analyst reason",
+            placeholder="Record the evidence-based reason for this controlled decision.",
+        )
+        submitted = st.form_submit_button(
+            "Record decision", type="primary", width="stretch"
+        )
+    if submitted:
+        if not reason.strip():
+            st.error("An analyst reason is required for the audit trail.")
+        else:
+            receipt = store.record_decision(
+                exception_id=exception_id,
+                decision=decision,
+                analyst_reason=reason,
+                recommendation=result,
+            )
+            st.success(
+                f"{decision.title()} and recorded with trace {receipt['agent_trace_id']}."
+            )
 
-    st.subheader("📋 Department Metrics")
-    dept_data = pd.DataFrame({
-        'Department': ['Payment Processing', 'Card Services', 'Risk Management', 'Customer Support'],
-        'Total': [450, 320, 280, 210],
-        'Critical': [15, 12, 8, 5],
-        'Resolved': [380, 270, 240, 185],
-        'Compliance %': ['84%', '84%', '86%', '88%']
-    })
-    st.dataframe(dept_data, use_container_width=True, hide_index=True)
 
-# ============================================================================
-# PAGE 5: AUDIT & GOVERNANCE
-# ============================================================================
-elif page == "📋 Audit & Governance":
-    st.title("📋 Audit & Governance")
-    st.markdown("Compliance tracking, activity logs, and approval workflows")
-    st.divider()
+def _render_audit_metrics(data: pd.DataFrame, store: RuntimeStore) -> None:
+    _page_header(
+        "04 / PROOF",
+        "Audit & Metrics",
+        "Inspect measured pipeline quality, operational distributions, and analyst decisions.",
+    )
+    quality = _get_quality_results()
+    tests = quality.get("quality_results", [])
+    passed_tests = sum(bool(item.get("passed")) for item in tests)
+    decisions = store.latest_decisions()
+    events = store.latest_audit_events()
+    prohibited = {"card_number", "cvv", "pin", "address", "latitude", "longitude"}
+    leakage = prohibited & set(data.columns)
 
-    tab1, tab2, tab3, tab4 = st.tabs(["Activity Log", "Approvals", "AI Recommendations", "Compliance"])
+    metrics = st.columns(4)
+    metrics[0].metric("Gold rows", f"{len(data):,}")
+    metrics[1].metric("Quality checks", f"{passed_tests}/{len(tests)}")
+    metrics[2].metric("Duplicate cases", f"{data['exception_id'].duplicated().sum():,}")
+    metrics[3].metric("Sensitive fields exposed", str(len(leakage)))
 
-    with tab1:
-        st.subheader("Recent Activities")
-        activities = [
-            ("16:48", "Exception Resolved", "John Smith", "EXC-000234", "✅"),
-            ("16:45", "Escalated to Manager", "Sarah Johnson", "EXC-000212", "⬆️"),
-            ("16:30", "AI Analysis Completed", "ResolveOne AI", "EXC-000198", "🤖"),
-            ("15:45", "Exception Assigned", "System", "EXC-000156", "👥"),
-            ("15:20", "Customer Notified", "Sarah Johnson", "EXC-000145", "📧"),
-        ]
-        for time, action, actor, exc_id, icon in activities:
-            st.write(f"{icon} **{time}** — {action} by *{actor}* ({exc_id})")
+    audit_tab, distribution_tab, quality_tab, provenance_tab = st.tabs(
+        ["Audit trail", "Measured distributions", "Data quality", "Provenance & limits"]
+    )
+    with audit_tab:
+        st.markdown("#### Analyst decisions")
+        if decisions:
+            st.dataframe(pd.DataFrame(decisions), width="stretch", hide_index=True)
+        else:
+            st.info("No analyst decisions have been recorded yet.")
+        st.markdown("#### Runtime events")
+        if events:
+            st.dataframe(pd.DataFrame(events), width="stretch", hide_index=True)
+        else:
+            st.caption("The audit event stream will populate after the first decision.")
+        if st.session_state.investigation_results:
+            with st.expander("Session investigation traces"):
+                st.json(st.session_state.investigation_results)
+    with distribution_tab:
+        left, right = st.columns(2)
+        with left:
+            counts = data["primary_exception_type"].value_counts().sort_values()
+            fig = go.Figure(
+                go.Bar(
+                    x=counts.values,
+                    y=[display_exception_type(value) for value in counts.index],
+                    orientation="h",
+                    marker_color="#167d8d",
+                )
+            )
+            fig.update_layout(
+                title="Exceptions by governed type",
+                height=380,
+                margin=dict(l=10, r=10, t=50, b=10),
+            )
+            st.plotly_chart(fig, width="stretch")
+        with right:
+            severity = data["severity"].value_counts().reindex(
+                ["CRITICAL", "HIGH", "MEDIUM", "LOW"], fill_value=0
+            )
+            fig = go.Figure(
+                go.Pie(
+                    labels=severity.index,
+                    values=severity.values,
+                    hole=0.62,
+                    marker_colors=["#9b2c2c", "#c65d21", "#d4a72c", "#167d8d"],
+                )
+            )
+            fig.update_layout(
+                title="Deterministic severity mix",
+                height=380,
+                margin=dict(l=10, r=10, t=50, b=10),
+            )
+            st.plotly_chart(fig, width="stretch")
+        yearly = data.groupby(data["transaction_timestamp"].dt.year).size()
+        st.markdown("#### Exception history by source year")
+        st.line_chart(yearly.rename("Exceptions"), color="#d4a72c")
+        st.caption(
+            "These timestamps describe the public source dataset (2010–2019), "
+            "not live operational traffic."
+        )
+    with quality_tab:
+        if tests:
+            quality_frame = pd.DataFrame(tests)
+            quality_frame["status"] = quality_frame["passed"].map(
+                {True: "PASS", False: "FAIL"}
+            )
+            st.dataframe(
+                quality_frame[["test", "status"]],
+                width="stretch",
+                hide_index=True,
+            )
+        if quality.get("all_tests_passed"):
+            st.success("All published pipeline quality checks passed.")
+        else:
+            st.warning("Published pipeline quality is incomplete or contains failures.")
+        st.json(quality.get("metrics", {}))
+    with provenance_tab:
+        st.markdown("#### Governed source")
+        st.code(str(DEFAULT_GOLD_PATH.resolve()), language=None)
+        st.write("**Product:** finance_exception_case_gold")
+        st.write("**Grain:** one record per payment-exception case")
+        st.write("**Pipeline run:**", data["_pipeline_run_id"].iloc[0])
+        st.write("**Current runtime persistence:** local SQLite adapter")
+        st.markdown("#### Known limits")
+        st.write("- Source transactions are historical public data, not a live payment feed.")
+        st.write("- PostgreSQL/pgvector is required to evaluate live retrieval metrics.")
+        st.write("- SQLite is the local demo fallback for decisions; production targets PostgreSQL.")
+        st.write("- The UI never executes retries, refunds, reversals, or account/card changes.")
 
-    with tab2:
-        st.subheader("Approval Workflow")
-        approvals = pd.DataFrame({
-            'Exception ID': ['EXC-000234', 'EXC-000212', 'EXC-000198'],
-            'Priority': ['High', 'Critical', 'Medium'],
-            'Status': ['✅ Approved', '⏳ Pending (Manager)', '✅ Approved'],
-            'Approver': ['Manager A', 'VP Finance', 'Manager B'],
-            'Date': ['2 hours ago', 'Awaiting', '4 hours ago']
-        })
-        st.dataframe(approvals, use_container_width=True, hide_index=True)
 
-    with tab3:
-        st.subheader("AI Analysis Log")
-        log = pd.DataFrame({
-            'Exception ID': ['EXC-000234', 'EXC-000212', 'EXC-000198'],
-            'AI Recommendation': ['Contact customer', 'Escalate to compliance', 'Retry transaction'],
-            'Confidence': ['95%', '92%', '88%'],
-            'Acted Upon': ['✅ Yes', '✅ Yes', '❌ Override'],
-            'Outcome': ['Resolved', 'In Progress', 'Resolved']
-        })
-        st.dataframe(log, use_container_width=True, hide_index=True)
+_load_css()
+data = _get_data()
+runtime_store = _get_runtime_store()
 
-    with tab4:
-        st.subheader("Compliance Status")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.success("✅ Data Masking: Applied")
-            st.success("✅ PII Removal: Verified")
-            st.success("✅ Audit Trail: Enabled")
-        with col2:
-            st.success("✅ Access Control: Role-based")
-            st.success("✅ Encryption: Active")
-            st.info("⏳ Q4 External Audit: Scheduled")
+if "investigation_results" not in st.session_state:
+    st.session_state.investigation_results = {}
+if "last_agent_mode" not in st.session_state:
+    st.session_state.last_agent_mode = "not run"
+if "selected_exception_id" not in st.session_state:
+    technical = data.loc[data["primary_exception_type"].eq("TECHNICAL_GLITCH")]
+    st.session_state.selected_exception_id = str(
+        technical.iloc[0]["exception_id"] if not technical.empty else data.iloc[0]["exception_id"]
+    )
 
-# ============================================================================
-# PAGE 6: SETTINGS
-# ============================================================================
-elif page == "⚙️ Settings":
-    st.title("⚙️ Settings")
-    st.markdown("Configure your preferences, notifications, and system settings")
-    st.divider()
+PAGES = [
+    "Exception Queue",
+    "Case Investigation",
+    "Recommendation & Approval",
+    "Audit & Metrics",
+]
 
-    tab1, tab2, tab3, tab4 = st.tabs(["Preferences", "Notifications", "Security", "System"])
+st.sidebar.markdown(
+    """
+    <div class="brand-lockup">
+        <div class="brand-mark">R1</div>
+        <div><strong>ResolveOne</strong><span>Exception command desk</span></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+page = st.sidebar.radio(
+    "Workspace",
+    PAGES,
+    key="workspace_page",
+    label_visibility="collapsed",
+)
+st.sidebar.markdown(
+    f"""
+    <div class="system-panel">
+        <span class="system-label">GOVERNED GOLD</span>
+        <strong>{len(data):,} cases</strong>
+        <small>Pipeline {escape(str(data['_pipeline_run_id'].iloc[0]))}</small>
+        <span class="system-label">AGENT + RAG MODE</span>
+        <strong>{escape(str(st.session_state.last_agent_mode).replace('_', ' '))}</strong>
+        <small>Controlled actions remain human-gated</small>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+st.sidebar.caption("Masked evidence only · Runtime v1.1")
 
-    with tab1:
-        st.subheader("User Preferences")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.selectbox("Theme", ["Light", "Dark", "Auto"], index=2)
-            st.selectbox("Default View", ["Dashboard", "Exception Management", "Analytics"], index=0)
-            st.selectbox("Timezone", ["UTC", "EST", "CST", "MST", "PST"], index=1)
-        with col2:
-            st.selectbox("Date Format", ["YYYY-MM-DD", "MM/DD/YYYY", "DD/MM/YYYY"], index=0)
-            st.selectbox("Currency", ["USD", "EUR", "GBP", "CHF"], index=0)
-            st.selectbox("Language", ["English", "Spanish", "French", "German"], index=0)
-
-        if st.button("💾 Save Preferences", use_container_width=True):
-            st.success("✅ Preferences saved successfully")
-
-    with tab2:
-        st.subheader("Notification Configuration")
-        st.checkbox("Critical Exceptions - Email", value=True)
-        st.checkbox("Critical Exceptions - SMS", value=False)
-        st.checkbox("SLA Violations - Email", value=True)
-        st.checkbox("Daily Summary Report", value=False)
-        st.text_input("Email Address", value="user@company.com", disabled=False)
-
-        if st.button("💾 Update Notifications", use_container_width=True):
-            st.success("✅ Notification settings updated")
-
-    with tab3:
-        st.subheader("Security & Access")
-        st.write("✅ **Two-Factor Authentication:** Enabled")
-        st.write("✅ **Last Login:** Today at 09:45 AM")
-        st.write("✅ **Session Timeout:** 30 minutes")
-        st.write("✅ **Active Sessions:** 2")
-
-        if st.button("🔑 Change Password", use_container_width=True):
-            st.info("Redirecting to secure password change page...")
-
-    with tab4:
-        st.subheader("System Information")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.write("**Version:** 1.0.0")
-            st.write("**Environment:** Production")
-            st.write("**Database:** Connected ✓")
-        with col2:
-            st.write("**Last Update:** 2026-08-06")
-            st.write("**Status:** Online ✓")
-            st.write("**Uptime:** 99.9%")
-
-        st.progress(0.65, text="Storage: 65% Used (6.5 GB / 10 GB)")
+if page == "Exception Queue":
+    _render_queue(data, runtime_store)
+elif page == "Case Investigation":
+    _render_investigation(data, runtime_store)
+elif page == "Recommendation & Approval":
+    _render_recommendation(data, runtime_store)
+else:
+    _render_audit_metrics(data, runtime_store)
