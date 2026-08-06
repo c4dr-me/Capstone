@@ -1,9 +1,20 @@
 #!/usr/bin/env python3
+import os
 import sys
 from google.cloud import bigquery
 
-PROJECT_ID = "exlservic-1770871994025"
-DATASET_ID = "resolveone"
+
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "").strip()
+DATASET_ID = os.environ.get("BQ_DATASET_ID", "resolveone").strip()
+
+if not PROJECT_ID:
+    raise SystemExit(
+        "GCP_PROJECT_ID is required. Set it in the environment using the name "
+        "documented in .env.example."
+    )
+
+if not DATASET_ID:
+    raise SystemExit("BQ_DATASET_ID cannot be empty.")
 
 def run_query(client, query, desc):
     print(f"\n{'='*70}\n⏳ {desc}\n{'='*70}")
@@ -141,5 +152,8 @@ FROM `{PROJECT_ID}.{DATASET_ID}.finance_exception_case_gold`;
 """, "STEP 5: Validate masked IDs") or 0
 
 print(f"\n{'='*70}\n✅ COMPLETED: {success}/5 steps\n{'='*70}")
-print("\nNext: python scripts/validate_gold.py --source bigquery --project exlservic-1770871994025")
+print(
+    "\nNext: python scripts/validate_gold.py "
+    f"--source bigquery --project {PROJECT_ID}"
+)
 sys.exit(0 if success == 5 else 1)
