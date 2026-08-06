@@ -1,0 +1,26 @@
+{
+  "exception_id": "EXC-7475516",
+  "severity": "CRITICAL",
+  "recommended_queue": "Payment Operations",
+  "recommended_action": "Confirm current payment-service health against the incident log, then perform a single controlled retry of the transaction once service health is confirmed. If service health cannot be confirmed, hold the case open and notify Payment Operations Manager.",
+  "reason_codes": [
+    "TECHNICAL_GLITCH",
+    "REPEATED_EXCEPTIONS_ON_CARD"
+  ],
+  "policy_id": "POL-TECH-001",
+  "policy_version": "1.0",
+  "citations": [
+    "technical_glitch.md#human-approval-requirement",
+    "technical_glitch.md#recommended-action",
+    "technical_glitch.md#sla"
+  ],
+  "confidence": 0.39,
+  "approval_required": true,
+  "evidence_record_ids": [
+    "TXN-7475516"
+  ],
+  "limitations": [],
+  "replayed": false,
+  "blocked": false,
+  "block_reason": null
+}

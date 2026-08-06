@@ -1,0 +1,56 @@
+{
+  "exception_id": "EXC-7475611",
+  "first_call": {
+    "exception_id": "EXC-7475611",
+    "severity": "HIGH",
+    "recommended_queue": "Card Support",
+    "recommended_action": "If the card has genuinely expired, initiate a replacement-card request and notify the customer. If the expiration date was mistyped, prompt for correct re-entry through the standard checkout flow.",
+    "reason_codes": [
+      "BAD_EXPIRATION",
+      "REPEATED_EXCEPTIONS_ON_CARD"
+    ],
+    "policy_id": "POL-EXP-001",
+    "policy_version": "1.0",
+    "citations": [
+      "bad_expiration.md#human-approval-requirement",
+      "bad_expiration.md#recommended-action",
+      "bad_expiration.md#prohibited-action"
+    ],
+    "confidence": 0.47,
+    "approval_required": true,
+    "evidence_record_ids": [
+      "TXN-7475611"
+    ],
+    "limitations": [],
+    "replayed": false,
+    "blocked": false,
+    "block_reason": null
+  },
+  "second_call_same_exception_id": {
+    "exception_id": "EXC-7475611",
+    "severity": "HIGH",
+    "recommended_queue": "Card Support",
+    "recommended_action": "If the card has genuinely expired, initiate a replacement-card request and notify the customer. If the expiration date was mistyped, prompt for correct re-entry through the standard checkout flow.",
+    "reason_codes": [
+      "BAD_EXPIRATION",
+      "REPEATED_EXCEPTIONS_ON_CARD"
+    ],
+    "policy_id": "POL-EXP-001",
+    "policy_version": "1.0",
+    "citations": [
+      "bad_expiration.md#human-approval-requirement",
+      "bad_expiration.md#recommended-action",
+      "bad_expiration.md#prohibited-action"
+    ],
+    "confidence": 0.47,
+    "approval_required": true,
+    "evidence_record_ids": [
+      "TXN-7475611"
+    ],
+    "limitations": [],
+    "replayed": true,
+    "blocked": false,
+    "block_reason": null
+  },
+  "_scenario_note": "Replaying investigate_exception() for the same exception_id a second time does not create a duplicate case-creation/approval-submission event. The first call has replayed=false; the second call has replayed=true, and both calls return identical severity, routing, recommendation, and citations."
+}

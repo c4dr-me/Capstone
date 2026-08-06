@@ -1,0 +1,12 @@
+langgraph>=1.2
+langchain-core>=1.4
+pandas>=2.2
+pyarrow>=17.0
+numpy>=2.0
+scikit-learn>=1.5
+joblib>=1.4
+pyyaml>=6.0
+psycopg2-binary>=2.9
+pgvector>=0.5
+redis>=5.0
+pytest>=8.0

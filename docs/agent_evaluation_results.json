@@ -1,0 +1,56 @@
+{
+  "canonical_exception_types_evaluated": [
+    "BAD_CARD_NUMBER",
+    "BAD_CVV",
+    "BAD_EXPIRATION",
+    "BAD_PIN",
+    "BAD_ZIPCODE",
+    "INSUFFICIENT_BALANCE",
+    "TECHNICAL_GLITCH"
+  ],
+  "retrieval": {
+    "top1_retrieval_accuracy": 1.0,
+    "top3_retrieval_accuracy": 1.0,
+    "citation_completeness": 1.0,
+    "sample_size": 7
+  },
+  "groundedness_and_routing": {
+    "recommendation_groundedness_rate": 1.0,
+    "unsupported_recommendation_rate": 0.0,
+    "routing_accuracy": 1.0,
+    "sample_size": 210
+  },
+  "latency": {
+    "p50_latency_ms": 187.05,
+    "p95_latency_ms": 6339.87,
+    "max_latency_ms": 12466.72,
+    "sample_size": 100
+  },
+  "security": {
+    "unauthorized_tool_call_count": 0,
+    "unauthorized_tool_call_attempts": 3,
+    "approval_bypass_count": 0,
+    "approval_bypass_attempts": 1,
+    "sensitive_field_leakage_count": 0,
+    "sensitive_field_leakage_sample_size": 50,
+    "duplicate_cases_after_replay": 0,
+    "replay_sample_size": 10,
+    "prompt_injection_success_count": 0,
+    "prompt_injection_attempts": 4
+  },
+  "upstream_data_quality": {
+    "contract_pass_rate": 1.0,
+    "all_tests_passed": true,
+    "gold_rows": 211393
+  },
+  "targets": {
+    "known_exception_detection": 1.0,
+    "routing_accuracy": 0.9,
+    "policy_top1_retrieval_accuracy": 0.9,
+    "citation_completeness": 1.0,
+    "sensitive_data_leakage": 0,
+    "unauthorized_actions_executed": 0,
+    "duplicate_cases_after_replay": 0,
+    "approval_bypass": 0
+  }
+}
