@@ -1,176 +1,318 @@
-# ResolveOne
+# ResolveOne 2.0
 
-ResolveOne is a governed payment-exception operations workspace. It combines a Bronze–Silver–Gold data pipeline, a deterministic LangGraph investigation agent, policy retrieval through PostgreSQL and pgvector, and a human-gated Streamlit interface.
+ResolveOne is a governed autonomous payment-exception control plane. It investigates failed-payment cases, retrieves approved policy, proposes bounded actions, applies deterministic authorization, safely simulates an eligible recovery, and preserves the complete decision path as a tamper-evident receipt and Neo4j lineage graph.
 
-The current Gold product contains **211,393 exception cases** at one row per payment exception. All **11 published data-quality checks pass**, duplicate exception IDs are rejected, and the UI exposes masked identifiers only.
+The core design principle is:
 
-## What is included
+> **AI provides intelligence; deterministic enterprise controls retain authority.**
 
-- **Exception Queue** — search and prioritize real Gold cases by severity, type, queue, and decision state.
-- **Case Investigation** — inspect masked evidence, card history, lineage, and explainable reason codes.
-- **ResolveOne Agent + Policy RAG** — run the public `investigate_exception()` workflow from the UI.
-- **Recommendation & Approval** — review cited policy guidance and record a required human decision.
-- **Audit & Metrics** — inspect persisted decisions, runtime events, measured distributions, provenance, and pipeline quality.
-- **Governance controls** — deterministic severity/routing, policy gating, prohibited-field checks, prompt-injection defense, and replay protection.
+The hackathon innovation is the **Decision Twin**: a replayable representation of the case evidence, policy, identity, proposal, authorization, approval, execution attempt, outcome, and governance receipt.
 
-## Architecture
+## Current implementation status
+
+This repository contains working components and an integration plan. The distinction matters:
+
+| Capability | Current status | Notes |
+| --- | --- | --- |
+| Bronze–Silver–Gold data product | Working | 211,393 governed payment-exception cases; masked identifiers only |
+| Existing operations UI (`app.py`) | Working, legacy workflow | Queue, evidence, deterministic agent/RAG, human form, local SQLite audit |
+| Member 1 governance | Working | Signed access contexts, deterministic authorization, maker-checker approval, Neo4j receipts and lineage |
+| Member 1 governance console | Working development harness | Real Neo4j backend with an interactive lineage graph |
+| Member 2 deterministic agent | Working baseline | LangGraph, governed evidence, policy retrieval, routing and safety gate |
+| Member 2 OpenRouter/Groq LLM | Required next task | Provider-neutral adapter and structured LLM proposals are specified but not yet implemented |
+| Member 3 orchestration and sandbox execution | Integration task | Must combine Member 2 and Member 1 in the main UI and enforce the kill switch |
+| Final single-URL judge workflow | Not complete yet | Member 3 owns this completion gate |
+
+The focused governance console is not the final product UI. It exists so Member 1 can be tested independently against real Neo4j. The final demonstration must expose the complete workflow through the main Streamlit entry point without changing URLs.
+
+## Target end-to-end workflow
 
 ```text
-Source data / BigQuery
-        |
-        v
-Bronze -> Silver -> Gold Parquet
-                       |
-             +---------+----------+
-             |                    |
-             v                    v
-      Streamlit workspace   LangGraph agent
-             |                    |
-             |             MDM policy profile
-             |                    |
-             |            PostgreSQL + pgvector
-             |                    |
-             +------ cited recommendation
-                       |
-                human approval
-                       |
-               decision + audit event
+Synthetic payment exception
+        ↓
+Member 3 integration orchestrator
+        ↓
+Member 2 investigates evidence and retrieves policy
+        ↓
+Member 2 returns a grounded ProposedAction
+        ↓
+Member 1 validates identity and authoritative case facts
+        ↓
+Member 1 returns ALLOW / DENY / REQUIRE_APPROVAL
+        ↓
+Member 3 enforces the persisted kill switch
+        ↓
+SIMULATE_RETRY_PAYMENT executes in the sandbox when permitted
+        ↓
+Member 3 verifies the result
+        ↓
+Member 1 finalizes the tamper-evident receipt
+        ↓
+Member 3 displays status, evidence, metrics, receipt and lineage in the main UI
 ```
 
-The agent hot path is deterministic: severity, routing, and recommended action are derived from governed evidence and approved policy content. The agent does not execute retries, refunds, reversals, balance changes, or card/account actions.
+For the low-risk golden path, the synthetic event should trigger the entire sequence without manual **Authorize** or **Finalize** clicks. Human interaction remains mandatory for `REQUIRE_APPROVAL`, identity changes, and autonomy controls. `DENY` always stops automatically.
+
+## Workstream ownership
+
+| Member | Owns | Public responsibility |
+| --- | --- | --- |
+| Member 1 | Identity, access context, authorization, approvals, Neo4j, receipts and lineage | Decide whether a proposal may proceed and prove why |
+| Member 2 | LangGraph investigation, Ask ResolveOne, policy RAG, LLM provider, proposals and AI guardrails | Understand the case and return a grounded answer or bounded proposal |
+| Member 3 | Events, integration orchestrator, sandbox executor, kill switch, main UI and observability | Turn an authorized proposal into a safe, visible and verified outcome |
+
+Member 3 is the accountable owner of the final visible workflow. Member 1 and Member 2 being complete means their real adapters and contracts are ready; it does not mean the integrated product is finished.
+
+## AI agent and LLM providers
+
+The current agent hot path is deterministic. It validates governed evidence, calculates severity and queue routing, resolves policy, retrieves approved policy chunks, verifies safety, and returns a structured recommendation.
+
+Member 2 must add one provider-neutral OpenAI-compatible adapter supporting:
+
+```text
+OpenRouter: https://openrouter.ai/api/v1
+Groq:       https://api.groq.com/openai/v1
+```
+
+Planned environment configuration:
+
+```env
+RESOLVEONE_LLM_PROVIDER=groq
+RESOLVEONE_LLM_MODEL=<frozen-model-id>
+GROQ_API_KEY=<secret>
+OPENROUTER_API_KEY=<secret>
+RESOLVEONE_LLM_TIMEOUT_SECONDS=30
+```
+
+API keys belong only in the ignored `.env` or a deployment secret store. They must never be committed, sent to the browser, included in model prompts, written to receipts, or logged.
+
+The LLM may:
+
+- classify `EXPLAIN`, `QUERY`, and `ACT` intents;
+- compose evidence- and policy-grounded explanations;
+- return cited answers;
+- generate a strictly validated `ProposedAction`;
+- produce analyst-facing summaries and safe refusals.
+
+The LLM may never:
+
+- mint or modify an access context;
+- grant `ALLOW`, `DENY`, or `REQUIRE_APPROVAL`;
+- approve a proposal;
+- change tenant, queue, role, or field scope;
+- control the kill switch;
+- directly execute a retry, refund, reversal, or escalation;
+- finalize a governance receipt.
+
+Every model response is untrusted input. Pydantic schema validation, citation validation, policy grounding, restricted-field checks, and prompt-injection checks run before a response becomes a proposal. Provider failure activates the declared deterministic fallback or a safe refusal; it never bypasses governance.
+
+## Governance rules
+
+Neo4j is authoritative for authorization decisions, approvals, receipt revisions, and decision lineage. PostgreSQL/Parquet remains authoritative for operational case facts.
+
+The governed action outcomes are:
+
+```text
+ALLOW
+DENY
+REQUIRE_APPROVAL
+```
+
+Only `SIMULATE_RETRY_PAYMENT` may execute autonomously during the hackathon. It has no external financial effect. A real `RETRY_PAYMENT` remains human-governed, and no live payment rail is connected.
+
+Examples:
+
+| Scenario | Result |
+| --- | --- |
+| Technical Glitch, fraud `No`, amount below $250, first simulation | `ALLOW` |
+| Fraud `Unknown` or amount at least $250 | `REQUIRE_APPROVAL` by Operations Manager |
+| Fraud `Yes` with retry action | `DENY` |
+| Retry count at least one | `DENY` |
+| Unsupported action | `DENY` |
+| Allowed action while autonomy is disabled | No execution; receipt finalized with `AUTONOMY_DISABLED` |
+
+The `FakeGovernanceAdapter` is for isolated development and contract tests only. Production and integrated runtime paths must use Neo4j and fail closed when it is unavailable.
 
 ## Repository layout
 
 ```text
-agent/       LangGraph workflow, retrieval, safety, routing, and evaluation
-data/        Local raw/processed data products (ignored by Git)
-docs/        Architecture, lineage, policy, evaluation, GCP, and runbook docs
-policies/    Approved payment-exception policy documents
-scripts/     GCP upload, BigQuery transformation, and Gold validation scripts
-styles/      Streamlit design system
-tests/       Agent, evaluation, security, and UI tests
-utils/       Gold adapter, agent adapter, and decision/audit persistence
-app.py       Main four-screen Streamlit application
+agent/          Existing deterministic LangGraph agent and policy retrieval
+contracts/      Frozen typed contracts shared by all three members
+governance/     Member 1 access, authorization, approvals, receipts and UI harness
+trust_graph/    Neo4j client, schema, repository and lineage projection
+data/           Local raw and processed data products; ignored by Git
+policies/       Approved payment-exception policy documents
+reports/        Generated evaluation evidence
+requirements/   Member-specific dependency files
+scripts/        Data, validation and evidence-generation scripts
+styles/         Streamlit design system
+tests/          Agent, governance, graph, security, evaluation and UI tests
+utils/          Existing main-UI adapters and legacy runtime store
+app.py          Existing main Streamlit operations UI; Member 3 integration entry point
+implementation.md  Complete contracts, ownership, integration and acceptance plan
 ```
 
 ## Prerequisites
 
 - Python 3.12
-- The published Gold file at `data/processed/gold_exception_cases.parquet`
+- Gold Parquet at `data/processed/gold_exception_cases.parquet`
+- Neo4j Community or Enterprise for the real Member 1 backend
 - PostgreSQL with pgvector for live policy retrieval
-- Redis for persistent replay protection
+- Redis for persistent agent replay protection
 
-PostgreSQL and Redis are optional for viewing the UI. If pgvector is unavailable, the interface clearly labels the result as an **approved-policy deterministic fallback** and does not report a retrieval confidence score.
+PostgreSQL and Redis are optional for viewing the current UI. When pgvector is unavailable, the existing UI labels the response as an approved-policy deterministic fallback and does not claim a live retrieval score.
 
-## Quick start on Windows
+Neo4j is not optional for the real governance backend. Member 1 never silently falls back to memory.
+
+## Setup on Windows
+
+Create or activate the project environment:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r agent\requirements.txt
+python -m pip install -r requirements\member1.txt
 python -m pip install streamlit plotly
 ```
 
-Point the application at the Gold product if it is stored elsewhere:
+Create the ignored local environment file:
 
 ```powershell
-$env:RESOLVEONE_GOLD_PARQUET = "E:\path\to\gold_exception_cases.parquet"
+Copy-Item .env.example .env
 ```
 
-Launch the workspace:
+Configure at minimum:
+
+```env
+NEO4J_URI=neo4j://localhost:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=<local-password>
+NEO4J_DATABASE=neo4j
+RESOLVEONE_CONTEXT_SIGNING_KEY=<random-secret>
+RESOLVEONE_RECEIPT_SIGNING_KEY=<different-random-secret>
+RESOLVEONE_GOLD_PARQUET=data/processed/gold_exception_cases.parquet
+```
+
+Never commit `.env`. The repository ignores `.env`, local Neo4j runtime data, Streamlit secrets, generated logs, and processed data.
+
+## Running the current applications
+
+### Existing operations UI
 
 ```powershell
-streamlit run app.py
+.\.venv\Scripts\python.exe -m streamlit run app.py
 ```
 
-Open `http://localhost:8501`. The default selected case is a real Technical Glitch exception so the Agent + RAG workflow is immediately demonstrable.
+Open `http://localhost:8501`.
 
-## Quick start on Linux or macOS
+This is the existing queue, investigation, recommendation, local approval and metrics interface. Its SQLite approval trail is legacy demo persistence and must not remain a second authoritative governance record after Member 3 integration.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r agent/requirements.txt
-python -m pip install streamlit plotly
-streamlit run app.py
+### Member 1 governance console
+
+Start Neo4j first, then run:
+
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run governance\demo_app.py
 ```
 
-## Enable live Agent + RAG retrieval
+The console supports:
 
-Set the PostgreSQL connection string, enable pgvector, and build the governed policy index:
+- trusted demo identities and signed 30-minute access contexts;
+- real Parquet case facts and Neo4j retry history;
+- deterministic authorization;
+- maker-checker approval;
+- receipt finalization;
+- interactive pan/zoom/hover decision-lineage graph;
+- JSON receipt and lineage audit views.
+
+This console is a focused Member 1 test harness, not the final judge entry point.
+
+## Policy RAG configuration
+
+Set the PostgreSQL connection string and build the governed policy index:
 
 ```powershell
 $env:RESOLVEONE_PG_DSN = "dbname=resolveone user=resolveone password=change-me host=localhost port=5432"
 psql -d resolveone -c "CREATE EXTENSION IF NOT EXISTS vector;"
-python -m agent.build_index
+.\.venv\Scripts\python.exe -m agent.build_index
 ```
 
-Redis defaults to `localhost:6379/0`. Override it when needed:
+Redis defaults to `localhost:6379/0` and can be overridden with:
 
-```powershell
-$env:RESOLVEONE_REDIS_HOST = "localhost"
-$env:RESOLVEONE_REDIS_PORT = "6379"
-$env:RESOLVEONE_REDIS_DB = "0"
+```env
+RESOLVEONE_REDIS_HOST=localhost
+RESOLVEONE_REDIS_PORT=6379
+RESOLVEONE_REDIS_DB=0
 ```
-
-The UI calls the agent through:
-
-```python
-from agent.orchestrator import investigate_exception
-
-result = investigate_exception("EXC-7475516")
-```
-
-The workflow validates evidence, calculates deterministic severity and routing, resolves the golden policy profile, retrieves approved policy chunks, verifies safety, requires human approval, and returns a structured recommendation with citations.
-
-## Configuration
-
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `RESOLVEONE_GOLD_PARQUET` | `data/processed/gold_exception_cases.parquet` | Governed Gold data product |
-| `DATA_PROCESSED_GOLD` | same as above | Alternate Gold-path variable used by the UI |
-| `RESOLVEONE_POLICIES_DIR` | `policies/` | Approved policy source directory |
-| `RESOLVEONE_PG_DSN` | local `labuser_db` socket | PostgreSQL/pgvector connection |
-| `RESOLVEONE_REDIS_HOST` | `localhost` | Redis host |
-| `RESOLVEONE_REDIS_PORT` | `6379` | Redis port |
-| `RESOLVEONE_REDIS_DB` | `0` | Redis database |
-| `RESOLVEONE_RUNTIME_DB` | `data/runtime/resolveone_runtime.db` | Local decision/audit SQLite path |
-| `GCP_PROJECT_ID` | required by GCP scripts | Google Cloud project ID |
-| `BQ_DATASET_ID` | `resolveone` | BigQuery dataset |
-
-See [`.env.example`](.env.example) for the GCP and data-pipeline variables. The scripts read environment variables directly; load them into your shell before running a script.
 
 ## Testing
 
-Run the self-contained UI/data tests:
+Run Member 1 unit tests and live Neo4j integration tests:
 
 ```powershell
-python -m pytest tests\ui -q
+.\.venv\Scripts\python.exe -m pytest tests\governance tests\trust_graph -q -rs
 ```
 
-Run the full agent, retrieval, evaluation, and security suite after PostgreSQL/pgvector and Redis are available:
+Run the existing agent, evaluation and security suites:
 
 ```powershell
-python -m pytest tests\agent tests\evaluation tests\security -v
+.\.venv\Scripts\python.exe -m pytest tests\agent tests\evaluation tests\security -v
 ```
 
-Validate the published Gold product:
+Run the current UI/data tests:
 
 ```powershell
-python scripts\validate_gold.py
+.\.venv\Scripts\python.exe -m pytest tests\ui -q
 ```
+
+Validate the Gold product:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_gold.py
+```
+
+Generate Member 1 evidence:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\generate_member1_report.py
+```
+
+The generated report is written to `reports/member1/governance_results.json`. Integration tests skip with an explicit reason when Neo4j credentials or connectivity are unavailable.
+
+## Evaluation and judge evidence
+
+The final dashboard must read generated artifacts rather than displaying hard-coded claims.
+
+Required evidence includes:
+
+- authorization scenario accuracy and unauthorized bypasses;
+- receipt and lineage completeness;
+- intent accuracy, action-plan accuracy and citation completeness;
+- prompt-injection success and PII leakage rates;
+- end-to-end recovery success;
+- kill-switch bypass count;
+- p50 and p95 latency;
+- provider/model, token usage and estimated LLM cost;
+- transparent estimates of manual touches and analyst minutes saved.
+
+The final judge story is:
+
+> **Sense → Understand → Govern → Act → Verify → Prove**
 
 ## Data and privacy boundary
 
-The application reads only the approved Gold product. It does not expose raw client IDs, raw card IDs, card numbers, CVV, PIN, address, latitude, or longitude. `Unknown` fraud status remains distinct from `No` and must not be interpreted as a non-fraud prediction.
+The application reads only approved governed projections. It must not expose or send raw client identifiers, raw card identifiers, full card numbers, CVV, PIN, address, latitude, longitude, credentials, or signing keys.
 
-Local analyst decisions are stored in SQLite for capstone/demo use. The production target remains PostgreSQL with authenticated analyst identity and production-grade access controls.
+Fraud `Unknown` is a first-class state and must never be converted to `No`. Model providers receive only the minimum masked evidence and approved policy content required for the task.
+
+Do not store hidden model chain-of-thought. Store validated answers, structured proposals, citations, reason codes, provider/model metadata, latency, token usage and declared fallback reasons.
 
 ## Documentation
 
-- [Implementation specification](implementation.md)
+- [Complete implementation plan](implementation.md)
+- [Member 1 governance runbook](docs/member1/README.md)
 - [Agent architecture](docs/AGENT_ARCHITECTURE.md)
 - [MDM applied to RAG](docs/MDM_RAG.md)
 - [Policy library](docs/POLICY_LIBRARY.md)
@@ -179,10 +321,3 @@ Local analyst decisions are stored in SQLite for capstone/demo use. The producti
 - [Gold data handoff](docs/README_DATA.MD)
 - [Operational runbook](docs/RUNBOOK.md)
 - [GCP setup and production guidance](docs/gcp/README.md)
-
-## Current runtime behavior
-
-- With PostgreSQL/pgvector online: the UI displays the LangGraph result with live policy citations and retrieval confidence.
-- Without PostgreSQL/pgvector: the same UI remains usable and explicitly displays the deterministic approved-policy fallback.
-- Every controlled decision requires an analyst reason and creates a linked audit event.
-- No controlled payment or account action is executed by the Streamlit application.

@@ -1,0 +1,11 @@
+{
+  "context_id": "CTX-FIXTURE-OPS",
+  "user_id": "ops_01",
+  "canonical_role": "OPERATIONS_ANALYST",
+  "tenant_id": "TENANT-DEMO",
+  "allowed_queues": ["FRAUD", "OPERATIONS"],
+  "can_view_risk_fields": false,
+  "issued_at": "2026-08-16T12:00:00Z",
+  "expires_at": "2026-08-16T12:30:00Z",
+  "integrity_hash": "sha256:9b44acb33be19a1f1cb27fa34ab3f1d9faa77180f06e8c72f78594e449a074c4"
+}

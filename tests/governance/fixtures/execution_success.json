@@ -1,0 +1,11 @@
+{
+  "execution_id": "EXEC-FIXTURE-101",
+  "trace_id": "TRACE-FIXTURE-101",
+  "exception_id": "EXC-FIXTURE-HIGH",
+  "action": "SIMULATE_RETRY_PAYMENT",
+  "status": "SUCCESS",
+  "reference": "SIM-FIXTURE-101",
+  "verified": true,
+  "started_at": "2026-08-16T12:06:00Z",
+  "completed_at": "2026-08-16T12:06:01Z"
+}

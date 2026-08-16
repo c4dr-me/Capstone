@@ -1,0 +1,50 @@
+{
+  "receipt_id": "RCP-FIXTURE-101",
+  "authorization_id": "AUTH-FIXTURE-101",
+  "request_id": "REQ-FIXTURE-101",
+  "trace_id": "TRACE-FIXTURE-101",
+  "tenant_id": "TENANT-DEMO",
+  "exception_id": "EXC-FIXTURE-HIGH",
+  "user_id": "ops_01",
+  "canonical_role": "OPERATIONS_ANALYST",
+  "agent_id": "recovery_agent",
+  "policy_citations": ["POL-TECH-001@1.0", "GOV-SIM-TECH-001@1.0"],
+  "evidence_ids": ["EVD-EXC-FIXTURE-HIGH"],
+  "reason_codes": ["HIGH_VALUE", "FIRST_RETRY", "SANDBOX_ONLY", "HUMAN_APPROVAL_REQUIRED"],
+  "action": "SIMULATE_RETRY_PAYMENT",
+  "authorization": "REQUIRE_APPROVAL",
+  "approval_id": "APR-FIXTURE-101",
+  "receipt_state": "PENDING",
+  "outcome": "PENDING_EXECUTION",
+  "outcome_reason": "APPROVAL_GRANTED",
+  "integrity_hash": "sha256:481b887e3c9a28c8291a9da7eb369d93a00707b4afb2d02f00e89475dc9b6d70",
+  "timestamp": "2026-08-16T12:05:00Z",
+  "revisions": [
+    {
+      "revision_id": "RCP-FIXTURE-101:REV:1",
+      "revision_number": 1,
+      "receipt_state": "PENDING",
+      "outcome": "PENDING_APPROVAL",
+      "outcome_reason": "AWAITING_HUMAN_APPROVAL",
+      "authorization": "REQUIRE_APPROVAL",
+      "approval_id": null,
+      "execution_id": null,
+      "timestamp": "2026-08-16T12:05:00Z",
+      "previous_integrity_hash": null,
+      "integrity_hash": "sha256:08f2104d247d5ee9c7f3e208032e32e4d7f2e733cb67428fc377824ebe4e48d4"
+    },
+    {
+      "revision_id": "RCP-FIXTURE-101:APR:APR-FIXTURE-101",
+      "revision_number": 2,
+      "receipt_state": "PENDING",
+      "outcome": "PENDING_EXECUTION",
+      "outcome_reason": "APPROVAL_GRANTED",
+      "authorization": "REQUIRE_APPROVAL",
+      "approval_id": "APR-FIXTURE-101",
+      "execution_id": null,
+      "timestamp": "2026-08-16T12:05:00Z",
+      "previous_integrity_hash": "sha256:08f2104d247d5ee9c7f3e208032e32e4d7f2e733cb67428fc377824ebe4e48d4",
+      "integrity_hash": "sha256:481b887e3c9a28c8291a9da7eb369d93a00707b4afb2d02f00e89475dc9b6d70"
+    }
+  ]
+}

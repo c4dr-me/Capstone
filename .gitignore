@@ -220,6 +220,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# Local Neo4j test runtime (database, logs, and process state)
+.neo4j/
+.neo4j-template/
+
 # Data files (keep structure)
 data/
 data/*.zip

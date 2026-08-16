@@ -1,0 +1,9 @@
+{
+  "authorization_id": "AUTH-FIXTURE-101",
+  "receipt_id": "RCP-FIXTURE-101",
+  "decision": "REQUIRE_APPROVAL",
+  "reason_codes": ["HIGH_VALUE", "FIRST_RETRY", "SANDBOX_ONLY", "HUMAN_APPROVAL_REQUIRED"],
+  "requires_human": true,
+  "required_approver_role": "OPERATIONS_MANAGER",
+  "policy_citations": ["POL-TECH-001@1.0", "GOV-SIM-TECH-001@1.0"]
+}

@@ -1,0 +1,7 @@
+{
+  "approval_id": "APR-FIXTURE-101",
+  "authorization_id": "AUTH-FIXTURE-101",
+  "access_context_id": "CTX-FIXTURE-MANAGER",
+  "decision": "APPROVE",
+  "comment": "Approved after evidence review"
+}

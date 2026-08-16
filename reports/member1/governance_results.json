@@ -1,0 +1,93 @@
+{
+  "report_version": "member1-governance-v1",
+  "metrics_hard_coded": false,
+  "measurement_method": "deterministic scenario execution, receipt/lineage reads, pytest subprocess, and optional live Neo4j probes",
+  "authorization_scenario_count": 9,
+  "authorization_accuracy_percent": 100.0,
+  "unauthorized_bypass_count": 0,
+  "receipt_completeness_percent": 100.0,
+  "lineage_completeness_percent": 100.0,
+  "scenario_results": [
+    {
+      "scenario": "low risk sandbox",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-001",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "unknown fraud sandbox",
+      "expected": "REQUIRE_APPROVAL",
+      "actual": "REQUIRE_APPROVAL",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-002",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "high value sandbox",
+      "expected": "REQUIRE_APPROVAL",
+      "actual": "REQUIRE_APPROVAL",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-003",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "fraud positive sandbox",
+      "expected": "DENY",
+      "actual": "DENY",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-004",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "auditor escalation",
+      "expected": "DENY",
+      "actual": "DENY",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-005",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "agent live retry",
+      "expected": "DENY",
+      "actual": "DENY",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-006",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "operations live retry",
+      "expected": "REQUIRE_APPROVAL",
+      "actual": "REQUIRE_APPROVAL",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-007",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "authorized escalation",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-008",
+      "lineage_completeness": 1.0
+    },
+    {
+      "scenario": "unsupported refund",
+      "expected": "DENY",
+      "actual": "DENY",
+      "correct": true,
+      "receipt_id": "RCP-EVAL-009",
+      "lineage_completeness": 1.0
+    }
+  ],
+  "governance_tests_passed": 39,
+  "governance_tests_failed": 0,
+  "governance_tests_passing_percent": 100.0,
+  "pytest_exit_code": 0,
+  "neo4j_connected": true,
+  "neo4j_query_count": 20,
+  "neo4j_query_p50_ms": 16.343,
+  "neo4j_query_p95_ms": 56.185,
+  "neo4j_unavailable_reason": null
+}

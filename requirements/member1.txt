@@ -1,0 +1,3 @@
+neo4j
+pydantic>=2,<3
+pytest>=8

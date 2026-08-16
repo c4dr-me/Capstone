@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-FIXTURE-101",
+  "access_context_id": "CTX-FIXTURE-OPS",
+  "agent_id": "recovery_agent",
+  "exception_id": "EXC-FIXTURE-HIGH",
+  "action": "SIMULATE_RETRY_PAYMENT",
+  "policy_id": "POL-TECH-001",
+  "asserted_case_context": {
+    "exception_type": "Technical Glitch",
+    "amount": 425.5,
+    "fraud_label": "No"
+  },
+  "trace_id": "TRACE-FIXTURE-101"
+}

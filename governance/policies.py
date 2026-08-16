@@ -1,0 +1,7 @@
+"""Version-locked deterministic governance policy citations."""
+
+TECHNICAL_RETRY_POLICY = "POL-TECH-001@1.0"
+SIMULATION_GOVERNANCE_POLICY = "GOV-SIM-TECH-001@1.0"
+ESCALATION_POLICY = "GOV-ESCALATE-001@1.0"
+
+TECHNICAL_GLITCH = "Technical Glitch"
