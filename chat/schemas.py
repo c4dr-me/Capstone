@@ -1,15 +1,20 @@
 """Member 2 data models for chat, intents, and proposals."""
 
-from datetime import datetime
 from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from contracts.enums import Action, CanonicalRole, FraudLabel
+from contracts.enums import Action
 
 
+
+class ChatModel(BaseModel):
+    """Untrusted model/provider payloads must reject unknown fields."""
+
+    model_config = ConfigDict(extra="forbid", use_enum_values=True)
 class IntentType(str, Enum):
+
     """Natural-language intent classifications."""
 
     EXPLAIN = "EXPLAIN"
@@ -17,7 +22,7 @@ class IntentType(str, Enum):
     ACT = "ACT"
 
 
-class ProposedAction(BaseModel):
+class ProposedAction(ChatModel):
     """Member 2's proposed action, derived from investigation and natural language.
 
     Per implementation.md Contract 4 shape. Member 3's orchestrator will map this
@@ -36,7 +41,7 @@ class ProposedAction(BaseModel):
     citations: tuple[str, ...] = Field(description="Policy chunk citations, e.g. ['POL-TECH-001@1.0']")
     confidence: float = Field(ge=0.0, le=1.0, description="Confidence score [0,1]")
 
-    model_config = {"use_enum_values": True}
+    source_mode: Literal["llm", "approved_policy_fallback"] = "approved_policy_fallback"
 
     @field_validator("action")
     @classmethod
@@ -48,7 +53,7 @@ class ProposedAction(BaseModel):
         return v
 
 
-class ExplanationResponse(BaseModel):
+class ExplanationResponse(ChatModel):
     """EXPLAIN intent response: grounded evidence-backed explanation."""
 
     intent: Literal["EXPLAIN"] = "EXPLAIN"
@@ -57,7 +62,7 @@ class ExplanationResponse(BaseModel):
     source_mode: Literal["llm", "approved_policy_fallback", "safe_refusal"] = "approved_policy_fallback"
 
 
-class QueryResult(BaseModel):
+class QueryResult(ChatModel):
     """QUERY intent response: governed result set."""
 
     intent: Literal["QUERY"] = "QUERY"
@@ -66,7 +71,7 @@ class QueryResult(BaseModel):
     source_mode: Literal["llm", "approved_policy_fallback", "safe_refusal"] = "approved_policy_fallback"
 
 
-class SafeRefusal(BaseModel):
+class SafeRefusal(ChatModel):
     """Safe refusal response: guardrail blocked the request."""
 
     intent: Literal["EXPLAIN", "QUERY", "ACT"] = Field(description="Original intent")
@@ -75,7 +80,7 @@ class SafeRefusal(BaseModel):
     source_mode: Literal["safe_refusal"] = "safe_refusal"
 
 
-class ChatResponse(BaseModel):
+class ChatResponse(ChatModel):
     """Union of all chat response types."""
 
     response: ExplanationResponse | ProposedAction | QueryResult | SafeRefusal = Field(
@@ -83,7 +88,7 @@ class ChatResponse(BaseModel):
     )
 
 
-class ChatRequest(BaseModel):
+class ChatRequest(ChatModel):
     """Chat request from the user."""
 
     text: str = Field(description="Natural-language input")

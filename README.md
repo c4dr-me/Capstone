@@ -19,7 +19,7 @@ This repository contains working components and an integration plan. The distinc
 | Member 1 governance | Working | Signed access contexts, deterministic authorization, maker-checker approval, Neo4j receipts and lineage |
 | Member 1 governance console | Working development harness | Real Neo4j backend with an interactive lineage graph |
 | Member 2 deterministic agent | Working baseline | LangGraph, governed evidence, policy retrieval, routing and safety gate |
-| Member 2 OpenRouter/Groq LLM | Required next task | Provider-neutral adapter and structured LLM proposals are specified but not yet implemented |
+| Member 2 LLM proposals | Working with configured provider | Groq, OpenRouter, or Gemini structured proposals; missing or failed provider uses the labelled approved-policy fallback |
 | Member 3 orchestration and sandbox execution | Integration task | Must combine Member 2 and Member 1 in the main UI and enforce the kill switch |
 | Final single-URL judge workflow | Not complete yet | Member 3 owns this completion gate |
 

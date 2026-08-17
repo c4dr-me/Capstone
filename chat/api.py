@@ -1,15 +1,15 @@
-"""Member 2 public chat API: handle_chat for EXPLAIN/QUERY/ACT intents."""
+"""Member 2 public chat API: scoped, grounded, proposal-only chat."""
 
-from typing import Callable, Optional
+from collections.abc import Callable
+from typing import Any
 
 from contracts.access import AccessContext
 
-from chat.adapters.fake_access_context import validate_access_context_offline
-from chat.adapters.fake_llm import FakeLLMProvider
-from chat.guardrails import detect_prompt_injection, detect_restricted_field_request, run_guardrails
+from chat.adapters import get_llm_provider
+from chat.guardrails import run_guardrails, validate_citations
 from chat.intents import classify_intent
 from chat.planner import plan_action
-from chat.query_service import query_cases
+from chat.query_service import AccessScopeError, QueryService, query_cases
 from chat.schemas import (
     ChatRequest,
     ChatResponse,
@@ -20,149 +20,156 @@ from chat.schemas import (
     SafeRefusal,
 )
 
+_KNOWN_POLICY_IDS = {"POL-TECH-001", "GOV-SIM-TECH-001"}
+ContextValidator = Callable[[AccessContext], AccessContext]
+
+
+def _default_validate_context(context: AccessContext) -> AccessContext:
+    """Use Member 1's public validator in runtime; tests must inject their fake."""
+    from governance.api import validate_access_context
+
+    return validate_access_context(context)
+
+
+def _safe_refusal(intent: IntentType | str, reason_code: str, message: str) -> ChatResponse:
+    intent_value = intent.value if isinstance(intent, IntentType) else intent
+    return ChatResponse(response=SafeRefusal(intent=intent_value, reason_code=reason_code, message=message))
+
+
+def _configured_provider(provider: Any | None) -> Any | None:
+    if provider is not None:
+        return provider
+    try:
+        return get_llm_provider(fallback_to_fake=False)
+    except Exception:
+        # Missing keys and provider outages must never trigger a cross-provider route.
+        return None
+
+
+def _case_prompt(case: dict[str, Any]) -> str:
+    allowed = ("exception_id", "exception_type", "amount", "status", "severity", "retry_count", "queue")
+    return ", ".join(f"{key}={case[key]!r}" for key in allowed if key in case)
+
+
+def _validate_cited_response(response: ExplanationResponse | ProposedAction, exception_id: str | None = None):
+    valid, reason = validate_citations(tuple(response.citations), _KNOWN_POLICY_IDS)
+    if not valid:
+        raise ValueError(reason or "INVALID_CITATION")
+    if isinstance(response, ProposedAction) and exception_id and response.exception_id != exception_id:
+        raise ValueError("CASE_ID_MISMATCH")
+    return response
+
 
 def handle_chat(
     request: ChatRequest,
     access_context: AccessContext,
-    validate_context: Optional[Callable] = None,
+    validate_context: ContextValidator | None = None,
+    *,
+    query_service: QueryService | None = None,
+    llm_provider: Any | None = None,
 ) -> ChatResponse:
-    """Handle a chat request with EXPLAIN/QUERY/ACT intents.
-
-    Args:
-        request: ChatRequest with text and optional exception_id
-        access_context: user's AccessContext (scope, permissions, expiry)
-        validate_context: optional validator callable (defaults to offline fake)
-
-    Returns:
-        ChatResponse with one of: ExplanationResponse, QueryResult, ProposedAction, SafeRefusal
-
-    Validates:
-        - AccessContext is not expired/tampered
-        - User input passes guardrails (no injection/PII requests/policy override)
-        - Proposed action is in allowlist
-        - Citations are present and well-formed
-    """
-    # Validate access context (expiry, shape)
-    if validate_context is None:
-        validate_context = validate_access_context_offline
-
+    """Return a scoped answer, query result, or proposal; never an authorization decision."""
+    validator = validate_context or _default_validate_context
     try:
-        access_context = validate_context(access_context)
-    except ValueError as e:
-        return ChatResponse(
-            response=SafeRefusal(
-                intent="EXPLAIN",
-                reason_code="INVALID_ACCESS_CONTEXT",
-                message=f"Access context validation failed: {str(e)}",
-            )
-        )
+        context = validator(access_context)
+    except Exception:
+        return _safe_refusal("EXPLAIN", "INVALID_ACCESS_CONTEXT", "The access context is invalid or expired.")
 
-    # Run guardrails on raw input
     passed, block_reason = run_guardrails(request.text)
     if not passed:
-        return ChatResponse(
-            response=SafeRefusal(
-                intent="EXPLAIN",  # we don't know intent yet
-                reason_code=block_reason,
-                message=_refusal_message(block_reason),
-            )
-        )
+        return _safe_refusal("EXPLAIN", block_reason or "GUARDRAIL_BLOCKED", _refusal_message(block_reason))
 
-    # Classify intent
     intent = classify_intent(request.text)
-
-    # Route by intent
+    service = query_service or QueryService()
+    provider = _configured_provider(llm_provider)
     try:
-        if intent == IntentType.EXPLAIN:
-            response = _handle_explain(request.text, access_context)
-        elif intent == IntentType.QUERY:
-            response = _handle_query(request.text, access_context)
-        elif intent == IntentType.ACT:
-            response = _handle_act(request.text, request.exception_id, access_context)
-        else:
-            response = _handle_explain(request.text, access_context)
-
-        return ChatResponse(response=response)
-
-    except Exception as e:
-        return ChatResponse(
-            response=SafeRefusal(
-                intent=intent.value,
-                reason_code="INTERNAL_ERROR",
-                message=f"Request could not be processed: {str(e)}",
-            )
-        )
-
-
-def _handle_explain(text: str, access_context: AccessContext) -> ExplanationResponse:
-    """Handle EXPLAIN intent: return grounded explanation with citations."""
-    # In a real implementation, this would:
-    # 1. Load case context via investigate_exception or agent.graph
-    # 2. Retrieve relevant policy chunks via agent/retrieval.py
-    # 3. Use LLM to compose explanation (or template-based)
-    # 4. Validate citations
-
-    # For now, return a canned but realistic explanation
-    return ExplanationResponse(
-        intent="EXPLAIN",
-        explanation=(
-            "This is a Technical Glitch exception: a legitimate payment failed due to a "
-            "transient system error. The fraud label is 'No' and risk is 'LOW'. "
-            "Policy POL-TECH-001 authorizes a single simulation-only retry (SIMULATE_RETRY_PAYMENT) "
-            "for such cases, provided the fraud label is not positive and the retry count is zero."
-        ),
-        citations=("POL-TECH-001@1.0", "GOV-SIM-TECH-001@1.0"),
-        source_mode="approved_policy_fallback",
-    )
-
-
-def _handle_query(text: str, access_context: AccessContext) -> QueryResult | SafeRefusal:
-    """Handle QUERY intent: return governed case results within user's scope."""
-    try:
-        count, results = query_cases(text, access_context)
-        return QueryResult(
-            intent="QUERY",
-            count=count,
-            results=results,
-            source_mode="approved_policy_fallback",
-        )
+        if intent == IntentType.QUERY:
+            return _handle_query(request.text, context, service)
+        if intent == IntentType.ACT:
+            return _handle_act(request.text, request.exception_id, context, service, provider)
+        return _handle_explain(request.text, request.exception_id, context, service, provider)
+    except AccessScopeError:
+        return _safe_refusal(intent, "FIELD_ACCESS_DENIED", "You do not have access to the requested field.")
     except FileNotFoundError:
-        return SafeRefusal(
-            intent="QUERY",
-            reason_code="DATA_UNAVAILABLE",
-            message="Case data is not available. This is expected in the development environment.",
-        )
+        return _safe_refusal(intent, "DATA_UNAVAILABLE", "Governed case data is currently unavailable.")
+    except ValueError:
+        return _safe_refusal(intent, "REQUEST_NOT_SUPPORTED", "The request could not be safely completed.")
+    except Exception:
+        return _safe_refusal(intent, "INTERNAL_ERROR", "The request could not be processed safely.")
+
+
+def _handle_explain(
+    text: str,
+    exception_id: str | None,
+    access_context: AccessContext,
+    service: QueryService,
+    provider: Any | None,
+) -> ChatResponse:
+    case = service.get_case_in_scope(exception_id, access_context) if exception_id else None
+    if exception_id and case is None:
+        return _safe_refusal("EXPLAIN", "CASE_NOT_FOUND_OR_OUT_OF_SCOPE", "That case is not available in your scope.")
+    if provider is not None:
+        try:
+            result = provider.generate(
+                [
+                    {"role": "system", "content": "Provide a concise grounded policy explanation. Cite only approved policy IDs."},
+                    {"role": "user", "content": f"Question: {text}\nGoverned evidence: {_case_prompt(case) if case else 'No case selected.'}"},
+                ],
+                ExplanationResponse,
+            )
+            response = ExplanationResponse.model_validate(result.content)
+            return ChatResponse(response=_validate_cited_response(response).model_copy(update={"source_mode": "llm"}))
+        except Exception:
+            pass
+    if case is None:
+        return ChatResponse(response=ExplanationResponse(
+            explanation="POL-TECH-001 governs controlled sandbox retries for eligible Technical Glitch cases; authorization remains external.",
+            citations=("POL-TECH-001@1.0",),
+        ))
+    exception_type = case.get("exception_type", "the selected")
+    return ChatResponse(response=ExplanationResponse(
+        explanation=f"{case['exception_id']} is an in-scope {exception_type} case. POL-TECH-001 requires deterministic authorization before any sandbox retry.",
+        citations=("POL-TECH-001@1.0",),
+    ))
+
+
+def _handle_query(text: str, access_context: AccessContext, service: QueryService) -> ChatResponse:
+    count, results = query_cases(text, access_context, service=service)
+    return ChatResponse(response=QueryResult(count=count, results=results, source_mode="approved_policy_fallback"))
 
 
 def _handle_act(
-    text: str, exception_id: str | None, access_context: AccessContext
-) -> ProposedAction | SafeRefusal:
-    """Handle ACT intent: return a ProposedAction if permitted."""
+    text: str,
+    exception_id: str | None,
+    access_context: AccessContext,
+    service: QueryService,
+    provider: Any | None,
+) -> ChatResponse:
     if not exception_id:
-        return SafeRefusal(
-            intent="ACT",
-            reason_code="MISSING_EXCEPTION_ID",
-            message="An exception_id must be provided for ACT requests.",
-        )
+        return _safe_refusal("ACT", "MISSING_EXCEPTION_ID", "An exception ID is required for an action proposal.")
+    case = service.get_case_in_scope(exception_id, access_context)
+    if case is None:
+        return _safe_refusal("ACT", "CASE_NOT_FOUND_OR_OUT_OF_SCOPE", "That case is not available in your scope.")
+    if provider is not None:
+        try:
+            result = provider.generate(
+                [
+                    {"role": "system", "content": "Return only a bounded proposed action. Never authorize or execute."},
+                    {"role": "user", "content": f"Request: {text}\nGoverned evidence: {_case_prompt(case)}"},
+                ],
+                ProposedAction,
+            )
+            response = ProposedAction.model_validate(result.content)
+            return ChatResponse(response=_validate_cited_response(response, exception_id).model_copy(update={"source_mode": "llm"}))
+        except Exception:
+            pass
+    return ChatResponse(response=plan_action(text, case))
 
-    try:
-        proposal = plan_action(text, exception_id)
-        return proposal
-    except ValueError as e:
-        return SafeRefusal(
-            intent="ACT",
-            reason_code="PROPOSAL_BLOCKED",
-            message=str(e),
-        )
 
-
-def _refusal_message(reason_code: str) -> str:
-    """User-facing message for a blocked request."""
+def _refusal_message(reason_code: str | None) -> str:
     messages = {
         "BLOCKED_POLICY_OVERRIDE": "Policy override attempts are not allowed.",
-        "BLOCKED_SENSITIVE_FIELD": "Requests for sensitive fields (card numbers, CVV, PII) are blocked.",
+        "BLOCKED_SENSITIVE_FIELD": "Requests for sensitive fields are blocked.",
         "UNSUPPORTED_ACTION": "That action is not supported in this environment.",
-        "MISSING_CITATIONS": "Proposed actions must cite applicable policy.",
-        "INVALID_CITATION_FORMAT": "Citations must be in format POLICY_ID@VERSION.",
     }
-    return messages.get(reason_code, "Your request could not be processed.")
+    return messages.get(reason_code, "Your request could not be processed safely.")
