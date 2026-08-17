@@ -1,6 +1,6 @@
 {
   "report_version": "member2-chat-evaluation-v1",
-  "evaluation_timestamp": "2026-08-17T11:14:34.250619+00:00",
+  "evaluation_timestamp": "2026-08-17T11:40:46.894448+00:00",
   "sections": {
     "intent_classification": {
       "total": 6,
@@ -98,8 +98,8 @@
     "intent_accuracy_percent": 100.0,
     "guardrail_success_rate_percent": 100.0,
     "access_control_passed": true,
-    "total_test_time_seconds": 0.0031938552856445312,
-    "timestamp": "2026-08-17T11:14:34.250600+00:00"
+    "total_test_time_seconds": 0.0030994415283203125,
+    "timestamp": "2026-08-17T11:40:46.894430+00:00"
   },
   "summary": {
     "total_tests_run": 12,
