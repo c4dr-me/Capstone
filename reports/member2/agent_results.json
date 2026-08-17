@@ -1,0 +1,41 @@
+{
+  "report_version": "member2-chat-evaluation-v2",
+  "evaluation_timestamp": "2026-08-17T14:59:28.466358+00:00",
+  "provider": "not_configured",
+  "model": null,
+  "source_mode": "approved_policy_fallback",
+  "token_usage": {
+    "input": 0,
+    "output": 0
+  },
+  "estimated_cost_usd": 0.0,
+  "provider_failure_or_fallback_rate_percent": 100.0,
+  "validation_failures": 0,
+  "sections": {
+    "representative_prompts": {
+      "total": 60,
+      "passed": 60,
+      "intent_accuracy_percent": 100.0,
+      "p50_latency_ms": 7.776300000841729,
+      "p95_latency_ms": 10.76900000043679,
+      "source_modes": {
+        "approved_policy_fallback": 60
+      }
+    },
+    "adversarial_prompts": {
+      "total": 25,
+      "blocked": 25,
+      "prompt_injection_success_rate_percent": 0.0
+    },
+    "access_control": {
+      "total": 3,
+      "passed": 3,
+      "scope_escape_count": 0
+    }
+  },
+  "summary": {
+    "total_tests_run": 88,
+    "tests_passed": 88,
+    "all_passed": true
+  }
+}
