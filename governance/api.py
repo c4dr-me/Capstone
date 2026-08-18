@@ -288,62 +288,27 @@ _SERVICE: GovernanceService | None = None
 def _default_service() -> GovernanceService:
     global _SERVICE
     if _SERVICE is None:
-        try:
-            from trust_graph.neo4j_client import Neo4jClient
-            from trust_graph.repository import Neo4jGovernanceRepository
-            from trust_graph.schema import ensure_schema
+        from trust_graph.neo4j_client import Neo4jClient
+        from trust_graph.repository import Neo4jGovernanceRepository
+        from trust_graph.schema import ensure_schema
 
-            settings = GovernanceSettings.from_env()
-            client = Neo4jClient(
-                settings.neo4j_uri,
-                settings.neo4j_user,
-                settings.neo4j_password,
-                settings.neo4j_database,
-            )
-            client.verify_connectivity()
-            ensure_schema(client)
-            repository = Neo4jGovernanceRepository(client)
-            _SERVICE = GovernanceService(
-                repository=repository,
-                case_repository=ParquetCaseRepository(settings.gold_parquet_path, repository),
-                access_contexts=AccessContextService(settings.context_signing_key),
-                receipts=ReceiptFactory(settings.receipt_signing_key),
-                receipt_signing_key=settings.receipt_signing_key,
-            )
-        except Exception:
-            # Fall back to a lightweight development wrapper that delegates to
-            # the integration fakes when required environment variables are
-            # missing (useful for local development/demo runs). This avoids
-            # raising at import time while keeping production paths intact.
-            from integration.fakes.fake_governance import (
-                validate_access_context as _fake_validate,
-                authorize_action as _fake_authorize,
-                create_governance_receipt as _fake_create_receipt,
-                finalize_governance_receipt as _fake_finalize,
-                get_case_lineage as _fake_lineage,
-            )
-
-            class _DevGovernanceService:
-                def mint_access_context(self, session):
-                    # fakes do not implement minting; return a simple context dict
-                    return _fake_validate({})
-
-                def validate_access_context(self, context):
-                    return _fake_validate(context or {})
-
-                def authorize_action(self, request, access_context):
-                    return _fake_authorize(request, access_context)
-
-                def create_governance_receipt(self, authorization_id, access_context):
-                    return _fake_create_receipt(authorization_id, access_context)
-
-                def finalize_governance_receipt(self, receipt_id, execution_result, terminal_reason, service_context):
-                    return _fake_finalize(receipt_id, execution_result, terminal_reason)
-
-                def get_case_lineage(self, exception_id, access_context):
-                    return _fake_lineage(exception_id, access_context)
-
-            _SERVICE = _DevGovernanceService()
+        settings = GovernanceSettings.from_env()
+        client = Neo4jClient(
+            settings.neo4j_uri,
+            settings.neo4j_user,
+            settings.neo4j_password,
+            settings.neo4j_database,
+        )
+        client.verify_connectivity()
+        ensure_schema(client)
+        repository = Neo4jGovernanceRepository(client)
+        _SERVICE = GovernanceService(
+            repository=repository,
+            case_repository=ParquetCaseRepository(settings.gold_parquet_path, repository),
+            access_contexts=AccessContextService(settings.context_signing_key),
+            receipts=ReceiptFactory(settings.receipt_signing_key),
+            receipt_signing_key=settings.receipt_signing_key,
+        )
     return _SERVICE
 
 

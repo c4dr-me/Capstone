@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+os.environ.setdefault("RESOLVEONE_USE_FAKE_GOVERNANCE", "1")
 
 from integration.orchestrator import process_event
 from execution.kill_switch import KillSwitch

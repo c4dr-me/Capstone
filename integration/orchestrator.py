@@ -13,10 +13,10 @@ from typing import Any, Dict
 from integration.fakes.fake_agent import investigate_exception
 import os
 
-# By default use local fakes for demos. Set USE_REAL_GOV=1 to prefer the real governance API.
+## The fake adapter is test-only and must be explicitly enabled.
 try:
-    if os.getenv("USE_REAL_GOV", "false").lower() not in ("1", "true", "yes"):
-        raise ImportError("Forced to use fakes")
+    if os.getenv("RESOLVEONE_USE_FAKE_GOVERNANCE", "").lower() in ("1", "true", "yes"):
+        raise ImportError("Explicit fake governance requested")
     import governance.api as gov_api
     from contracts.access import AccessContext as AccessContextContract
     from contracts.authorization import AuthorizationRequest as AuthorizationRequestContract
@@ -103,7 +103,9 @@ try:
         except Exception:
             return lineage
 
-except Exception:
+except Exception as exc:
+    if os.getenv("RESOLVEONE_USE_FAKE_GOVERNANCE", "").lower() not in ("1", "true", "yes"):
+        raise RuntimeError("Authoritative governance is unavailable; refusing to use the fake adapter.") from exc
     from integration.fakes.fake_governance import (
         authorize_action,
         create_governance_receipt,
