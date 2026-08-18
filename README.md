@@ -131,6 +131,11 @@ Open `http://127.0.0.1:8501`. Streamlit and the orchestration API load `.env` au
 
 Tests requiring PostgreSQL, Neo4j, Redis, or the Gold Parquet data must use the corresponding local services and `.env` configuration.
 
+## CI data and integration verification
+
+GitHub Actions downloads the versioned `gold-data-v1` release asset before tests and verifies its SHA-256 checksum. The integration job then starts temporary PostgreSQL/pgvector, Neo4j, and Redis containers, builds the approved policy index, and runs the suite with real governance enabled. It never connects to a live payment rail.
+
+To publish a revised Gold product, create a new immutable release tag, upload the Parquet and its checksum, then update `GOLD_RELEASE_TAG` in `.github/workflows/resolveone-ci.yml` in the same pull request.
 ## Product positioning
 
 ResolveOne is not a fraud-scoring replacement. It is a governed recovery layer for payment exceptions: it turns an exception into a bounded, explainable, authorized, verified, and auditable operational outcome.
