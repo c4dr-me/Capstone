@@ -383,3 +383,29 @@ textarea:focus-visible,
         flex-direction: column;
     }
 }
+
+/* Streamlit component defaults can otherwise inherit white text in content panels. */
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] li,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] h1,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] h2,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] h3,
+[data-testid="stMain"] [data-testid="stMarkdownContainer"] h4,
+[data-testid="stMain"] [data-testid="stCaptionContainer"],
+[data-testid="stMain"] [data-testid="stWidgetLabel"] p,
+[data-testid="stMain"] [data-testid="stTextInput"] input,
+[data-testid="stMain"] [data-testid="stTextArea"] textarea,
+[data-testid="stMain"] [data-baseweb="select"] > div {
+    color: var(--ink) !important;
+}
+
+[data-testid="stMain"] [role="tabpanel"] {
+    color: var(--ink);
+}
+
+[data-testid="stMain"] [data-testid="stTextInput"] input,
+[data-testid="stMain"] [data-testid="stTextArea"] textarea,
+[data-testid="stMain"] [data-baseweb="select"] > div {
+    background: var(--panel) !important;
+    border-color: var(--line) !important;
+}
