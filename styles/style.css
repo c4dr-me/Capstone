@@ -409,3 +409,285 @@ textarea:focus-visible,
     background: var(--panel) !important;
     border-color: var(--line) !important;
 }
+/* Keep action controls readable even when Streamlit's dark component theme is active. */
+[data-testid="stMain"] .stButton > button,
+[data-testid="stMain"] .stFormSubmitButton > button,
+[data-testid="stMain"] .stDownloadButton > button {
+    background: var(--panel) !important;
+    color: var(--navy) !important;
+    border-color: var(--navy) !important;
+}
+
+[data-testid="stMain"] .stButton > button[data-testid="stBaseButton-primary"],
+[data-testid="stMain"] .stFormSubmitButton > button[data-testid="stBaseButton-primary"] {
+    background: var(--navy) !important;
+    color: #fffdf7 !important;
+    border-color: var(--navy) !important;
+}
+
+[data-testid="stMain"] .stButton > button:hover,
+[data-testid="stMain"] .stFormSubmitButton > button:hover,
+[data-testid="stMain"] .stDownloadButton > button:hover {
+    background: #e2eff0 !important;
+    color: var(--teal) !important;
+    border-color: var(--teal) !important;
+}
+
+[data-testid="stMain"] .stButton > button[data-testid="stBaseButton-primary"]:hover,
+[data-testid="stMain"] .stFormSubmitButton > button[data-testid="stBaseButton-primary"]:hover {
+    background: var(--teal) !important;
+    color: #fffdf7 !important;
+    border-color: var(--teal) !important;
+}
+/* Streamlit renders button labels in nested spans; inherit the button contrast. */
+[data-testid="stMain"] button[kind="primary"],
+[data-testid="stMain"] button[data-testid="stBaseButton-primary"] {
+    background: var(--navy) !important;
+    color: #fffdf7 !important;
+    border-color: var(--navy) !important;
+}
+
+[data-testid="stMain"] button[kind="primary"] *,
+[data-testid="stMain"] button[data-testid="stBaseButton-primary"] * {
+    color: #fffdf7 !important;
+}
+
+[data-testid="stMain"] button[kind="primary"]:hover,
+[data-testid="stMain"] button[data-testid="stBaseButton-primary"]:hover {
+    background: var(--teal) !important;
+    border-color: var(--teal) !important;
+}
+/* Floating ResolveOne decision-support assistant. */
+[data-testid="stPopover"] {
+    position: fixed !important;
+    right: 2rem;
+    bottom: 1.75rem;
+    z-index: 1000;
+}
+
+[data-testid="stPopover"] > div > button {
+    min-height: 58px !important;
+    padding: 0.7rem 1.15rem !important;
+    border: 1px solid #173f5f !important;
+    border-radius: 999px !important;
+    background: #081e4a !important;
+    box-shadow: 0 16px 32px rgba(8, 30, 74, 0.26), 0 0 24px rgba(80, 213, 225, 0.32) !important;
+    color: #fffdf7 !important;
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+}
+
+[data-testid="stPopover"] > div > button * {
+    color: #fffdf7 !important;
+}
+
+[data-testid="stPopover"] > div > button:hover {
+    background: #116b78 !important;
+    border-color: #56d8df !important;
+    transform: translateY(-2px);
+}
+
+[data-testid="stPopoverBody"] {
+    width: min(510px, calc(100vw - 2rem)) !important;
+    border: 1px solid #d9caa6 !important;
+    border-radius: 28px !important;
+    background: #fffaf0 !important;
+    box-shadow: 0 22px 60px rgba(20, 33, 40, 0.2) !important;
+}
+
+.agent-chat-heading {
+    margin: -0.2rem -0.2rem 1rem;
+    padding: 0.2rem 0.2rem 1rem;
+    border-bottom: 1px solid #e4d5b8;
+}
+
+.agent-chat-heading span {
+    color: #79551d;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.28em;
+}
+
+.agent-chat-heading h3 {
+    margin: 0.4rem 0 0;
+    color: #081e4a;
+    font-family: "Rockwell", "Roboto Slab", serif;
+    font-size: 1.45rem;
+}
+
+.agent-chat-intro {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #e3cfa8;
+    border-radius: 22px;
+    background: #fff6df;
+    color: #173f5f;
+    line-height: 1.55;
+}
+
+.agent-chat-suggestions .stButton > button {
+    min-height: 0 !important;
+    margin-bottom: 0.42rem;
+    padding: 0.48rem 0.78rem !important;
+    border: 1px solid #dfc58e !important;
+    border-radius: 999px !important;
+    background: #fff7e5 !important;
+    color: #6b4312 !important;
+    text-align: left;
+}
+
+.agent-chat-suggestions .stButton > button * {
+    color: #6b4312 !important;
+}
+
+@media (max-width: 700px) {
+    [data-testid="stPopover"] {
+        right: 1rem;
+        bottom: 1rem;
+    }
+}
+/* Streamlit wraps popover triggers in a full-width block; collapse only the agent trigger. */
+[data-testid="stPopover"],
+[data-testid="stPopover"] > div {
+    left: auto !important;
+    width: fit-content !important;
+    min-width: 0 !important;
+    display: inline-block !important;
+}
+
+[data-testid="stPopover"] button {
+    width: auto !important;
+    min-width: 0 !important;
+    background: #081e4a !important;
+    color: #fffdf7 !important;
+}
+
+[data-testid="stPopover"] button * {
+    color: #fffdf7 !important;
+}
+/* Final ResolveOne pill palette: amber surface, dark readable label. */
+[data-testid="stPopover"] button {
+    background: #e8bb3f !important;
+    border-color: #b78314 !important;
+    color: #132a34 !important;
+    box-shadow: 0 14px 28px rgba(183, 131, 20, 0.26) !important;
+}
+
+[data-testid="stPopover"] button *,
+[data-testid="stPopover"] button p,
+[data-testid="stPopover"] button span {
+    color: #132a34 !important;
+}
+
+[data-testid="stPopover"] button:hover {
+    background: #f3ce61 !important;
+    border-color: #8f650d !important;
+    color: #132a34 !important;
+}
+/* ResolveOne chat panel: never inherit Streamlit dark-theme text or surfaces. */
+[data-testid="stPopoverBody"],
+[data-baseweb="popover"] {
+    background: #fffaf0 !important;
+    color: #132a34 !important;
+}
+
+[data-testid="stPopoverBody"] p,
+[data-testid="stPopoverBody"] span,
+[data-testid="stPopoverBody"] label,
+[data-testid="stPopoverBody"] h1,
+[data-testid="stPopoverBody"] h2,
+[data-testid="stPopoverBody"] h3,
+[data-baseweb="popover"] p,
+[data-baseweb="popover"] span,
+[data-baseweb="popover"] label,
+[data-baseweb="popover"] h1,
+[data-baseweb="popover"] h2,
+[data-baseweb="popover"] h3 {
+    color: #132a34 !important;
+}
+
+[data-testid="stPopoverBody"] textarea,
+[data-baseweb="popover"] textarea {
+    background: #fffdf7 !important;
+    color: #132a34 !important;
+    border: 1px solid #c99b2c !important;
+}
+
+[data-testid="stPopoverBody"] .stButton > button,
+[data-baseweb="popover"] .stButton > button {
+    background: #f0c64e !important;
+    color: #132a34 !important;
+    border-color: #b78314 !important;
+}
+
+[data-testid="stPopoverBody"] .stButton > button *,
+[data-baseweb="popover"] .stButton > button * {
+    color: #132a34 !important;
+}
+/* ResolveOne trigger: accessible amber background with a dark, stable label. */
+[data-testid="stPopover"] button,
+[data-testid="stPopover"] button:not(:disabled) {
+    background-color: #f0c64e !important;
+    background-image: none !important;
+    border: 1px solid #a87510 !important;
+    color: #132a34 !important;
+    text-shadow: none !important;
+}
+
+[data-testid="stPopover"] button *,
+[data-testid="stPopover"] button:not(:disabled) * {
+    color: #132a34 !important;
+    text-shadow: none !important;
+}
+/* Preserve the same amber family when hovering the ResolveOne trigger. */
+[data-testid="stPopover"] > div > button:hover,
+[data-testid="stPopover"] button:hover {
+    background-color: #f3ce61 !important;
+    background-image: none !important;
+    border-color: #a87510 !important;
+    color: #132a34 !important;
+}
+
+[data-testid="stPopover"] button:hover * {
+    color: #132a34 !important;
+}
+
+/* Inline execution state: replaces the Run button only while its graph is active. */
+.agent-run-progress {
+  width: 100%; min-height: 2.55rem; box-sizing: border-box; display: flex;
+  align-items: center; justify-content: center; gap: 0.58rem; padding: 0.55rem 0.8rem;
+  border: 1px solid #b18b19; border-radius: 0.38rem; background: #d4a72c; color: #132c3a;
+  font-weight: 700; font-size: 0.93rem; letter-spacing: 0.01em;
+}
+.agent-run-spinner {
+  width: 0.92rem; height: 0.92rem; border-radius: 50%; display: inline-block;
+  border: 2px solid rgba(19, 44, 58, 0.28); border-top-color: #132c3a;
+  animation: resolveone-spin 0.72s linear infinite;
+}
+@keyframes resolveone-spin { to { transform: rotate(360deg); } }
+/* Queue pagination must not inherit the global dark/transparent button variants. */
+.st-key-queue_previous button,
+.st-key-queue_next button {
+  min-width: 2.4rem !important;
+  min-height: 2.4rem !important;
+  padding: 0 !important;
+  border: 1px solid #b18b19 !important;
+  border-radius: 0.45rem !important;
+  background: #f4d36d !important;
+  color: #132c3a !important;
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+.st-key-queue_previous button:hover:not(:disabled),
+.st-key-queue_next button:hover:not(:disabled) {
+  background: #d4a72c !important;
+  color: #132c3a !important;
+}
+.st-key-queue_previous button:disabled,
+.st-key-queue_next button:disabled {
+  background: #eee7d8 !important;
+  border-color: #d7c9ad !important;
+  color: #8b8173 !important;
+  opacity: 1 !important;
+}

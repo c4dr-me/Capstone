@@ -5,15 +5,23 @@ application needs to call. It runs the LangGraph flow end to end and returns
 the exact response schema documented in the team split.
 """
 
+from collections.abc import Callable
+
 from agent.graph import build_graph
 from agent.state import ExceptionAgentState
 
 _graph = build_graph()
 
 
-def investigate_exception(exception_id: str) -> dict:
+def investigate_exception(exception_id: str, on_step: Callable[[str], None] | None = None) -> dict:
+    """Run the LangGraph flow and optionally report each completed graph node."""
     initial_state: ExceptionAgentState = {"exception_id": exception_id}
-    final_state = _graph.invoke(initial_state)
+    final_state: dict = dict(initial_state)
+    for update in _graph.stream(initial_state, stream_mode="updates"):
+        for node_name, node_state in update.items():
+            final_state.update(node_state)
+            if on_step is not None:
+                on_step(node_name)
 
     if not final_state.get("contract_valid", False):
         return {

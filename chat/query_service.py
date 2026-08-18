@@ -37,8 +37,14 @@ class QueryService:
             return df.iloc[0:0]
         if not access_context.allowed_queues:
             return df.iloc[0:0]
+        # Gold exposes fraud context, from which governance derives the canonical
+        # queue. This keeps the chat scope aligned with the governance adapter.
         if "queue" not in df.columns:
-            raise ValueError("Governed case data is missing queue scope.")
+            if "fraud_label" not in df.columns:
+                raise ValueError("Governed case data is missing queue scope.")
+            df["queue"] = df["fraud_label"].astype(str).eq("Yes").map(
+                {True: "FRAUD", False: "OPERATIONS"}
+            )
         return df[df["queue"].isin(access_context.allowed_queues)]
 
     @staticmethod

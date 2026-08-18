@@ -88,6 +88,20 @@ def test_models_reject_spoofed_identity_fields():
         })
 
 
+def test_case_routing_is_deterministic_even_when_an_llm_is_configured(
+    valid_ops_context, offline_validator, scoped_query_service
+):
+    response = call(
+        ChatRequest(text="Why is this case routed here?", exception_id="EXC-101"),
+        valid_ops_context,
+        offline_validator,
+        scoped_query_service,
+        llm_provider=ValidExplanationProvider(),
+    )
+    assert response.response.source_mode == "approved_policy_fallback"
+    assert "threshold" not in response.response.explanation.lower()
+    assert "EXC-101" in response.response.explanation
+
 class ValidExplanationProvider:
     def generate(self, messages, response_schema):
         return type("Result", (), {"content": {"intent": "EXPLAIN", "explanation": "Grounded response.", "citations": ["POL-TECH-001@1.0"], "source_mode": "llm"}})()

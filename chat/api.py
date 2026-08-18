@@ -1,6 +1,7 @@
 """Member 2 public chat API: scoped, grounded, proposal-only chat."""
 
 from collections.abc import Callable
+import logging
 from typing import Any
 
 from contracts.access import AccessContext
@@ -21,6 +22,7 @@ from chat.schemas import (
 )
 
 _KNOWN_POLICY_IDS = {"POL-TECH-001", "GOV-SIM-TECH-001"}
+logger = logging.getLogger(__name__)
 ContextValidator = Callable[[AccessContext], AccessContext]
 
 
@@ -59,6 +61,43 @@ def _validate_cited_response(response: ExplanationResponse | ProposedAction, exc
         raise ValueError("CASE_ID_MISMATCH")
     return response
 
+
+def _grounded_case_explanation(case: dict[str, Any], text: str) -> ExplanationResponse | None:
+    """Answer case-fact questions without asking an LLM to infer policy rules."""
+    question = text.lower()
+    exception_id = case.get("exception_id", "This case")
+    exception_type = case.get("exception_type") or case.get("error_types") or "the recorded exception type"
+    queue = case.get("recommended_queue") or case.get("queue") or "the governed operations queue"
+    severity = case.get("severity") or "the assessed severity"
+    if isinstance(queue, str) and queue.isupper():
+        queue = queue.replace("_", " ").title()
+
+    if any(term in question for term in ("route", "routed", "queue")):
+        explanation = (
+            f"{exception_id} is routed to {queue} because its governed case record is classified as "
+            f"{exception_type}. Its recorded severity is {severity}. This chat does not set routing or approvals."
+        )
+    elif any(term in question for term in ("policy", "requirement", "allowed", "retry", "authoriz", "approv")):
+        explanation = (
+            "POL-TECH-001 requires a controlled, governed response for a Technical Glitch: "
+            "authorization must happen before a single sandbox retry, and chat cannot approve or execute it. "
+            "Higher-risk or uncertain cases require human approval."
+        )
+    elif any(term in question for term in ("evidence", "fact", "detail", "amount")):
+        amount = case.get("amount")
+        amount_text = f"${float(amount):,.2f}" if amount is not None else "an unavailable amount"
+        explanation = (
+            f"The governed evidence for {exception_id} records {exception_type}, severity {severity}, "
+            f"and transaction amount {amount_text}. Only masked and permitted fields are available to this chat."
+        )
+    else:
+        return None
+
+    return ExplanationResponse(
+        explanation=explanation,
+        citations=("POL-TECH-001@1.0",),
+        source_mode="approved_policy_fallback",
+    )
 
 def handle_chat(
     request: ChatRequest,
@@ -108,28 +147,53 @@ def _handle_explain(
     case = service.get_case_in_scope(exception_id, access_context) if exception_id else None
     if exception_id and case is None:
         return _safe_refusal("EXPLAIN", "CASE_NOT_FOUND_OR_OUT_OF_SCOPE", "That case is not available in your scope.")
+    if case is not None:
+        grounded_response = _grounded_case_explanation(case, text)
+        if grounded_response is not None:
+            return ChatResponse(response=grounded_response)
     if provider is not None:
         try:
             result = provider.generate(
                 [
-                    {"role": "system", "content": "Provide a concise grounded policy explanation. Cite only approved policy IDs."},
-                    {"role": "user", "content": f"Question: {text}\nGoverned evidence: {_case_prompt(case) if case else 'No case selected.'}"},
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are ResolveOne's read-only decision-support assistant. "
+                            "Return only a concise, grounded explanation using the requested structured schema. "
+                            "Set source_mode to 'llm'. Citations must be a non-empty list containing only "
+                            "'POL-TECH-001@1.0' or 'GOV-SIM-TECH-001@1.0'. Never claim to authorize, "
+                            "approve, execute, or change the case."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Question: {text}\nGoverned evidence: {_case_prompt(case) if case else 'No case selected.'}",
+                    },
                 ],
                 ExplanationResponse,
             )
             response = ExplanationResponse.model_validate(result.content)
-            return ChatResponse(response=_validate_cited_response(response).model_copy(update={"source_mode": "llm"}))
-        except Exception:
-            pass
+            return ChatResponse(
+                response=_validate_cited_response(response).model_copy(update={"source_mode": "llm"})
+            )
+        except Exception as error:
+            # Fallback is deliberate, but failures must remain diagnosable in server logs.
+            logger.warning("Groq/OpenAI-compatible explanation failed; using approved fallback: %s", error)
     if case is None:
         return ChatResponse(response=ExplanationResponse(
             explanation="POL-TECH-001 governs controlled sandbox retries for eligible Technical Glitch cases; authorization remains external.",
             citations=("POL-TECH-001@1.0",),
         ))
-    exception_type = case.get("exception_type", "the selected")
+    exception_type = case.get("exception_type") or case.get("error_types") or "selected"
+    queue = case.get("recommended_queue") or case.get("queue") or "the governed operations queue"
+    explanation = (
+        f"{case['exception_id']} is an in-scope {exception_type} case in {queue}. "
+        "Ask about its routing, policy requirement, or governed evidence for a more specific explanation."
+    )
     return ChatResponse(response=ExplanationResponse(
-        explanation=f"{case['exception_id']} is an in-scope {exception_type} case. POL-TECH-001 requires deterministic authorization before any sandbox retry.",
+        explanation=explanation,
         citations=("POL-TECH-001@1.0",),
+        source_mode="approved_policy_fallback",
     ))
 
 

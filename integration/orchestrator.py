@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from collections.abc import Callable
 from typing import Any, Dict
 
 from integration.fakes.fake_agent import investigate_exception
@@ -239,10 +240,12 @@ class Orchestrator:
         return result
 
 
-def process_event(event: Dict[str, Any]) -> Dict[str, Any]:
+def process_event(event: Dict[str, Any], on_step: Callable[[str], None] | None = None) -> Dict[str, Any]:
     if os.getenv("RESOLVEONE_USE_FAKE_GOVERNANCE", "").lower() in ("1", "true", "yes"):
+        if on_step is not None:
+            on_step("fake_recovery")
         return Orchestrator().process_event(event)
-    return RealOrchestrator().process_event(event)
+    return RealOrchestrator().process_event(event, on_step=on_step)
 
 
 class RealOrchestrator:
@@ -255,7 +258,11 @@ class RealOrchestrator:
     def _dump(value: Any) -> dict:
         return value.model_dump(mode="json")
 
-    def process_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+    def process_event(self, event: Dict[str, Any], on_step: Callable[[str], None] | None = None) -> Dict[str, Any]:
+        def emit(step: str) -> None:
+            if on_step is not None:
+                on_step(step)
+
         from agent.evidence import get_exception_case
         from agent.orchestrator import investigate_exception as investigate_real_exception
         from contracts.access import AuthenticatedSession
@@ -267,7 +274,8 @@ class RealOrchestrator:
         exception_id = str(event["exception_id"])
         trace_id = str(event.get("trace_id") or f"TRACE-{uuid.uuid4().hex[:12]}")
         requester = str(event.get("requester_user_id") or "ops_01")
-        proposal = investigate_real_exception(exception_id)
+        emit("start_investigation")
+        proposal = investigate_real_exception(exception_id, on_step=on_step)
         proposal["trace_id"] = trace_id
         if proposal.get("blocked"):
             return {"trace_id": trace_id, "exception_id": exception_id, "proposal": proposal,
@@ -286,7 +294,9 @@ class RealOrchestrator:
             asserted_case_context={"exception_type": str(governed_case["error_types"]), "amount": float(governed_case["amount"]), "fraud_label": str(governed_case["fraud_label"])},
             trace_id=trace_id,
         )
+        emit("authorize_action")
         authorization = governance.authorize_action(request, requester_context)
+        emit("create_receipt")
         receipt = governance.create_governance_receipt(authorization.authorization_id, requester_context)
         result: Dict[str, Any] = {"trace_id": trace_id, "exception_id": exception_id, "proposal": proposal,
                                   "authorization": self._dump(authorization), "receipt": self._dump(receipt), "execution": None}
@@ -305,18 +315,88 @@ class RealOrchestrator:
             result["receipt"] = self._dump(governance.finalize_governance_receipt(receipt.receipt_id, None, "ESCALATED", service_context))
             result["status"] = "ESCALATED"
             return result
+        emit("sandbox_execution")
         raw_execution = retry_payment({"execution_id": f"EXEC-{uuid.uuid4().hex}", "trace_id": trace_id,
                                        "exception_id": exception_id, "action": action,
                                        "case": {"severity": proposal.get("severity")}})
+        emit("verify_execution")
         raw_execution["verified"] = verify_execution(raw_execution)
         execution = ExecutionResult.model_validate(raw_execution)
+        emit("finalize_receipt")
         result["receipt"] = self._dump(governance.finalize_governance_receipt(receipt.receipt_id, execution, None, service_context))
         result["execution"] = self._dump(execution)
+        emit("load_lineage")
         result["lineage"] = self._dump(governance.get_case_lineage(exception_id, requester_context))
         result["status"] = str(execution.status)
         record_workflow_result(result)
         return result
 
+
+
+def resume_pending_approval(
+    recovery: Dict[str, Any], decision: str, comment: str, on_step: Callable[[str], None] | None = None
+) -> Dict[str, Any]:
+    """Record a manager decision and complete the same pending governance receipt."""
+    from contracts.access import AuthenticatedSession
+    from contracts.authorization import ApprovalDecision
+    from contracts.enums import Action
+    from contracts.execution import ExecutionResult
+    from governance import api as governance
+
+    def emit(step: str) -> None:
+        if on_step is not None:
+            on_step(step)
+
+    if os.getenv("RESOLVEONE_USE_FAKE_GOVERNANCE", "").lower() in ("1", "true", "yes"):
+        raise RuntimeError("Pending approval resume requires the real governance adapter.")
+    authorization = recovery.get("authorization") or {}
+    receipt = recovery.get("receipt") or {}
+    authorization_id, receipt_id = authorization.get("authorization_id"), receipt.get("receipt_id")
+    exception_id = str(recovery.get("exception_id"))
+    if recovery.get("status") != "PENDING_APPROVAL" or not authorization_id or not receipt_id:
+        raise ValueError("Only a pending governance receipt can be resumed.")
+
+    emit("record_manager_approval")
+    manager_context = governance.mint_access_context(AuthenticatedSession(user_id="manager_01"))
+    approval = ApprovalDecision(
+        approval_id=f"APR-{uuid.uuid4().hex[:10].upper()}", authorization_id=str(authorization_id),
+        access_context_id=manager_context.context_id, decision=decision, comment=comment,
+    )
+    governance.record_approval(approval, manager_context)
+    result = dict(recovery)
+    result["approval"] = approval.model_dump(mode="json")
+    service_context = governance.mint_access_context(AuthenticatedSession(user_id="resolveone_agent"))
+
+    if decision == "REJECT":
+        emit("finalize_rejection")
+        result["receipt"] = governance.finalize_governance_receipt(str(receipt_id), None, "REJECTED_BY_MANAGER", service_context).model_dump(mode="json")
+        result["status"] = "REJECTED"
+    else:
+        proposal = result.get("proposal") or {}
+        reason_codes = proposal.get("reason_codes") or []
+        action = Action.SIMULATE_RETRY_PAYMENT if reason_codes and reason_codes[0] == "TECHNICAL_GLITCH" else Action.ESCALATE
+        if not RealOrchestrator().kill_switch.enabled():
+            emit("finalize_autonomy_disabled")
+            result["receipt"] = governance.finalize_governance_receipt(str(receipt_id), None, "AUTONOMY_DISABLED", service_context).model_dump(mode="json")
+            result["status"] = "APPROVED_AUTONOMY_DISABLED"
+        elif action == Action.ESCALATE:
+            emit("finalize_escalation")
+            result["receipt"] = governance.finalize_governance_receipt(str(receipt_id), None, "ESCALATED", service_context).model_dump(mode="json")
+            result["status"] = "ESCALATED"
+        else:
+            emit("sandbox_execution")
+            raw_execution = retry_payment({"execution_id": f"EXEC-{uuid.uuid4().hex}", "trace_id": result["trace_id"], "exception_id": exception_id, "action": action, "case": {"severity": proposal.get("severity")}})
+            emit("verify_execution")
+            raw_execution["verified"] = verify_execution(raw_execution)
+            execution = ExecutionResult.model_validate(raw_execution)
+            emit("finalize_receipt")
+            result["receipt"] = governance.finalize_governance_receipt(str(receipt_id), execution, None, service_context).model_dump(mode="json")
+            result["execution"] = execution.model_dump(mode="json")
+            result["status"] = str(execution.status)
+    emit("load_lineage")
+    result["lineage"] = governance.get_case_lineage(exception_id, manager_context).model_dump(mode="json")
+    record_workflow_result(result)
+    return result
 
 if __name__ == "__main__":
     # quick smoke

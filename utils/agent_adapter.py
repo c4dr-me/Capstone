@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
 from agent.evidence import get_exception_case
@@ -55,12 +56,14 @@ def build_local_policy_result(exception_id: str, error: Exception | None = None)
     }
 
 
-def run_investigation(exception_id: str) -> dict[str, Any]:
+def run_investigation(exception_id: str, on_step: Callable[[str], None] | None = None) -> dict[str, Any]:
     """Run the public agent contract, falling back without hiding the limitation."""
 
     try:
-        result = investigate_exception(exception_id)
+        result = investigate_exception(exception_id, on_step=on_step)
     except Exception as error:  # The UI must remain usable when VM services are offline.
+        if on_step is not None:
+            on_step("approved_policy_fallback")
         return build_local_policy_result(exception_id, error)
 
     adapted = dict(result)

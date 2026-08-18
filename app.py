@@ -2,9 +2,25 @@
 
 from __future__ import annotations
 
+import os
 from html import escape
 from pathlib import Path
 from typing import Any
+
+
+def _load_local_env() -> None:
+    """Load developer .env settings before agent and governance imports."""
+    env_file = Path(__file__).with_name(".env")
+    if not env_file.is_file():
+        return
+    for line in env_file.read_text(encoding="utf-8").splitlines():
+        if not line or line.lstrip().startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+_load_local_env()
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -29,9 +45,10 @@ from utils.runtime_store import RuntimeStore
 
 # Optional integration orchestrator (Member 3)
 try:
-    from integration.orchestrator import process_event as integration_process_event
+    from integration.orchestrator import process_event as integration_process_event, resume_pending_approval as integration_resume_pending_approval
 except Exception:
     integration_process_event = None
+    integration_resume_pending_approval = None
 
 
 # Read/remember optional remote endpoints for Member 2 (chat) and Member 3 (orchestrator)
@@ -128,13 +145,97 @@ def _navigate(page_name: str, exception_id: str | None = None) -> None:
     st.session_state.workspace_page = page_name
 
 
-def _run_selected_investigation(exception_id: str) -> dict[str, Any]:
-    with st.spinner("Running governed evidence, severity, policy, and safety checks..."):
-        result = run_investigation(exception_id)
+def _run_selected_investigation(exception_id: str, status_slot: Any | None = None) -> dict[str, Any]:
+    next_step_labels = {
+        "validate_contract": "Loading permitted evidence…",
+        "fetch_evidence": "Calculating severity and route…",
+        "score_severity_and_queue": "Retrieving approved policy…",
+        "retrieve_policy": "Building cited recommendation…",
+        "generate_recommendation": "Checking policy safeguards…",
+        "verify_policy_and_safety": "Preparing human approval checkpoint…",
+        "require_human_approval": "Recording governed audit trail…",
+        "record_and_route": "Finalizing investigation…",
+        "approved_policy_fallback": "Applying approved local-policy fallback…",
+    }
+    completed_steps: list[str] = []
+
+    def render_progress(label: str) -> None:
+        if status_slot is not None:
+            status_slot.markdown(
+                f'<div class="agent-run-progress"><span class="agent-run-spinner"></span><span>{label}</span></div>',
+                unsafe_allow_html=True,
+            )
+        else:
+            st.info(label)
+
+    render_progress("Validating governed case…")
+
+    def on_step(node_name: str) -> None:
+        completed_steps.append(node_name)
+        render_progress(next_step_labels.get(node_name, "Processing governed workflow…"))
+
+    try:
+        result = run_investigation(exception_id, on_step=on_step)
+    except Exception:
+        if status_slot is not None:
+            status_slot.error("ResolveOne could not complete the investigation.")
+        raise
+
+    result["workflow_steps"] = completed_steps
     st.session_state.investigation_results[exception_id] = result
     st.session_state.last_agent_mode = result.get("source_mode", "unknown")
     return result
 
+def _chat_display(payload: dict[str, Any]) -> tuple[str, list[str], str | None]:
+    """Convert a governed chat response into safe, readable UI content."""
+    response = payload.get("response", payload)
+    if "error" in response:
+        return "The chat service could not process that message.", [], str(response["error"])
+    if response.get("source_mode") == "safe_refusal":
+        return str(response.get("message", "That request cannot be completed safely.")), [], str(response.get("reason_code", "SAFE_REFUSAL"))
+    if response.get("explanation"):
+        return str(response["explanation"]), list(response.get("citations", [])), None
+    if response.get("explanation") is None and response.get("message"):
+        return str(response["message"]), [], None
+    if response.get("action"):
+        message = f"Proposed action: {response['action']}. {response.get('explanation', '')}".strip()
+        return message, list(response.get("citations", [])), None
+    if "count" in response:
+        return f"Found {response['count']} governed case(s) in your access scope.", [], None
+    return "ResolveOne returned an unsupported response format.", [], "UNSUPPORTED_RESPONSE"
+
+
+def _render_chat_history(messages: list[dict[str, Any]]) -> None:
+    for message in messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+            if message.get("citations"):
+                st.caption("Policy citations: " + " · ".join(message["citations"]))
+            if message.get("notice"):
+                st.caption(message["notice"])
+
+
+def _render_agent_result(result: dict[str, Any]) -> None:
+    """Present the agent contract as an analyst-readable result, not raw JSON."""
+    if result.get("blocked"):
+        st.error("Recommendation blocked: " + str(result.get("block_reason", "Safety check failed.")))
+        return
+    left, right = st.columns(2)
+    with left:
+        st.metric("Severity", result.get("severity") or "—")
+        st.metric("Policy", result.get("policy_id") or "—")
+    with right:
+        st.metric("Route", result.get("recommended_queue") or "—")
+        confidence = result.get("confidence")
+        st.metric("Retrieval confidence", "—" if confidence is None else f"{float(confidence):.0%}")
+    st.markdown("**Recommended action**")
+    st.write(result.get("recommended_action") or "No action was produced.")
+    if result.get("reason_codes"):
+        st.markdown("**Reason codes:** " + " · ".join(str(item) for item in result["reason_codes"]))
+    if result.get("citations"):
+        st.markdown("**Policy citations:** " + " · ".join(str(item) for item in result["citations"]))
+    if result.get("limitations"):
+        st.caption(" · ".join(str(item) for item in result["limitations"]))
 
 def _with_runtime_status(data: pd.DataFrame, store: RuntimeStore) -> pd.DataFrame:
     status_map = store.status_by_exception()
@@ -143,13 +244,38 @@ def _with_runtime_status(data: pd.DataFrame, store: RuntimeStore) -> pd.DataFram
     return frame
 
 
-def _case_selector(data: pd.DataFrame, label: str = "Find a governed case") -> str:
+def _load_lineage(exception_id: str) -> tuple[dict[str, Any] | None, str | None]:
+    """Read the restricted Neo4j projection for the local analyst identity."""
+    try:
+        from contracts.access import AuthenticatedSession
+        from governance.api import get_case_lineage, mint_access_context
+
+        context = mint_access_context(AuthenticatedSession(user_id="ops_01"))
+        return get_case_lineage(exception_id, context).model_dump(mode="json"), None
+    except Exception as error:
+        return None, str(error)
+
+
+def _render_lineage_graph(lineage: dict[str, Any] | None, error: str | None = None) -> None:
+    if lineage and lineage.get("nodes"):
+        from governance.lineage_viz import build_lineage_figure
+
+        st.plotly_chart(build_lineage_figure(lineage), width="stretch")
+        st.caption("Neo4j decision lineage · hover nodes for permitted governed properties.")
+    elif error:
+        st.info("No governed decision lineage exists for this case yet. Run the governed recovery flow to create one.")
+    else:
+        st.info("No decision lineage is available yet.")
+
+def _case_selector(data: pd.DataFrame, label: str = "Find a governed case", *, show_search: bool = True) -> str:
     selected = st.session_state.selected_exception_id
-    query = st.text_input(
-        label,
-        placeholder="Exception ID, transaction ID, masked client or masked card",
-        key=f"case_search_{st.session_state.workspace_page}",
-    )
+    query = ""
+    if show_search:
+        query = st.text_input(
+            label,
+            placeholder="Exception ID, transaction ID, masked client or masked card",
+            key=f"case_search_{st.session_state.workspace_page}",
+        )
     candidates = search_cases(data, query, limit=75)
     current = get_case(data, selected)
     if current is not None and selected not in set(candidates["exception_id"]):
@@ -241,10 +367,17 @@ def _render_queue(data: pd.DataFrame, store: RuntimeStore) -> None:
         _severity_rank=filtered["severity"].map(severity_rank)
     ).sort_values(["_severity_rank", "transaction_timestamp"], ascending=[True, False])
 
-    st.caption(
-        f"Showing up to 250 of {len(filtered):,} matching governed cases. "
-        "Only masked identifiers are exposed."
-    )
+    page_size = 250
+    filter_signature = (search, tuple(severity_filter), tuple(type_filter), tuple(queue_filter), tuple(status_filter))
+    if st.session_state.get("queue_filter_signature") != filter_signature:
+        st.session_state.queue_filter_signature = filter_signature
+        st.session_state.queue_page = 0
+    total_pages = max(1, (len(filtered) + page_size - 1) // page_size)
+    current_page = min(st.session_state.get("queue_page", 0), total_pages - 1)
+    st.session_state.queue_page = current_page
+    start_row = current_page * page_size
+    end_row = min(start_row + page_size, len(filtered))
+
     queue_columns = [
         "exception_id",
         "transaction_timestamp",
@@ -254,25 +387,35 @@ def _render_queue(data: pd.DataFrame, store: RuntimeStore) -> None:
         "recommended_queue",
         "case_status",
     ]
-    st.dataframe(
-        filtered[queue_columns].head(250),
-        width="stretch",
-        hide_index=True,
-        height=390,
-        column_config={
-            "exception_id": "Exception",
-            "transaction_timestamp": st.column_config.DatetimeColumn(
-                "Occurred", format="YYYY-MM-DD HH:mm"
-            ),
-            "error_types": "Observed error",
-            "severity": "Severity",
-            "amount": st.column_config.NumberColumn("Amount", format="$%.2f"),
-            "recommended_queue": "Queue",
-            "case_status": "Decision",
-        },
-    )
-
-    open_options = filtered["exception_id"].head(100).astype(str).tolist()
+    page_cases = filtered.iloc[start_row:end_row]
+    with st.container(border=True):
+        st.dataframe(
+            page_cases[queue_columns],
+            width="stretch",
+            hide_index=True,
+            height=390,
+            column_config={
+                "exception_id": "Exception",
+                "transaction_timestamp": st.column_config.DatetimeColumn(
+                    "Occurred", format="YYYY-MM-DD HH:mm"
+                ),
+                "error_types": "Observed error",
+                "severity": "Severity",
+                "amount": st.column_config.NumberColumn("Amount", format="$%.2f"),
+                "recommended_queue": "Queue",
+                "case_status": "Decision",
+            },
+        )
+        navigation = st.columns([8, 0.45, 0.45])
+        with navigation[1]:
+            if st.button("‹", disabled=current_page == 0, width="stretch", key="queue_previous", help=f"Previous page · Page {current_page + 1:,} of {total_pages:,}"):
+                st.session_state.queue_page = current_page - 1
+                st.rerun()
+        with navigation[2]:
+            if st.button("›", disabled=current_page >= total_pages - 1, width="stretch", key="queue_next", help=f"Next page · Page {current_page + 1:,} of {total_pages:,}"):
+                st.session_state.queue_page = current_page + 1
+                st.rerun()
+    open_options = page_cases["exception_id"].astype(str).tolist()
     if open_options:
         action_columns = st.columns([3, 1])
         with action_columns[0]:
@@ -291,13 +434,51 @@ def _render_queue(data: pd.DataFrame, store: RuntimeStore) -> None:
         st.info("No cases match the current filters.")
 
 
+def _render_case_data_lineage(case: pd.Series) -> None:
+    """Render the selected case's Bronze-to-Gold provenance as an inspectable graph."""
+    source_file = str(case.get("_source_file", "Unavailable source file"))
+    pipeline_run_id = str(case.get("_pipeline_run_id", "Unavailable pipeline run"))
+    ingested_at = str(case.get("_ingested_at_utc", "Unavailable ingest time"))
+    bronze_row = int(case.get("_bronze_row_num", 0))
+    grain = "one record per payment-exception case"
+    nodes = [
+        (0, "Source file", "#365b6d", f"<b>Source file</b><br>{source_file}"),
+        (1, "Bronze record", "#8b6f47", f"<b>Bronze row number</b><br>{bronze_row}<br>Ingested at UTC: {ingested_at}"),
+        (2, "Gold product", "#d4a72c", f"<b>finance_exception_case_gold</b><br>Grain: {grain}<br>Pipeline run: {pipeline_run_id}"),
+        (3, str(case["exception_id"]), "#167d8d", f"<b>Case in review</b><br>{case['exception_id']}"),
+    ]
+    figure = go.Figure()
+    for index in range(len(nodes) - 1):
+        figure.add_trace(go.Scatter(x=[nodes[index][0], nodes[index + 1][0]], y=[0, 0], mode="lines", line={"color": "#9aa8ad", "width": 2}, hoverinfo="skip", showlegend=False))
+    figure.add_trace(go.Scatter(
+        x=[node[0] for node in nodes], y=[0] * len(nodes), mode="markers+text",
+        text=[node[1] for node in nodes], textposition="top center", textfont={"size": 13, "color": "#132c3a"},
+        hovertext=[node[3] for node in nodes], hovertemplate="%{hovertext}<extra></extra>",
+        marker={"size": 34, "color": [node[2] for node in nodes], "line": {"color": "#fffdf7", "width": 2}}, showlegend=False,
+    ))
+    figure.update_layout(
+        height=310, margin={"l": 20, "r": 20, "t": 35, "b": 20}, paper_bgcolor="#fffdf7", plot_bgcolor="#f7f4ec", hovermode="closest",
+        xaxis={"visible": False, "range": [-0.35, 3.35], "fixedrange": True}, yaxis={"visible": False, "range": [-0.65, 0.65], "fixedrange": True},
+        title={"text": "Source → Bronze → governed Gold → case", "x": 0.02, "font": {"size": 14, "color": "#132c3a"}},
+    )
+    st.plotly_chart(figure, width="stretch", config={"scrollZoom": False})
+    st.caption("Hover a node for its governed provenance fields. Sensitive payment fields are excluded.")
+    st.dataframe(pd.DataFrame([
+        {"Provenance field": "Source file", "Value": source_file},
+        {"Provenance field": "Pipeline run ID", "Value": pipeline_run_id},
+        {"Provenance field": "Ingested at (UTC)", "Value": ingested_at},
+        {"Provenance field": "Bronze row number", "Value": bronze_row},
+        {"Provenance field": "Gold product", "Value": "finance_exception_case_gold"},
+        {"Provenance field": "Grain", "Value": grain},
+    ]), width="stretch", hide_index=True)
+
 def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
     _page_header(
         "02 / EVIDENCE",
         "Case Investigation",
         "Inspect masked evidence, explain severity, and run the ResolveOne agent with policy RAG.",
     )
-    exception_id = _case_selector(data)
+    exception_id = _case_selector(data, show_search=False)
     case = get_case(data, exception_id)
     if case is None:
         st.error("The selected exception is not present in the Gold product.")
@@ -321,8 +502,8 @@ def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
     metrics[2].metric("Card history", f"{int(case['card_exception_count']):,} exceptions")
     metrics[3].metric("Fraud label", _format_value(case["fraud_label"]))
 
-    evidence_tab, history_tab, lineage_tab = st.tabs(
-        ["Governed evidence", "Related card history", "Lineage"]
+    evidence_tab, history_tab, data_lineage_tab = st.tabs(
+        ["Governed evidence", "Related card history", "Data lineage"]
     )
     with evidence_tab:
         left, right = st.columns(2)
@@ -361,6 +542,7 @@ def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
             " ".join(_badge(code, "reason") for code in reason_codes_for_case(case)),
             unsafe_allow_html=True,
         )
+
     with history_tab:
         related = data.loc[data["masked_card_id"].eq(case["masked_card_id"])].sort_values(
             "transaction_timestamp", ascending=False
@@ -381,17 +563,10 @@ def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
             width="stretch",
             hide_index=True,
         )
-    with lineage_tab:
-        lineage = {
-            "source_file": case["_source_file"],
-            "pipeline_run_id": case["_pipeline_run_id"],
-            "ingested_at_utc": case["_ingested_at_utc"],
-            "bronze_row_number": int(case["_bronze_row_num"]),
-            "gold_product": "finance_exception_case_gold",
-            "grain": "one record per payment-exception case",
-        }
-        st.json(lineage)
-        st.success("Identifiers are masked; full card number and CVV are absent from Gold.")
+
+    with data_lineage_tab:
+        st.markdown("#### Case data lineage")
+        _render_case_data_lineage(case)
 
     st.markdown(
         """
@@ -408,85 +583,86 @@ def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
         unsafe_allow_html=True,
     )
 
+    has_investigation = exception_id in st.session_state.investigation_results
     action_columns = st.columns([1, 1])
     with action_columns[0]:
-        if st.button(
+        run_slot = st.empty()
+        if run_slot.button(
             "Run ResolveOne agent + policy RAG",
             type="primary",
             width="stretch",
+            disabled=has_investigation,
         ):
-            result = _run_selected_investigation(exception_id)
-            if result.get("source_mode") == "langgraph_pgvector":
-                st.success("ResolveOne agent completed with live pgvector policy RAG.")
-            else:
-                st.warning(
-                    "Policy RAG is offline because the VM PostgreSQL/pgvector service is unavailable. "
-                    "The agent returned its approved-policy deterministic fallback; vector retrieval "
-                    "was not scored."
-                )
+            _run_selected_investigation(exception_id, status_slot=run_slot)
+            st.rerun()
     with action_columns[1]:
         st.button(
             "Review recommendation →",
             width="stretch",
+            disabled=not has_investigation,
             on_click=_navigate,
             args=("Recommendation & Approval", exception_id),
         )
+    if has_investigation:
+        with st.container(border=True):
+            _render_agent_result(st.session_state.investigation_results[exception_id])
 
-    # Chat panel (Member 2) — use fake access context for demo if governance not available
-    st.markdown("#### Ask ResolveOne (chat)")
-    chat_col1, chat_col2 = st.columns([3, 1])
-    with chat_col1:
-        chat_input = st.text_area("Message to ResolveOne", key=f"chat_input_{exception_id}")
-    with chat_col2:
-        st.write(" ")
-        if st.button("Send to chat", key=f"chat_send_{exception_id}"):
-            # Build a demo AccessContext for chat.api.handle_chat
+    # Floating read-only decision-support assistant, intentionally separate from governed execution.
+    with st.popover("✦  Ask ResolveOne", use_container_width=False):
+        close_column = st.columns([5, 1])[1]
+        with close_column:
+            if st.button("×", key=f"chat_close_{exception_id}", width="stretch"):
+                st.rerun()
+        st.markdown(
+            """
+            <div class="agent-chat-intro">Ask about the selected exception, policy rationale,
+            evidence, or why the case is routed. ResolveOne explains; governance decides.</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        history_by_case = st.session_state.setdefault("chat_history", {})
+        history = history_by_case.setdefault(exception_id, [])
+        if history:
+            _render_chat_history(history)
+        st.markdown('<div class="agent-chat-suggestions">', unsafe_allow_html=True)
+        suggestions = [
+            "Why is this case routed here?",
+            "Explain the policy requirement.",
+            "What evidence supports this recommendation?",
+        ]
+        for index, suggestion in enumerate(suggestions):
+            if st.button(suggestion, key=f"chat_suggestion_{exception_id}_{index}", width="stretch"):
+                st.session_state[f"chat_input_{exception_id}"] = suggestion
+                st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
+        chat_input = st.text_area(
+            "Ask ResolveOne",
+            placeholder="Ask about policy, evidence, or routing…",
+            key=f"chat_input_{exception_id}",
+            height=88,
+            label_visibility="collapsed",
+        )
+        if st.button("Send message ↑", key=f"chat_send_{exception_id}", type="primary", width="stretch"):
+            prompt = chat_input.strip() or "Explain this case and the applicable policy."
+            history.append({"role": "user", "content": prompt})
             try:
-                from datetime import datetime, timezone, timedelta
-                from contracts.access import AccessContext
-                from contracts.enums import CanonicalRole
-                from chat.adapters.fake_access_context import validate_access_context_offline
-                from chat.schemas import ChatRequest
+                from contracts.access import AuthenticatedSession
+                from governance.api import mint_access_context
                 from chat.api import handle_chat
+                from chat.schemas import ChatRequest
 
-                now = datetime.now(timezone.utc)
-                demo_ctx = AccessContext(
-                    context_id=f"CTX-DEMO-{exception_id}",
-                    user_id="ops_01",
-                    canonical_role=CanonicalRole.OPERATIONS_ANALYST,
-                    tenant_id="TENANT-DEMO",
-                    allowed_queues=("Payment Operations",),
-                    can_view_risk_fields=False,
-                    issued_at=now,
-                    expires_at=now + timedelta(minutes=30),
-                    integrity_hash="sha256:demo",
+                access_context = mint_access_context(AuthenticatedSession(user_id="ops_01"))
+                request = ChatRequest(text=prompt, exception_id=exception_id)
+                response_payload = (
+                    _call_member2_http(st.session_state["member2_url"], prompt, exception_id, access_context.model_dump(mode="json"))
+                    if st.session_state.get("member2_url")
+                    else handle_chat(request, access_context).model_dump(mode="json")
                 )
-                # validate offline (raises on invalid)
-                validate_access_context_offline(demo_ctx)
-                req = ChatRequest(text=chat_input or "Explain this case.", exception_id=exception_id)
-                # If a remote Member 2 endpoint is configured, call it instead
-                if st.session_state.get("member2_url"):
-                    try:
-                        payload_ctx = demo_ctx.model_dump(mode="json")
-                        resp_json = _call_member2_http(st.session_state.get("member2_url"), chat_input or "Explain this case.", exception_id, payload_ctx)
-                        st.session_state.last_chat_response = resp_json
-                    except Exception as e:
-                        st.session_state.last_chat_response = {"error": str(e)}
-                else:
-                    resp = handle_chat(req, demo_ctx)
-                    st.session_state.last_chat_response = resp.model_dump(mode="json")
-            except Exception as e:
-                st.session_state.last_chat_response = {"error": str(e)}
-
-    if st.session_state.get("last_chat_response"):
-        with st.expander("Latest chat response", expanded=True):
-            st.json(st.session_state.get("last_chat_response"))
-
-    result = st.session_state.investigation_results.get(exception_id)
-    if result:
-        with st.expander("Latest structured investigation result", expanded=True):
-            st.json(result)
-
+                content, citations, notice = _chat_display(response_payload)
+                history.append({"role": "assistant", "content": content, "citations": citations, "notice": notice})
+            except Exception:
+                history.append({"role": "assistant", "content": "The chat service is temporarily unavailable. Please try again.", "notice": "CHAT_SERVICE_UNAVAILABLE"})
+            st.rerun()
 
 def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
     _page_header(
@@ -494,7 +670,7 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
         "Recommendation & Approval",
         "Review cited policy guidance and record a human decision before action.",
     )
-    exception_id = _case_selector(data, "Choose the case awaiting decision")
+    exception_id = _case_selector(data, show_search=False)
     case = get_case(data, exception_id)
     if case is None:
         st.error("The selected exception is not present in the Gold product.")
@@ -557,119 +733,80 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
     if current_status:
         st.info(f"Latest recorded decision for {exception_id}: {current_status}")
 
-    with st.form("analyst_decision_form", clear_on_submit=True):
-        decision = st.radio("Decision", ["APPROVED", "REJECTED"], horizontal=True)
-        reason = st.text_area(
-            "Analyst reason",
-            placeholder="Record the evidence-based reason for this controlled decision.",
-        )
-        submitted = st.form_submit_button(
-            "Record decision", type="primary", width="stretch"
-        )
-    # Member 3 auto-resolve button
-    if integration_process_event is not None or st.session_state.get("member3_url"):
-        st.write("")
-        if st.button("Auto Resolve (Member 3) — sandbox"):
-            with st.spinner("Running orchestrator (Member 3)..."):
-                event = {"exception_id": exception_id, "trace_id": f"TRACE-{exception_id}", "case": {"exception_id": exception_id, "exception_type": str(case.get("primary_exception_type", ""))}}
+    st.markdown("#### Governed recovery")
+    st.caption("This runs the approved sandbox recovery path: investigate → authorize → verify → receipt → Neo4j lineage. No real payment rail is connected.")
+    recovery_by_case = st.session_state.setdefault("orchestration_results", {})
+    recovery = recovery_by_case.get(exception_id)
+    can_run_recovery = integration_process_event is not None or st.session_state.get("member3_url")
+    recovery_slot = st.empty()
+    if recovery_slot.button(
+        "Run governed recovery simulation",
+        type="primary",
+        disabled=not can_run_recovery or recovery is not None,
+        help="Creates a real governance receipt and Neo4j lineage; execution remains a sandbox simulation.",
+    ):
+        recovery_labels = {
+            "start_investigation": "Investigating governed case…",
+            "validate_contract": "Loading permitted evidence…",
+            "fetch_evidence": "Calculating severity and route…",
+            "score_severity_and_queue": "Retrieving approved policy…",
+            "retrieve_policy": "Building cited recommendation…",
+            "generate_recommendation": "Checking policy safeguards…",
+            "verify_policy_and_safety": "Authorizing controlled action…",
+            "require_human_approval": "Creating governance receipt…",
+            "record_and_route": "Evaluating recovery eligibility…",
+            "authorize_action": "Creating governance receipt…",
+            "create_receipt": "Starting sandbox execution…",
+            "sandbox_execution": "Verifying sandbox outcome…",
+            "verify_execution": "Finalizing governance receipt…",
+            "finalize_receipt": "Loading Neo4j decision lineage…",
+            "load_lineage": "Finalizing governed recovery…",
+            "fake_recovery": "Running demo recovery adapter…",
+        }
+        def render_recovery_progress(step: str) -> None:
+            recovery_slot.markdown(
+                f'<div class="agent-run-progress"><span class="agent-run-spinner"></span><span>{recovery_labels.get(step, "Processing governed recovery…")}</span></div>',
+                unsafe_allow_html=True,
+            )
+        event = {"exception_id": exception_id, "trace_id": f"TRACE-{exception_id}", "requester_user_id": "ops_01"}
+        render_recovery_progress("start_investigation")
+        try:
+            recovery = (
+                _call_member3_http(st.session_state["member3_url"], event)
+                if st.session_state.get("member3_url")
+                else integration_process_event(event, on_step=render_recovery_progress)
+            )
+            recovery_by_case[exception_id] = recovery
+            st.rerun()
+        except Exception as error:
+            recovery_slot.error(f"Governed recovery could not complete: {error}")
+    if recovery:
+        status = str(recovery.get("status", "UNKNOWN")).replace("_", " ").title()
+        st.success(f"Governed recovery finished: {status}")
+        receipt = recovery.get("receipt") or {}
+        status_columns = st.columns(3)
+        status_columns[0].metric("Authorization", (recovery.get("authorization") or {}).get("decision", "—"))
+        status_columns[1].metric("Receipt outcome", receipt.get("outcome", "—"))
+        status_columns[2].metric("Execution", (recovery.get("execution") or {}).get("status", "Not executed"))
+        _render_lineage_graph(recovery.get("lineage"))
+    if recovery and recovery.get("status") == "PENDING_APPROVAL":
+        st.warning("Manager approval required before sandbox execution can continue.")
+        with st.form(f"governance_approval_{exception_id}", clear_on_submit=True):
+            manager_decision = st.radio("Manager decision", ["APPROVE", "REJECT"], horizontal=True)
+            manager_comment = st.text_area("Manager rationale", placeholder="Record the governed decision rationale.")
+            resume_submitted = st.form_submit_button("Record manager decision and continue", type="primary", width="stretch")
+        if resume_submitted:
+            if not manager_comment.strip():
+                st.error("A manager rationale is required.")
+            elif integration_resume_pending_approval is None:
+                st.error("The real governance approval service is unavailable.")
+            else:
                 try:
-                    if st.session_state.get("member3_url"):
-                        # include demo access context if present
-                        access_ctx = st.session_state.get("demo_access_context")
-                        if access_ctx:
-                            event["access_context"] = access_ctx
-                        orchestration_result = _call_member3_http(st.session_state.get("member3_url"), event)
-                    else:
-                        orchestration_result = integration_process_event(event)
-                    st.success("Orchestrator completed")
-                    st.json(orchestration_result)
-                    # store last orchestration in session for visibility
-                    st.session_state.last_orchestration = orchestration_result
-
-                    # Render lineage visualization when available (force-directed if networkx installed)
-                    lineage = orchestration_result.get("lineage")
-                    if lineage and lineage.get("nodes"):
-                        nodes = lineage.get("nodes", [])
-                        edges = lineage.get("edges", [])
-                        try:
-                            if nx is not None and nodes:
-                                G = nx.DiGraph()
-                                for n in nodes:
-                                    nid = n.get("id")
-                                    G.add_node(nid, **n)
-                                for e in edges:
-                                    src = e.get("source")
-                                    tgt = e.get("target")
-                                    if src and tgt:
-                                        G.add_edge(src, tgt)
-
-                                pos = nx.spring_layout(G, seed=42)
-                                node_x = [pos[n.get("id")][0] for n in nodes]
-                                node_y = [pos[n.get("id")][1] for n in nodes]
-                                edge_x = []
-                                edge_y = []
-                                for u, v in G.edges():
-                                    x0, y0 = pos[u]
-                                    x1, y1 = pos[v]
-                                    edge_x += [x0, x1, None]
-                                    edge_y += [y0, y1, None]
-
-                                fig = go.Figure()
-                                if edge_x:
-                                    fig.add_trace(
-                                        go.Scatter(x=edge_x, y=edge_y, mode="lines", line=dict(color="#888", width=2), hoverinfo="none")
-                                    )
-                                hover_text = [f"{n.get('type','node')}\nID: {n.get('id')}" for n in nodes]
-                                fig.add_trace(
-                                    go.Scatter(x=node_x, y=node_y, mode="markers+text", marker=dict(size=36, color="#167d8d"), text=[n.get('id') for n in nodes], textposition="bottom center", hovertext=hover_text, hoverinfo="text")
-                                )
-                                fig.update_layout(showlegend=False, margin=dict(l=10, r=10, t=10, b=10), height=360)
-                                st.plotly_chart(fig, use_container_width=True)
-                            else:
-                                # fallback linear layout
-                                x = list(range(len(nodes)))
-                                y = [0] * len(nodes)
-                                edge_x = []
-                                edge_y = []
-                                if edges:
-                                    id_index = {n.get('id'): i for i, n in enumerate(nodes)}
-                                    for e in edges:
-                                        s = id_index.get(e.get('source'))
-                                        t = id_index.get(e.get('target'))
-                                        if s is None or t is None:
-                                            continue
-                                        edge_x += [x[s], x[t], None]
-                                        edge_y += [y[s], y[t], None]
-                                else:
-                                    for i in range(len(nodes) - 1):
-                                        edge_x += [x[i], x[i + 1], None]
-                                        edge_y += [y[i], y[i + 1], None]
-                                fig = go.Figure()
-                                if edge_x:
-                                    fig.add_trace(go.Scatter(x=edge_x, y=edge_y, mode="lines", line=dict(color="#888", width=2), hoverinfo="none"))
-                                fig.add_trace(go.Scatter(x=x, y=y, mode="markers+text", marker=dict(size=36, color="#167d8d"), text=[n.get('id') for n in nodes], textposition="bottom center"))
-                                fig.update_layout(showlegend=False, xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), margin=dict(l=10, r=10, t=10, b=10), height=240)
-                                st.plotly_chart(fig, use_container_width=True)
-                        except Exception:
-                            st.caption("Lineage visualization failed to render; showing raw lineage below.")
-                            st.json(lineage)
-                except Exception as e:
-                    st.error(f"Orchestrator failed: {e}")
-    if submitted:
-        if not reason.strip():
-            st.error("An analyst reason is required for the audit trail.")
-        else:
-            receipt = store.record_decision(
-                exception_id=exception_id,
-                decision=decision,
-                analyst_reason=reason,
-                recommendation=result,
-            )
-            st.success(
-                f"{decision.title()} and recorded with trace {receipt['agent_trace_id']}."
-            )
-
-
+                    updated_recovery = integration_resume_pending_approval(recovery, manager_decision, manager_comment.strip())
+                    recovery_by_case[exception_id] = updated_recovery
+                    st.rerun()
+                except Exception as error:
+                    st.error(f"Governance approval could not be completed: {error}")
 def _render_audit_metrics(data: pd.DataFrame, store: RuntimeStore) -> None:
     _page_header(
         "04 / PROOF",
@@ -690,8 +827,8 @@ def _render_audit_metrics(data: pd.DataFrame, store: RuntimeStore) -> None:
     metrics[2].metric("Duplicate cases", f"{data['exception_id'].duplicated().sum():,}")
     metrics[3].metric("Sensitive fields exposed", str(len(leakage)))
 
-    audit_tab, distribution_tab, quality_tab, provenance_tab = st.tabs(
-        ["Audit trail", "Measured distributions", "Data quality", "Provenance & limits"]
+    audit_tab, lineage_tab, distribution_tab, quality_tab, provenance_tab = st.tabs(
+        ["Audit trail", "Decision lineage", "Measured distributions", "Data quality", "Provenance & limits"]
     )
     with audit_tab:
         st.markdown("#### Analyst decisions")
@@ -704,9 +841,17 @@ def _render_audit_metrics(data: pd.DataFrame, store: RuntimeStore) -> None:
             st.dataframe(pd.DataFrame(events), width="stretch", hide_index=True)
         else:
             st.caption("The audit event stream will populate after the first decision.")
-        if st.session_state.investigation_results:
-            with st.expander("Session investigation traces"):
-                st.json(st.session_state.investigation_results)
+
+    with lineage_tab:
+        st.markdown("#### Neo4j governed decision lineage")
+        audit_exception_id = _case_selector(
+            data,
+            label="Choose a case to inspect in the audit graph",
+            show_search=False,
+        )
+        lineage, lineage_error = _load_lineage(audit_exception_id)
+        _render_lineage_graph(lineage, lineage_error)
+        st.caption("This graph is the immutable decision trail: evidence, policy, authorization, receipt, execution, and outcome.")
     with distribution_tab:
         left, right = st.columns(2)
         with left:
@@ -786,6 +931,8 @@ runtime_store = _get_runtime_store()
 
 if "investigation_results" not in st.session_state:
     st.session_state.investigation_results = {}
+if "orchestration_results" not in st.session_state:
+    st.session_state.orchestration_results = {}
 if "last_agent_mode" not in st.session_state:
     st.session_state.last_agent_mode = "not run"
 if "selected_exception_id" not in st.session_state:
@@ -793,40 +940,6 @@ if "selected_exception_id" not in st.session_state:
     st.session_state.selected_exception_id = str(
         technical.iloc[0]["exception_id"] if not technical.empty else data.iloc[0]["exception_id"]
     )
-
-# Demo access context minting (Member 1 exposed behavior)
-with st.sidebar.expander("Demo identity / access context", expanded=False):
-    if st.button("Mint demo access context"):
-        try:
-            from datetime import datetime, timezone, timedelta
-            from contracts.access import AccessContext
-            from contracts.enums import CanonicalRole
-
-            now = datetime.now(timezone.utc)
-            demo_ctx = AccessContext(
-                context_id=f"CTX-DEMO-{st.session_state.selected_exception_id}",
-                user_id="ops_01",
-                canonical_role=CanonicalRole.OPERATIONS_ANALYST,
-                tenant_id="TENANT-DEMO",
-                allowed_queues=("Payment Operations",),
-                can_view_risk_fields=False,
-                issued_at=now,
-                expires_at=now + timedelta(minutes=30),
-                integrity_hash="sha256:demo",
-            )
-            st.session_state.demo_access_context = demo_ctx.model_dump(mode="json")
-            st.success(f"Minted {demo_ctx.context_id}")
-        except Exception as e:
-            st.error(f"Could not mint demo context: {e}")
-
-    st.markdown("---")
-    st.markdown("**Remote endpoints (optional)**")
-    m2 = st.text_input("Member 2 chat endpoint (full URL)", value=st.session_state.get("member2_url") or "", placeholder="https://member2.example/api/chat")
-    m3 = st.text_input("Member 3 orchestrator endpoint (full URL)", value=st.session_state.get("member3_url") or "", placeholder="https://member3.example/api/orchestrate")
-    if st.button("Save endpoints"):
-        st.session_state.member2_url = m2.strip() or None
-        st.session_state.member3_url = m3.strip() or None
-        st.success("Saved endpoints to session")
 
 PAGES = [
     "Exception Queue",
