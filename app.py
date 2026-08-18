@@ -215,6 +215,144 @@ def _render_chat_history(messages: list[dict[str, Any]]) -> None:
                 st.caption(message["notice"])
 
 
+def _workflow_role_participants(recovery: dict[str, Any], requester_user_id: str) -> list[dict[str, str]]:
+    """Build a truthful role view from the actual recovery result and trusted registry."""
+    from governance.roles import IDENTITIES
+
+    proposal = recovery.get("proposal") or {}
+    authorization = recovery.get("authorization") or {}
+    receipt = recovery.get("receipt") or {}
+    approval = recovery.get("approval") or {}
+    decision = str(authorization.get("decision", ""))
+    outcome = str(recovery.get("status", ""))
+    recommended_queue = str(proposal.get("recommended_queue", ""))
+    action = str(proposal.get("recommended_action", "a bounded action"))
+
+    def participant(user_id: str, state: str, detail: str) -> dict[str, str]:
+        identity = IDENTITIES[user_id]
+        return {
+            "user_id": identity.user_id,
+            "role": str(identity.canonical_role).replace("_", " ").title(),
+            "state": state,
+            "detail": detail,
+        }
+
+    manager_state = "Not required"
+    manager_detail = "Policy allowed the workflow to continue without a manager checkpoint."
+    if decision == "REQUIRE_APPROVAL":
+        approval_decision = str(approval.get("decision", ""))
+        if approval_decision:
+            manager_state = approval_decision.title()
+            manager_detail = "Recorded the required approval decision for this receipt."
+        else:
+            manager_state = "Awaiting decision"
+            manager_detail = "Policy paused this recovery before governed execution."
+
+    risk_route = "RISK" in recommended_queue.upper() or "FRAUD" in recommended_queue.upper()
+    risk_state = "In scope" if risk_route else "Not invoked"
+    risk_detail = (
+        f"The route is {recommended_queue}; risk review can be required by policy."
+        if risk_route
+        else "This route did not require a risk-review handoff."
+    )
+    auditor_state = "Audit-ready" if receipt else "Not created"
+    auditor_detail = (
+        "A governance receipt exists; the decision lineage is available for read-only review."
+        if receipt
+        else "A receipt will make this workflow available for read-only audit review."
+    )
+
+    return [
+        participant(requester_user_id, "Completed", "Opened the case and requested governed recovery."),
+        participant("resolveone_agent", "Completed", f"Investigated evidence and proposed {action}"),
+        participant("manager_01", manager_state, manager_detail),
+        participant("risk_01", risk_state, risk_detail),
+        participant("auditor_01", auditor_state, auditor_detail),
+    ]
+
+
+def _render_workflow_role_panel(recovery: dict[str, Any], requester_user_id: str) -> None:
+    """Render a compact, state-driven Plotly view of governance participation."""
+    participants = _workflow_role_participants(recovery, requester_user_id)
+    by_user = {item["user_id"]: item for item in participants}
+    positions = {
+        requester_user_id: (0.0, 0.0),
+        "resolveone_agent": (1.0, 0.0),
+        "manager_01": (2.0, 0.48),
+        "risk_01": (2.0, -0.48),
+        "auditor_01": (3.0, 0.0),
+    }
+    active_manager = by_user["manager_01"]["state"] != "Not required"
+    active_risk = by_user["risk_01"]["state"] == "In scope"
+    audit_ready = by_user["auditor_01"]["state"] == "Audit-ready"
+    links = [(requester_user_id, "resolveone_agent")]
+    if active_manager:
+        links.append(("resolveone_agent", "manager_01"))
+    if active_risk:
+        links.append(("resolveone_agent", "risk_01"))
+    if audit_ready:
+        if active_manager:
+            links.append(("manager_01", "auditor_01"))
+        if active_risk:
+            links.append(("risk_01", "auditor_01"))
+        if not active_manager and not active_risk:
+            links.append(("resolveone_agent", "auditor_01"))
+
+    state_colors = {
+        "Completed": "#167d8d",
+        "Approved": "#2f855a",
+        "Rejected": "#9b2c2c",
+        "Awaiting decision": "#d4a72c",
+        "In scope": "#6a5a8c",
+        "Audit-ready": "#365b6d",
+        "Not required": "#b5b9b6",
+        "Not invoked": "#b5b9b6",
+        "Not created": "#b5b9b6",
+    }
+    edge_x: list[float | None] = []
+    edge_y: list[float | None] = []
+    for source, target in links:
+        edge_x.extend([positions[source][0], positions[target][0], None])
+        edge_y.extend([positions[source][1], positions[target][1], None])
+
+    node_x, node_y, node_text, node_hover, node_color, node_size = [], [], [], [], [], []
+    for user_id, participant in by_user.items():
+        x, y = positions[user_id]
+        state = participant["state"]
+        muted = state in {"Not required", "Not invoked", "Not created"}
+        node_x.append(x)
+        node_y.append(y)
+        node_text.append(f"{participant['role']}<br><sup>{state}</sup>")
+        node_hover.append(
+            f"<b>{participant['role']}</b><br>User: {participant['user_id']}"
+            f"<br>Status: {state}<br>{participant['detail']}"
+        )
+        node_color.append(state_colors.get(state, "#6b7280"))
+        node_size.append(24 if muted else 34)
+
+    figure = go.Figure()
+    figure.add_trace(go.Scatter(
+        x=edge_x, y=edge_y, mode="lines", hoverinfo="skip", showlegend=False,
+        line={"color": "#7c9198", "width": 2.2},
+    ))
+    figure.add_trace(go.Scatter(
+        x=node_x, y=node_y, mode="markers+text", text=node_text,
+        textposition="bottom center", textfont={"size": 11, "color": "#173f5f"},
+        hovertext=node_hover, hovertemplate="%{hovertext}<extra></extra>",
+        marker={"size": node_size, "color": node_color, "line": {"color": "#fffdf7", "width": 2}},
+        showlegend=False,
+    ))
+    figure.update_layout(
+        height=245, margin={"l": 15, "r": 15, "t": 8, "b": 36},
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        hovermode="closest", dragmode=False,
+        xaxis={"visible": False, "range": [-0.35, 3.35], "fixedrange": True},
+        yaxis={"visible": False, "range": [-0.92, 0.92], "fixedrange": True},
+    )
+    st.markdown("#### Governance participation")
+    st.caption("Live decision path · muted roles were not invoked for this case · hover a role for its permitted contribution.")
+    st.plotly_chart(figure, width="stretch", config={"displayModeBar": False})
+
 def _render_agent_result(result: dict[str, Any]) -> None:
     """Present the agent contract as an analyst-readable result, not raw JSON."""
     if result.get("blocked"):
@@ -679,8 +817,11 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
     result = st.session_state.investigation_results.get(exception_id)
     if result is None:
         st.info("Run the governed investigation to produce a reviewable recommendation.")
-        if st.button("Run investigation now", type="primary"):
-            result = _run_selected_investigation(exception_id)
+        recommendation_run_slot = st.empty()
+        if recommendation_run_slot.button("Run ResolveOne agent + policy RAG", type="primary", width="stretch"):
+            _run_selected_investigation(exception_id, status_slot=recommendation_run_slot)
+            st.rerun()
+        result = st.session_state.investigation_results.get(exception_id)
 
     if result is None:
         return
@@ -734,16 +875,16 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
         st.info(f"Latest recorded decision for {exception_id}: {current_status}")
 
     st.markdown("#### Governed recovery")
-    st.caption("This runs the approved sandbox recovery path: investigate → authorize → verify → receipt → Neo4j lineage. No real payment rail is connected.")
+    st.caption("This runs the governed recovery path: investigate → authorize → execute → verify → receipt → Neo4j lineage.")
     recovery_by_case = st.session_state.setdefault("orchestration_results", {})
     recovery = recovery_by_case.get(exception_id)
     can_run_recovery = integration_process_event is not None or st.session_state.get("member3_url")
     recovery_slot = st.empty()
     if recovery_slot.button(
-        "Run governed recovery simulation",
+        "Run governed recovery",
         type="primary",
         disabled=not can_run_recovery or recovery is not None,
-        help="Creates a real governance receipt and Neo4j lineage; execution remains a sandbox simulation.",
+        help="Creates a governance receipt and Neo4j lineage, then performs only the policy-authorized controlled recovery action.",
     ):
         recovery_labels = {
             "start_investigation": "Investigating governed case…",
@@ -756,8 +897,8 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
             "require_human_approval": "Creating governance receipt…",
             "record_and_route": "Evaluating recovery eligibility…",
             "authorize_action": "Creating governance receipt…",
-            "create_receipt": "Starting sandbox execution…",
-            "sandbox_execution": "Verifying sandbox outcome…",
+            "create_receipt": "Executing authorized recovery…",
+            "sandbox_execution": "Verifying recovery outcome…",
             "verify_execution": "Finalizing governance receipt…",
             "finalize_receipt": "Loading Neo4j decision lineage…",
             "load_lineage": "Finalizing governed recovery…",
@@ -769,6 +910,7 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
                 unsafe_allow_html=True,
             )
         event = {"exception_id": exception_id, "trace_id": f"TRACE-{exception_id}", "requester_user_id": "ops_01"}
+        st.session_state.setdefault("recovery_requesters", {})[exception_id] = event["requester_user_id"]
         render_recovery_progress("start_investigation")
         try:
             recovery = (
@@ -788,9 +930,12 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
         status_columns[0].metric("Authorization", (recovery.get("authorization") or {}).get("decision", "—"))
         status_columns[1].metric("Receipt outcome", receipt.get("outcome", "—"))
         status_columns[2].metric("Execution", (recovery.get("execution") or {}).get("status", "Not executed"))
-        _render_lineage_graph(recovery.get("lineage"))
+        requester_user_id = st.session_state.get("recovery_requesters", {}).get(exception_id, "ops_01")
+        _render_workflow_role_panel(recovery, requester_user_id)
+        if recovery.get("lineage"):
+            _render_lineage_graph(recovery["lineage"])
     if recovery and recovery.get("status") == "PENDING_APPROVAL":
-        st.warning("Manager approval required before sandbox execution can continue.")
+        st.warning("Manager approval required before governed execution can continue.")
         with st.form(f"governance_approval_{exception_id}", clear_on_submit=True):
             manager_decision = st.radio("Manager decision", ["APPROVE", "REJECT"], horizontal=True)
             manager_comment = st.text_area("Manager rationale", placeholder="Record the governed decision rationale.")
