@@ -38,7 +38,7 @@ jobs:
         env:
           RESOLVEONE_GOLD_PARQUET: data/processed/gold_exception_cases.parquet
           RESOLVEONE_USE_FAKE_GOVERNANCE: "1"
-        run: pytest -q tests/chat tests/ui tests/agent/test_evidence_boundary.py tests/agent/test_mdm_rag.py tests/security/agent_policy_gate_test.py
+        run: pytest -q tests/chat tests/ui tests/agent/test_evidence_boundary.py tests/agent/test_mdm_rag.py tests/security/agent_policy_gate_test.py tests/integration/test_orchestrator.py
 
   governed-integration-tests:
     name: Governed integration tests
@@ -114,4 +114,4 @@ jobs:
           RESOLVEONE_RECEIPT_SIGNING_KEY: ci-receipt-signing-key
           RESOLVEONE_RUN_VECTOR_VALIDATION: "1"
           RESOLVEONE_USE_FAKE_GOVERNANCE: "0"
-        run: pytest -q
+        run: pytest -q --ignore=tests/integration/test_orchestrator.py
