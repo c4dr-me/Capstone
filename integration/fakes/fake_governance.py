@@ -88,36 +88,8 @@ def finalize_governance_receipt(receipt_id: str, execution_result: Dict[str, Any
         receipt["outcome"] = execution_result.get("status")
         receipt["outcome_reason"] = terminal_reason
     _receipts[receipt_id] = receipt
-    # append a demo audit entry for visibility
-    try:
-        _append_audit_entry(receipt, execution_result)
-    except Exception:
-        pass
     return receipt
 
-
-def _append_audit_entry(receipt: Dict[str, Any], execution_result: Dict[str, Any] | None) -> None:
-    """Append a simple audit entry to reports/member1/audit_log.json for demo visibility."""
-    reports_dir = Path("reports") / "member1"
-    reports_dir.mkdir(parents=True, exist_ok=True)
-    audit_file = reports_dir / "audit_log.json"
-    entry = {
-        "timestamp": int(time.time()),
-        "receipt_id": receipt.get("receipt_id"),
-        "exception_id": receipt.get("exception_id"),
-        "authorization": receipt.get("authorization"),
-        "outcome": receipt.get("outcome"),
-        "outcome_reason": receipt.get("outcome_reason"),
-        "execution": execution_result,
-    }
-    data = []
-    if audit_file.exists():
-        try:
-            data = json.loads(audit_file.read_text(encoding="utf-8"))
-        except Exception:
-            data = []
-    data.append(entry)
-    audit_file.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
 def get_case_lineage(exception_id: str, access_context: Dict[str, Any]) -> Dict[str, Any]:

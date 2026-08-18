@@ -241,3 +241,7 @@ agent/artifacts/*.joblib
 # Keep GCP documentation
 !docs/gcp/
 !docs/gcp/*.md
+
+# Generated runtime telemetry (not source-controlled evidence)
+reports/member1/audit_log.json
+reports/member3/runtime_results.json

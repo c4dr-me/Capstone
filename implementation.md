@@ -1402,7 +1402,7 @@ The UI and orchestrator must run end-to-end using these fakes before Member 1 an
 - ALLOW plus kill switch OFF always results in execution_calls = 0 and receipt outcome NOT_EXECUTED.
 - No action executes after DENY or unresolved REQUIRE_APPROVAL.
 - p50, p95, cost, success, and control results come from measured output.
-- **reports/member3/runtime_results.json** contains measured evidence.
+- Runtime telemetry is generated locally and is not source-controlled evidence.
 
 ### M3 demo proof
 
