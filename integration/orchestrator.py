@@ -240,7 +240,82 @@ class Orchestrator:
 
 
 def process_event(event: Dict[str, Any]) -> Dict[str, Any]:
-    return Orchestrator().process_event(event)
+    if os.getenv("RESOLVEONE_USE_FAKE_GOVERNANCE", "").lower() in ("1", "true", "yes"):
+        return Orchestrator().process_event(event)
+    return RealOrchestrator().process_event(event)
+
+
+class RealOrchestrator:
+    """Production adapter: real evidence, agent, governance, and sandbox executor."""
+
+    def __init__(self) -> None:
+        self.kill_switch = KillSwitch()
+
+    @staticmethod
+    def _dump(value: Any) -> dict:
+        return value.model_dump(mode="json")
+
+    def process_event(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        from agent.evidence import get_exception_case
+        from agent.orchestrator import investigate_exception as investigate_real_exception
+        from contracts.access import AuthenticatedSession
+        from contracts.authorization import AuthorizationRequest
+        from contracts.enums import Action
+        from contracts.execution import ExecutionResult
+        from governance import api as governance
+
+        exception_id = str(event["exception_id"])
+        trace_id = str(event.get("trace_id") or f"TRACE-{uuid.uuid4().hex[:12]}")
+        requester = str(event.get("requester_user_id") or "ops_01")
+        proposal = investigate_real_exception(exception_id)
+        proposal["trace_id"] = trace_id
+        if proposal.get("blocked"):
+            return {"trace_id": trace_id, "exception_id": exception_id, "proposal": proposal,
+                    "authorization": None, "receipt": None, "execution": None, "status": "AGENT_BLOCKED"}
+
+        reason_codes = proposal.get("reason_codes") or []
+        action = Action.SIMULATE_RETRY_PAYMENT if reason_codes and reason_codes[0] == "TECHNICAL_GLITCH" else Action.ESCALATE
+        governed_case = get_exception_case(exception_id)
+        if governed_case is None:
+            raise ValueError(f"exception_id {exception_id!r} was not found in Gold evidence")
+        requester_context = governance.mint_access_context(AuthenticatedSession(user_id=requester))
+        request = AuthorizationRequest(
+            request_id=f"REQ-{uuid.uuid4().hex}", access_context_id=requester_context.context_id,
+            agent_id="resolveone-investigator", exception_id=exception_id, action=action,
+            policy_id=str(proposal.get("policy_id") or "POL-UNKNOWN"),
+            asserted_case_context={"exception_type": str(governed_case["error_types"]), "amount": float(governed_case["amount"]), "fraud_label": str(governed_case["fraud_label"])},
+            trace_id=trace_id,
+        )
+        authorization = governance.authorize_action(request, requester_context)
+        receipt = governance.create_governance_receipt(authorization.authorization_id, requester_context)
+        result: Dict[str, Any] = {"trace_id": trace_id, "exception_id": exception_id, "proposal": proposal,
+                                  "authorization": self._dump(authorization), "receipt": self._dump(receipt), "execution": None}
+        if str(authorization.decision) == "DENY":
+            result["status"] = "DENIED"
+            return result
+        if str(authorization.decision) == "REQUIRE_APPROVAL":
+            result["status"] = "PENDING_APPROVAL"
+            return result
+        service_context = governance.mint_access_context(AuthenticatedSession(user_id="resolveone_agent"))
+        if not self.kill_switch.enabled():
+            result["receipt"] = self._dump(governance.finalize_governance_receipt(receipt.receipt_id, None, "AUTONOMY_DISABLED", service_context))
+            result["status"] = "ALLOW_AUTONOMY_DISABLED"
+            return result
+        if action == Action.ESCALATE:
+            result["receipt"] = self._dump(governance.finalize_governance_receipt(receipt.receipt_id, None, "ESCALATED", service_context))
+            result["status"] = "ESCALATED"
+            return result
+        raw_execution = retry_payment({"execution_id": f"EXEC-{uuid.uuid4().hex}", "trace_id": trace_id,
+                                       "exception_id": exception_id, "action": action,
+                                       "case": {"severity": proposal.get("severity")}})
+        raw_execution["verified"] = verify_execution(raw_execution)
+        execution = ExecutionResult.model_validate(raw_execution)
+        result["receipt"] = self._dump(governance.finalize_governance_receipt(receipt.receipt_id, execution, None, service_context))
+        result["execution"] = self._dump(execution)
+        result["lineage"] = self._dump(governance.get_case_lineage(exception_id, requester_context))
+        result["status"] = str(execution.status)
+        record_workflow_result(result)
+        return result
 
 
 if __name__ == "__main__":
