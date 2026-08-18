@@ -225,11 +225,13 @@ __marimo__/
 .neo4j-template/
 
 # Data files (keep structure)
-data/
-data/*.zip
+data/*
+!data/raw/
+data/raw/*
 !data/raw/.gitkeep
 
 # Local generated data
+!data/processed/
 data/processed/*
 !data/processed/.gitkeep
 

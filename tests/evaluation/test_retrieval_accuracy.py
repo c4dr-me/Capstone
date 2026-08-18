@@ -18,7 +18,7 @@ RAW_ERROR_CODES_BY_TYPE = {
 
 
 @pytest.mark.parametrize("exception_type", CANONICAL_EXCEPTION_TYPES)
-def test_top1_retrieval_matches_golden_policy(exception_type):
+def test_top1_retrieval_matches_golden_policy(exception_type, vector_validation):
     golden_profile = build_golden_policy_profile()
     expected_policy_id = golden_profile[exception_type].policy_id
 
@@ -31,7 +31,7 @@ def test_top1_retrieval_matches_golden_policy(exception_type):
 
 
 @pytest.mark.parametrize("exception_type", CANONICAL_EXCEPTION_TYPES)
-def test_top3_retrieval_contains_only_the_golden_policy(exception_type):
+def test_top3_retrieval_contains_only_the_golden_policy(exception_type, vector_validation):
     raw_code = RAW_ERROR_CODES_BY_TYPE[exception_type]
     result = retrieve_resolution_policy(raw_code, top_k=3)
     policy_ids_returned = {hit.policy_id for hit in result.hits}

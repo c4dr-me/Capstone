@@ -33,8 +33,12 @@ _idempotency_store = CaseIdempotencyStore()
 
 
 def validate_contract(state: ExceptionAgentState) -> ExceptionAgentState:
-    case = evidence_module.get_exception_case(state["exception_id"])
     errors = []
+    try:
+        case = evidence_module.get_exception_case(state["exception_id"])
+    except FileNotFoundError:
+        case = None
+        errors.append("Gold evidence is unavailable")
     if case is None:
         errors.append(f"exception_id '{state['exception_id']}' not found in Gold evidence")
     else:

@@ -1,7 +1,7 @@
 from utils.agent_adapter import build_local_policy_result
 
 
-def test_local_policy_fallback_is_cited_and_transparent():
+def test_local_policy_fallback_is_cited_and_transparent(gold_df):
     result = build_local_policy_result("EXC-7475516")
 
     assert result["exception_id"] == "EXC-7475516"

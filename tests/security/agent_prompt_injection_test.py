@@ -8,6 +8,9 @@ pattern and halt the flow before a recommendation reaches an analyst.
 
 from agent import evidence as evidence_module
 from agent import severity as severity_module
+from agent import graph as graph_module
+from agent.retrieval import PolicyRetrievalResult
+from agent.vector_store import SimilarityHit
 from agent.orchestrator import investigate_exception
 
 POISONED_CASE = {
@@ -54,6 +57,26 @@ def test_poisoned_evidence_field_halts_the_flow(monkeypatch):
     monkeypatch.setattr(evidence_module, "get_payment_profile", lambda masked_card_id: fake_profile)
     monkeypatch.setattr(severity_module, "get_exception_case", fake_get_exception_case)
     monkeypatch.setattr(severity_module, "get_payment_profile", lambda masked_card_id: fake_profile)
+
+    def fake_retrieve_resolution_policy(error_code):
+        hit = SimilarityHit(
+            chunk_id="POL-TEST:1.0:recommended-action", policy_id="POL-TEST",
+            policy_title="Test policy", exception_type="BAD_CVV", version="1.0",
+            responsible_team="Payment Operations", default_severity="HIGH",
+            recommended_queue="Card Security Review", human_approval_required=True,
+            sla_hours=4, section_title="Recommended action", anchor="recommended-action",
+            source_file="test_policy.md", chunk_text="Safely review the exception.",
+            similarity_score=1.0,
+        )
+        return PolicyRetrievalResult(
+            query_error_code=error_code, resolved_exception_type="BAD_CVV",
+            policy_id="POL-TEST", policy_title="Test policy", policy_version="1.0",
+            responsible_team="Payment Operations", default_severity="HIGH",
+            recommended_queue="Card Security Review", human_approval_required=True,
+            hits=[hit], limitations=[],
+        )
+
+    monkeypatch.setattr(graph_module, "retrieve_resolution_policy", fake_retrieve_resolution_policy)
 
     result = investigate_exception(POISONED_CASE["exception_id"])
 
