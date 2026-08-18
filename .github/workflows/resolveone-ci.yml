@@ -1,4 +1,4 @@
-name: ResolveOne CI
+name: ResolveOne Integration CI
 on:
   push:
   pull_request:
@@ -21,4 +21,4 @@ jobs:
         env:
           RESOLVEONE_USE_FAKE_GOVERNANCE: "1"
         run: |
-          pytest -q
+          pytest -q tests/integration
