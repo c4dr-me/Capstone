@@ -24,6 +24,7 @@ pydantic>=2,<3
 prometheus-client>=0.21
 structlog>=24.0
 google-generativeai>=0.8
+openai>=1.0
 
 # Databases / vector stores
 psycopg2-binary>=2.9
