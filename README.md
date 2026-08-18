@@ -136,6 +136,17 @@ Tests requiring PostgreSQL, Neo4j, Redis, or the Gold Parquet data must use the 
 GitHub Actions downloads the versioned `gold-data-v1` release asset before tests and verifies its SHA-256 checksum. The integration job then starts temporary PostgreSQL/pgvector, Neo4j, and Redis containers, builds the approved policy index, and runs the suite with real governance enabled. It never connects to a live payment rail.
 
 To publish a revised Gold product, create a new immutable release tag, upload the Parquet and its checksum, then update `GOLD_RELEASE_TAG` in `.github/workflows/resolveone-ci.yml` in the same pull request.
+
+## Verified CI results
+
+The governed Gold release is published as [`gold-data-v1`](https://github.com/c4dr-me/Capstone/releases/tag/gold-data-v1). Each CI run downloads `gold_exception_cases.parquet`, verifies its SHA-256 checksum, and places it at `data/processed/gold_exception_cases.parquet` before testing.
+
+The latest verified run is [GitHub Actions run 32170082734](https://github.com/c4dr-me/Capstone/actions/runs/32170082734), with both jobs passing:
+
+- **Real Gold data tests**: exercises chat, UI, policy/MDM, data-boundary, security-gate, and fake-orchestrator unit tests against the released Gold product.
+- **Governed integration tests**: starts temporary PostgreSQL/pgvector, Neo4j, and Redis services; builds the approved policy index; then runs the full test suite with `RESOLVEONE_USE_FAKE_GOVERNANCE=0`.
+
+`tests/integration/test_orchestrator.py` intentionally remains in the fast fake-governance lane because it uses synthetic IDs such as `EXC-101` to unit-test allow, deny, kill-switch, and approval branches. The integration lane instead includes `test_real_orchestrator.py`, which selects a real Gold case and verifies a real policy proposal, governance authorization, and receipt.
 ## Product positioning
 
 ResolveOne is not a fraud-scoring replacement. It is a governed recovery layer for payment exceptions: it turns an exception into a bounded, explainable, authorized, verified, and auditable operational outcome.
