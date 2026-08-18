@@ -1,0 +1,297 @@
+[
+  {
+    "timestamp": 1787043944,
+    "receipt_id": "RCP-2703482a",
+    "exception_id": "EXC-TEST",
+    "authorization": null,
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "timestamp": 1787044285,
+    "receipt_id": "RCP-cf88cd1e",
+    "exception_id": "EXC-SMOKE",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-d5b68e91",
+      "trace_id": "TRACE-efa36a19",
+      "exception_id": "EXC-SMOKE",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-f6c3e537",
+      "verified": true,
+      "started_at": "2026-08-18T09:11:25Z",
+      "completed_at": "2026-08-18T09:11:25Z"
+    }
+  },
+  {
+    "timestamp": 1787044785,
+    "receipt_id": "RCP-f1cce13e",
+    "exception_id": "EXC-101",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-dc7ec6f4",
+      "trace_id": "TRACE-636cdd04",
+      "exception_id": "EXC-101",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-8ea5a609",
+      "verified": true,
+      "started_at": "2026-08-18T09:19:44Z",
+      "completed_at": "2026-08-18T09:19:45Z"
+    }
+  },
+  {
+    "timestamp": 1787044785,
+    "receipt_id": "RCP-06fcd576",
+    "exception_id": "EXC-102",
+    "authorization": "ALLOW",
+    "outcome": "NOT_EXECUTED",
+    "outcome_reason": "AUTONOMY_DISABLED",
+    "execution": null
+  },
+  {
+    "timestamp": 1787044785,
+    "receipt_id": "RCP-bd85af3d",
+    "exception_id": "EXC-104",
+    "authorization": "DENY",
+    "outcome": "NOT_EXECUTED",
+    "outcome_reason": "DENIED_BY_POLICY",
+    "execution": null
+  },
+  {
+    "timestamp": 1787046025,
+    "receipt_id": "RCP-1014af82",
+    "exception_id": "EXC-100",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-339dbf34",
+      "trace_id": "TRACE-92c9a60b",
+      "exception_id": "EXC-100",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-83a02cd5",
+      "verified": true,
+      "started_at": "2026-08-18T09:40:25Z",
+      "completed_at": "2026-08-18T09:40:25Z"
+    }
+  },
+  {
+    "timestamp": 1787046027,
+    "receipt_id": "RCP-3ae02906",
+    "exception_id": "EXC-101",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-ede90cb3",
+      "trace_id": "TRACE-5389814f",
+      "exception_id": "EXC-101",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-d103a722",
+      "verified": true,
+      "started_at": "2026-08-18T09:40:27Z",
+      "completed_at": "2026-08-18T09:40:27Z"
+    }
+  },
+  {
+    "timestamp": 1787046030,
+    "receipt_id": "RCP-a977ecc8",
+    "exception_id": "EXC-102",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-137b8fff",
+      "trace_id": "TRACE-17cf5d11",
+      "exception_id": "EXC-102",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-5c30e5b3",
+      "verified": true,
+      "started_at": "2026-08-18T09:40:30Z",
+      "completed_at": "2026-08-18T09:40:30Z"
+    }
+  },
+  {
+    "timestamp": 1787046032,
+    "receipt_id": "RCP-4a616b59",
+    "exception_id": "EXC-103",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-4ab61707",
+      "trace_id": "TRACE-736c4b95",
+      "exception_id": "EXC-103",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-c2886e68",
+      "verified": true,
+      "started_at": "2026-08-18T09:40:32Z",
+      "completed_at": "2026-08-18T09:40:32Z"
+    }
+  },
+  {
+    "timestamp": 1787046299,
+    "receipt_id": "RCP-16194e4b",
+    "exception_id": "EXC-100",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-decdc70e",
+      "trace_id": "TRACE-be84b266",
+      "exception_id": "EXC-100",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-f4d4905f",
+      "verified": true,
+      "started_at": "2026-08-18T09:44:59Z",
+      "completed_at": "2026-08-18T09:44:59Z"
+    }
+  },
+  {
+    "timestamp": 1787046301,
+    "receipt_id": "RCP-ce7a9dc0",
+    "exception_id": "EXC-101",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-cae3da65",
+      "trace_id": "TRACE-87f60961",
+      "exception_id": "EXC-101",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-23f444cc",
+      "verified": true,
+      "started_at": "2026-08-18T09:45:01Z",
+      "completed_at": "2026-08-18T09:45:01Z"
+    }
+  },
+  {
+    "timestamp": 1787046303,
+    "receipt_id": "RCP-13fa18e5",
+    "exception_id": "EXC-102",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-1e5d917e",
+      "trace_id": "TRACE-3fdca092",
+      "exception_id": "EXC-102",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-2bd7e575",
+      "verified": true,
+      "started_at": "2026-08-18T09:45:03Z",
+      "completed_at": "2026-08-18T09:45:03Z"
+    }
+  },
+  {
+    "timestamp": 1787046305,
+    "receipt_id": "RCP-d4fe506a",
+    "exception_id": "EXC-103",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-f3b4ec6d",
+      "trace_id": "TRACE-1dd74526",
+      "exception_id": "EXC-103",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-6103ad73",
+      "verified": true,
+      "started_at": "2026-08-18T09:45:05Z",
+      "completed_at": "2026-08-18T09:45:05Z"
+    }
+  },
+  {
+    "timestamp": 1787046719,
+    "receipt_id": "RCP-1a5f3306",
+    "exception_id": "EXC-100",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-95115f74",
+      "trace_id": "TRACE-c0605587",
+      "exception_id": "EXC-100",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-486807b6",
+      "verified": true,
+      "started_at": "2026-08-18T09:51:59Z",
+      "completed_at": "2026-08-18T09:51:59Z"
+    }
+  },
+  {
+    "timestamp": 1787046721,
+    "receipt_id": "RCP-2321562e",
+    "exception_id": "EXC-101",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-3ac771ed",
+      "trace_id": "TRACE-9bd864b8",
+      "exception_id": "EXC-101",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-b3d543da",
+      "verified": true,
+      "started_at": "2026-08-18T09:52:01Z",
+      "completed_at": "2026-08-18T09:52:01Z"
+    }
+  },
+  {
+    "timestamp": 1787046724,
+    "receipt_id": "RCP-7388ded4",
+    "exception_id": "EXC-102",
+    "authorization": "ALLOW",
+    "outcome": "FAILED",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-37de41d5",
+      "trace_id": "TRACE-e608a442",
+      "exception_id": "EXC-102",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "FAILED",
+      "reference": "SIM-5153fdd7",
+      "verified": true,
+      "started_at": "2026-08-18T09:52:04Z",
+      "completed_at": "2026-08-18T09:52:04Z"
+    }
+  },
+  {
+    "timestamp": 1787046726,
+    "receipt_id": "RCP-59ceb893",
+    "exception_id": "EXC-103",
+    "authorization": "ALLOW",
+    "outcome": "SUCCESS",
+    "outcome_reason": "EXECUTED",
+    "execution": {
+      "execution_id": "EXEC-b085e6b0",
+      "trace_id": "TRACE-bb97b920",
+      "exception_id": "EXC-103",
+      "action": "SIMULATE_RETRY_PAYMENT",
+      "status": "SUCCESS",
+      "reference": "SIM-8fa7da9b",
+      "verified": true,
+      "started_at": "2026-08-18T09:52:06Z",
+      "completed_at": "2026-08-18T09:52:06Z"
+    }
+  }
+]

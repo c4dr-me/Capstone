@@ -1,0 +1,5567 @@
+[
+  {
+    "trace_id": "TRACE-EXC-101",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787035719,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-101",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-adfae6ad",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-101"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-cfdf1701",
+        "receipt_id": "RCP-8d3b116b",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-8d3b116b",
+        "authorization_id": "AUTH-cfdf1701",
+        "request_id": "REQ-078bf829",
+        "trace_id": "TRACE-EXC-101",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-04b9bb1b",
+        "trace_id": "TRACE-EXC-101",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-7df28f32",
+        "verified": true,
+        "started_at": "2026-08-18T06:48:39Z",
+        "completed_at": "2026-08-18T06:48:39Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-51889bde",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-101",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787035807,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-101",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-55a7239a",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-101"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-883f2893",
+        "receipt_id": "RCP-1551383f",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-1551383f",
+        "authorization_id": "AUTH-883f2893",
+        "request_id": "REQ-d73836f0",
+        "trace_id": "TRACE-EXC-101",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-8bc415b3",
+        "trace_id": "TRACE-EXC-101",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-e2492a52",
+        "verified": true,
+        "started_at": "2026-08-18T06:50:07Z",
+        "completed_at": "2026-08-18T06:50:07Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-a913079c",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-101",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787035918,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-101",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-1ad725b6",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-101"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-487a7922",
+        "receipt_id": "RCP-21125cc5",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-21125cc5",
+        "authorization_id": "AUTH-487a7922",
+        "request_id": "REQ-eafeabb1",
+        "trace_id": "TRACE-EXC-101",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-234b9d6e",
+        "trace_id": "TRACE-EXC-101",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-84932b86",
+        "verified": true,
+        "started_at": "2026-08-18T06:51:58Z",
+        "completed_at": "2026-08-18T06:51:58Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-b6ca66d0",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-7475516",
+    "exception_id": "EXC-7475516",
+    "status": "FAILED",
+    "timestamp": 1787036822,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-7475516",
+      "exception_id": "EXC-7475516",
+      "proposal": {
+        "proposal_id": "PROP-34dea94a",
+        "exception_id": "EXC-7475516",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-7475516"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-3cfa0dd0",
+        "receipt_id": "RCP-10674321",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-10674321",
+        "authorization_id": "AUTH-3cfa0dd0",
+        "request_id": "REQ-1f17356e",
+        "trace_id": "TRACE-EXC-7475516",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-7475516",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-9a00bdf4",
+        "trace_id": "TRACE-EXC-7475516",
+        "exception_id": "EXC-7475516",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-61377c05",
+        "verified": true,
+        "started_at": "2026-08-18T07:07:02Z",
+        "completed_at": "2026-08-18T07:07:02Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-7475516",
+        "trace_id": "TRACE-0d0ffb78",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-7475792",
+    "exception_id": "EXC-7475792",
+    "status": "FAILED",
+    "timestamp": 1787036900,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-7475792",
+      "exception_id": "EXC-7475792",
+      "proposal": {
+        "proposal_id": "PROP-43d002e1",
+        "exception_id": "EXC-7475792",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-7475792"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-83b49fba",
+        "receipt_id": "RCP-f904f1da",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-f904f1da",
+        "authorization_id": "AUTH-83b49fba",
+        "request_id": "REQ-bf5ea49e",
+        "trace_id": "TRACE-EXC-7475792",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-7475792",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-d7849724",
+        "trace_id": "TRACE-EXC-7475792",
+        "exception_id": "EXC-7475792",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-cd745682",
+        "verified": true,
+        "started_at": "2026-08-18T07:08:20Z",
+        "completed_at": "2026-08-18T07:08:20Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-7475792",
+        "trace_id": "TRACE-8789d5de",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-7475792",
+    "exception_id": "EXC-7475792",
+    "status": "FAILED",
+    "timestamp": 1787037583,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-7475792",
+      "exception_id": "EXC-7475792",
+      "proposal": {
+        "proposal_id": "PROP-96671dad",
+        "exception_id": "EXC-7475792",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-7475792"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-1ae36429",
+        "receipt_id": "RCP-4cf40f83",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-4cf40f83",
+        "authorization_id": "AUTH-1ae36429",
+        "request_id": "REQ-1661efd9",
+        "trace_id": "TRACE-EXC-7475792",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-7475792",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-36bc8d39",
+        "trace_id": "TRACE-EXC-7475792",
+        "exception_id": "EXC-7475792",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-ae304ba6",
+        "verified": true,
+        "started_at": "2026-08-18T07:19:43Z",
+        "completed_at": "2026-08-18T07:19:43Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-7475792",
+        "trace_id": "TRACE-d9c983d2",
+        "nodes": [],
+        "edges": [],
+        "receipt_id": null,
+        "completeness": 0.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-694e455f",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787037884,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-694e455f",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-9e1f7b20",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-694e455f"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-54c4dcdd",
+        "receipt_id": "RCP-a23e86f7",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-a23e86f7",
+        "authorization_id": "AUTH-54c4dcdd",
+        "request_id": "REQ-27e45a91",
+        "trace_id": "TRACE-694e455f",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-a5a4136c",
+        "trace_id": "TRACE-694e455f",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-bcbf1dbd",
+        "verified": true,
+        "started_at": "2026-08-18T07:24:44Z",
+        "completed_at": "2026-08-18T07:24:44Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-12186ff1",
+        "nodes": [
+          {
+            "id": "TXN-592017de",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-087bed3c",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-30cd75fa",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-fc58e467",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-fd034925",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-cb1ebfec",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-592017de",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-087bed3c",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-30cd75fa",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-30cd75fa",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-30cd75fa",
+            "target": "AUTH-fc58e467",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-fc58e467",
+            "target": "EXEC-fd034925",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-fd034925",
+            "target": "RCP-cb1ebfec",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-cb1ebfec",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23761252",
+    "exception_id": "EXC-23761252",
+    "status": "FAILED",
+    "timestamp": 1787038226,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23761252",
+      "exception_id": "EXC-23761252",
+      "proposal": {
+        "proposal_id": "PROP-53066c07",
+        "exception_id": "EXC-23761252",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23761252"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-4d2409c7",
+        "receipt_id": "RCP-8cd7ed4f",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-8cd7ed4f",
+        "authorization_id": "AUTH-4d2409c7",
+        "request_id": "REQ-1b0f152e",
+        "trace_id": "TRACE-EXC-23761252",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23761252",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-97036037",
+        "trace_id": "TRACE-EXC-23761252",
+        "exception_id": "EXC-23761252",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-c9291872",
+        "verified": true,
+        "started_at": "2026-08-18T07:30:26Z",
+        "completed_at": "2026-08-18T07:30:26Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23761252",
+        "trace_id": "TRACE-f268d2a5",
+        "nodes": [
+          {
+            "id": "TXN-b328c73e",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23761252",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-d3f287b0",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-bfc203e0",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-99229f3f",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-f32de6ed",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-195d8cf5",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-b328c73e",
+            "target": "EXC-23761252",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23761252",
+            "target": "EVD-d3f287b0",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-bfc203e0",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-bfc203e0",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-bfc203e0",
+            "target": "AUTH-99229f3f",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-99229f3f",
+            "target": "EXEC-f32de6ed",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-f32de6ed",
+            "target": "RCP-195d8cf5",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-195d8cf5",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23761252",
+    "exception_id": "EXC-23761252",
+    "status": "FAILED",
+    "timestamp": 1787042328,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23761252",
+      "exception_id": "EXC-23761252",
+      "proposal": {
+        "proposal_id": "PROP-226934e8",
+        "exception_id": "EXC-23761252",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23761252"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-bee85797",
+        "receipt_id": "RCP-e596843e",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-e596843e",
+        "authorization_id": "AUTH-bee85797",
+        "request_id": "REQ-ee5b5927",
+        "trace_id": "TRACE-EXC-23761252",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23761252",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-366e5774",
+        "trace_id": "TRACE-EXC-23761252",
+        "exception_id": "EXC-23761252",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-aa8dfc50",
+        "verified": true,
+        "started_at": "2026-08-18T08:38:48Z",
+        "completed_at": "2026-08-18T08:38:48Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23761252",
+        "trace_id": "TRACE-c0ee35e1",
+        "nodes": [
+          {
+            "id": "TXN-e31bfeb2",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23761252",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-9eead1e3",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-a7c81967",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-73ee3d3d",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-5580b4b4",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-b0f8aac1",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-e31bfeb2",
+            "target": "EXC-23761252",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23761252",
+            "target": "EVD-9eead1e3",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-a7c81967",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-a7c81967",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-a7c81967",
+            "target": "AUTH-73ee3d3d",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-73ee3d3d",
+            "target": "EXEC-5580b4b4",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-5580b4b4",
+            "target": "RCP-b0f8aac1",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-b0f8aac1",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23761252",
+    "exception_id": "EXC-23761252",
+    "status": "FAILED",
+    "timestamp": 1787042423,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23761252",
+      "exception_id": "EXC-23761252",
+      "proposal": {
+        "proposal_id": "PROP-c0a64de3",
+        "exception_id": "EXC-23761252",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23761252"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-3b00b91e",
+        "receipt_id": "RCP-69d8ade9",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-69d8ade9",
+        "authorization_id": "AUTH-3b00b91e",
+        "request_id": "REQ-9f2347fc",
+        "trace_id": "TRACE-EXC-23761252",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23761252",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-eaf4835b",
+        "trace_id": "TRACE-EXC-23761252",
+        "exception_id": "EXC-23761252",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-5385a2cd",
+        "verified": true,
+        "started_at": "2026-08-18T08:40:23Z",
+        "completed_at": "2026-08-18T08:40:23Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23761252",
+        "trace_id": "TRACE-64cf43f4",
+        "nodes": [
+          {
+            "id": "TXN-f592ab58",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23761252",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-57a6fc8b",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-28381e69",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-ed9c9916",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-2cfd8460",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-096dad4e",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-f592ab58",
+            "target": "EXC-23761252",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23761252",
+            "target": "EVD-57a6fc8b",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-28381e69",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-28381e69",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-28381e69",
+            "target": "AUTH-ed9c9916",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-ed9c9916",
+            "target": "EXEC-2cfd8460",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-2cfd8460",
+            "target": "RCP-096dad4e",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-096dad4e",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23747918",
+    "exception_id": "EXC-23747918",
+    "status": "FAILED",
+    "timestamp": 1787042909,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23747918",
+      "exception_id": "EXC-23747918",
+      "proposal": {
+        "proposal_id": "PROP-25dee946",
+        "exception_id": "EXC-23747918",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23747918"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-4d21429f",
+        "receipt_id": "RCP-6bbbe674",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-6bbbe674",
+        "authorization_id": "AUTH-4d21429f",
+        "request_id": "REQ-8a8cb585",
+        "trace_id": "TRACE-EXC-23747918",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23747918",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-29a8d390",
+        "trace_id": "TRACE-EXC-23747918",
+        "exception_id": "EXC-23747918",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-588a7ad4",
+        "verified": true,
+        "started_at": "2026-08-18T08:48:29Z",
+        "completed_at": "2026-08-18T08:48:29Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23747918",
+        "trace_id": "TRACE-74776813",
+        "nodes": [
+          {
+            "id": "TXN-0d219e0c",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23747918",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-210c2c7b",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-2eda4d7d",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-168f94f8",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-0690302e",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-589b4fd7",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-0d219e0c",
+            "target": "EXC-23747918",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23747918",
+            "target": "EVD-210c2c7b",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-2eda4d7d",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-2eda4d7d",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-2eda4d7d",
+            "target": "AUTH-168f94f8",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-168f94f8",
+            "target": "EXEC-0690302e",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-0690302e",
+            "target": "RCP-589b4fd7",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-589b4fd7",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-5207bfd7",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787043049,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-5207bfd7",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-af77b23e",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-5207bfd7"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-0ccf70f8",
+        "receipt_id": "RCP-a43a0851",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-a43a0851",
+        "authorization_id": "AUTH-0ccf70f8",
+        "request_id": "REQ-9ace9957",
+        "trace_id": "TRACE-5207bfd7",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-89c1e8ed",
+        "trace_id": "TRACE-5207bfd7",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-dc507853",
+        "verified": true,
+        "started_at": "2026-08-18T08:50:49Z",
+        "completed_at": "2026-08-18T08:50:49Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-ab3aeaf6",
+        "nodes": [
+          {
+            "id": "TXN-15b60659",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-b43b33ee",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-3f53ffa8",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-644dd4a7",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-2bf4c504",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-ceb0d8b1",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-15b60659",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-b43b33ee",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-3f53ffa8",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-3f53ffa8",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-3f53ffa8",
+            "target": "AUTH-644dd4a7",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-644dd4a7",
+            "target": "EXEC-2bf4c504",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-2bf4c504",
+            "target": "RCP-ceb0d8b1",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-ceb0d8b1",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-3948868a",
+    "exception_id": "EXC-200",
+    "status": "FAILED",
+    "timestamp": 1787043094,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-3948868a",
+      "exception_id": "EXC-200",
+      "proposal": {
+        "proposal_id": "PROP-e949143b",
+        "exception_id": "EXC-200",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-3948868a"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-2e9ced51",
+        "receipt_id": "RCP-7cc5028e",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-7cc5028e",
+        "authorization_id": "AUTH-2e9ced51",
+        "request_id": "REQ-d08ddc3a",
+        "trace_id": "TRACE-3948868a",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-200",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-a6ace418",
+        "trace_id": "TRACE-3948868a",
+        "exception_id": "EXC-200",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-c795eae6",
+        "verified": true,
+        "started_at": "2026-08-18T08:51:34Z",
+        "completed_at": "2026-08-18T08:51:34Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-200",
+        "trace_id": "TRACE-c05039f4",
+        "nodes": [
+          {
+            "id": "TXN-a48be21c",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-200",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-e988deb9",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-b2231270",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-14b0b626",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-9a694eae",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-57da3479",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-a48be21c",
+            "target": "EXC-200",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-200",
+            "target": "EVD-e988deb9",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-b2231270",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-b2231270",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-b2231270",
+            "target": "AUTH-14b0b626",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-14b0b626",
+            "target": "EXEC-9a694eae",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-9a694eae",
+            "target": "RCP-57da3479",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-57da3479",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-2bacdfc4",
+    "exception_id": "EXC-200",
+    "status": "SUCCESS",
+    "timestamp": 1787043172,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-2bacdfc4",
+      "exception_id": "EXC-200",
+      "proposal": {
+        "proposal_id": "PROP-91f8cb46",
+        "exception_id": "EXC-200",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-2bacdfc4"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-dfc60a99",
+        "receipt_id": "RCP-f783ae63",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-f783ae63",
+        "authorization_id": "AUTH-dfc60a99",
+        "request_id": "REQ-f43d2887",
+        "trace_id": "TRACE-2bacdfc4",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-200",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-2d6c606e",
+        "trace_id": "TRACE-2bacdfc4",
+        "exception_id": "EXC-200",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-9b57c4e0",
+        "verified": true,
+        "started_at": "2026-08-18T08:52:52Z",
+        "completed_at": "2026-08-18T08:52:52Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-200",
+        "trace_id": "TRACE-c35153ea",
+        "nodes": [
+          {
+            "id": "TXN-258e14db",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-200",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-b2990e36",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-e6665808",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-2b0bcec8",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-cb40eea4",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-546ac3e3",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-258e14db",
+            "target": "EXC-200",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-200",
+            "target": "EVD-b2990e36",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-e6665808",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-e6665808",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-e6665808",
+            "target": "AUTH-2b0bcec8",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-2b0bcec8",
+            "target": "EXEC-cb40eea4",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-cb40eea4",
+            "target": "RCP-546ac3e3",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-546ac3e3",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23747918",
+    "exception_id": "EXC-23747918",
+    "status": "FAILED",
+    "timestamp": 1787043270,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23747918",
+      "exception_id": "EXC-23747918",
+      "proposal": {
+        "proposal_id": "PROP-6a346353",
+        "exception_id": "EXC-23747918",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23747918"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-4a77cef4",
+        "receipt_id": "RCP-b9d443d8",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-b9d443d8",
+        "authorization_id": "AUTH-4a77cef4",
+        "request_id": "REQ-e080cb58",
+        "trace_id": "TRACE-EXC-23747918",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23747918",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-e28ec00d",
+        "trace_id": "TRACE-EXC-23747918",
+        "exception_id": "EXC-23747918",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-13fc63d4",
+        "verified": true,
+        "started_at": "2026-08-18T08:54:30Z",
+        "completed_at": "2026-08-18T08:54:30Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23747918",
+        "trace_id": "TRACE-dc1aa384",
+        "nodes": [
+          {
+            "id": "TXN-a7272e34",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23747918",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-6d54fce0",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-25e3b989",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-264a671b",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-15979820",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-91cf5f52",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-a7272e34",
+            "target": "EXC-23747918",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23747918",
+            "target": "EVD-6d54fce0",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-25e3b989",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-25e3b989",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-25e3b989",
+            "target": "AUTH-264a671b",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-264a671b",
+            "target": "EXEC-15979820",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-15979820",
+            "target": "RCP-91cf5f52",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-91cf5f52",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-EXC-23653761",
+    "exception_id": "EXC-23653761",
+    "status": "SUCCESS",
+    "timestamp": 1787043571,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-EXC-23653761",
+      "exception_id": "EXC-23653761",
+      "proposal": {
+        "proposal_id": "PROP-14cf0006",
+        "exception_id": "EXC-23653761",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-EXC-23653761"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-1a75f0af",
+        "receipt_id": "RCP-73efc9ae",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-73efc9ae",
+        "authorization_id": "AUTH-1a75f0af",
+        "request_id": "REQ-e850f29a",
+        "trace_id": "TRACE-EXC-23653761",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-23653761",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-ce7ba6c8",
+        "trace_id": "TRACE-EXC-23653761",
+        "exception_id": "EXC-23653761",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-7376c00b",
+        "verified": true,
+        "started_at": "2026-08-18T08:59:31Z",
+        "completed_at": "2026-08-18T08:59:31Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-23653761",
+        "trace_id": "TRACE-5de952f3",
+        "nodes": [
+          {
+            "id": "TXN-d5231231",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-23653761",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-cb1634ca",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-3df89be8",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-71c705b5",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-00850c2f",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-daffe47a",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-d5231231",
+            "target": "EXC-23653761",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-23653761",
+            "target": "EVD-cb1634ca",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-3df89be8",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-3df89be8",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-3df89be8",
+            "target": "AUTH-71c705b5",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-71c705b5",
+            "target": "EXEC-00850c2f",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-00850c2f",
+            "target": "RCP-daffe47a",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-daffe47a",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-20a0c3ba",
+    "exception_id": "EXC-201",
+    "status": "SUCCESS",
+    "timestamp": 1787043839,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-20a0c3ba",
+      "exception_id": "EXC-201",
+      "proposal": {
+        "proposal_id": "PROP-c7df1103",
+        "exception_id": "EXC-201",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-20a0c3ba"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-ddcaf5df",
+        "receipt_id": "RCP-6447fb41",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-6447fb41",
+        "authorization_id": "AUTH-ddcaf5df",
+        "request_id": "REQ-22842d36",
+        "trace_id": "TRACE-20a0c3ba",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-201",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-9586d0ad",
+        "trace_id": "TRACE-20a0c3ba",
+        "exception_id": "EXC-201",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-56a4aa2a",
+        "verified": true,
+        "started_at": "2026-08-18T09:03:59Z",
+        "completed_at": "2026-08-18T09:03:59Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-201",
+        "trace_id": "TRACE-00a91edc",
+        "nodes": [
+          {
+            "id": "TXN-5ac960d2",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-201",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-b13959a4",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-e44d630e",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-8cde954d",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-c45b9ca2",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-383e567f",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-5ac960d2",
+            "target": "EXC-201",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-201",
+            "target": "EVD-b13959a4",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-e44d630e",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-e44d630e",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-e44d630e",
+            "target": "AUTH-8cde954d",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-8cde954d",
+            "target": "EXEC-c45b9ca2",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-c45b9ca2",
+            "target": "RCP-383e567f",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-383e567f",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-8a4fb580",
+    "exception_id": "EXC-202",
+    "status": "SUCCESS",
+    "timestamp": 1787043859,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-8a4fb580",
+      "exception_id": "EXC-202",
+      "proposal": {
+        "proposal_id": "PROP-defc2c87",
+        "exception_id": "EXC-202",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-8a4fb580"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-baae6b07",
+        "receipt_id": "RCP-52ca2951",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-52ca2951",
+        "authorization_id": "AUTH-baae6b07",
+        "request_id": "REQ-89a14a25",
+        "trace_id": "TRACE-8a4fb580",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-202",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-a6b2810d",
+        "trace_id": "TRACE-8a4fb580",
+        "exception_id": "EXC-202",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-9cb80fc3",
+        "verified": true,
+        "started_at": "2026-08-18T09:04:18Z",
+        "completed_at": "2026-08-18T09:04:19Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-202",
+        "trace_id": "TRACE-1e938f70",
+        "nodes": [
+          {
+            "id": "TXN-902cd5f0",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-202",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-29f84c3e",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-bb37b95a",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-350129f3",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-f592c62a",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-b799c34d",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-902cd5f0",
+            "target": "EXC-202",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-202",
+            "target": "EVD-29f84c3e",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-bb37b95a",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-bb37b95a",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-bb37b95a",
+            "target": "AUTH-350129f3",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-350129f3",
+            "target": "EXEC-f592c62a",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-f592c62a",
+            "target": "RCP-b799c34d",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-b799c34d",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-efa36a19",
+    "exception_id": "EXC-SMOKE",
+    "status": "SUCCESS",
+    "timestamp": 1787044285,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-efa36a19",
+      "exception_id": "EXC-SMOKE",
+      "proposal": {
+        "proposal_id": "PROP-f63b6807",
+        "exception_id": "EXC-SMOKE",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-efa36a19"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-e06648a2",
+        "receipt_id": "RCP-cf88cd1e",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-cf88cd1e",
+        "authorization_id": "AUTH-e06648a2",
+        "request_id": "REQ-0b6d7b37",
+        "trace_id": "TRACE-efa36a19",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-SMOKE",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-d5b68e91",
+        "trace_id": "TRACE-efa36a19",
+        "exception_id": "EXC-SMOKE",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-f6c3e537",
+        "verified": true,
+        "started_at": "2026-08-18T09:11:25Z",
+        "completed_at": "2026-08-18T09:11:25Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-SMOKE",
+        "trace_id": "TRACE-d37fd832",
+        "nodes": [
+          {
+            "id": "TXN-5a8ecfbe",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-SMOKE",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-362d08d1",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-64c44b3f",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-3e11a5f1",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-928ef626",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-33b81459",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-5a8ecfbe",
+            "target": "EXC-SMOKE",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-SMOKE",
+            "target": "EVD-362d08d1",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-64c44b3f",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-64c44b3f",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-64c44b3f",
+            "target": "AUTH-3e11a5f1",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-3e11a5f1",
+            "target": "EXEC-928ef626",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-928ef626",
+            "target": "RCP-33b81459",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-33b81459",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-636cdd04",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787044785,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-636cdd04",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-20a1c245",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-636cdd04"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-2e0dfa6c",
+        "receipt_id": "RCP-f1cce13e",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-f1cce13e",
+        "authorization_id": "AUTH-2e0dfa6c",
+        "request_id": "REQ-b0b46c23",
+        "trace_id": "TRACE-636cdd04",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-dc7ec6f4",
+        "trace_id": "TRACE-636cdd04",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-8ea5a609",
+        "verified": true,
+        "started_at": "2026-08-18T09:19:44Z",
+        "completed_at": "2026-08-18T09:19:45Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-027fedb7",
+        "nodes": [
+          {
+            "id": "TXN-38dfb8b7",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-f11711d3",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-1b559b56",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-237d13f2",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-09ca058e",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-0b711f66",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-38dfb8b7",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-f11711d3",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-1b559b56",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-1b559b56",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-1b559b56",
+            "target": "AUTH-237d13f2",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-237d13f2",
+            "target": "EXEC-09ca058e",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-09ca058e",
+            "target": "RCP-0b711f66",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-0b711f66",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-8720e173",
+    "exception_id": "EXC-102",
+    "status": "ALLOW_AUTONOMY_DISABLED",
+    "timestamp": 1787044785,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": null
+    },
+    "raw": {
+      "trace_id": "TRACE-8720e173",
+      "exception_id": "EXC-102",
+      "proposal": {
+        "proposal_id": "PROP-aa01dd1a",
+        "exception_id": "EXC-102",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-8720e173"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-4d8750e3",
+        "receipt_id": "RCP-06fcd576",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-06fcd576",
+        "authorization_id": "AUTH-4d8750e3",
+        "request_id": "REQ-95b7f19f",
+        "trace_id": "TRACE-8720e173",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-102",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "NOT_EXECUTED",
+        "outcome_reason": "AUTONOMY_DISABLED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": null,
+      "status": "ALLOW_AUTONOMY_DISABLED"
+    }
+  },
+  {
+    "trace_id": "TRACE-e936e0f9",
+    "exception_id": "EXC-103",
+    "status": "PENDING_APPROVAL",
+    "timestamp": 1787044785,
+    "short_summary": {
+      "authorization": "REQUIRE_APPROVAL",
+      "outcome": null
+    },
+    "raw": {
+      "trace_id": "TRACE-e936e0f9",
+      "exception_id": "EXC-103",
+      "proposal": {
+        "proposal_id": "PROP-8dfadd4c",
+        "exception_id": "EXC-103",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-e936e0f9"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-15828d4d",
+        "receipt_id": "RCP-8caee7dc",
+        "decision": "REQUIRE_APPROVAL",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": true,
+        "required_approver_role": "OPERATIONS_MANAGER",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-8caee7dc",
+        "authorization_id": "AUTH-15828d4d",
+        "request_id": "REQ-f442ebe5",
+        "trace_id": "TRACE-e936e0f9",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-103",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "REQUIRE_APPROVAL",
+        "approval_id": null,
+        "receipt_state": "PENDING",
+        "outcome": "PENDING",
+        "outcome_reason": null,
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": null,
+      "status": "PENDING_APPROVAL"
+    }
+  },
+  {
+    "trace_id": "TRACE-e65ae4dc",
+    "exception_id": "EXC-104",
+    "status": "DENIED",
+    "timestamp": 1787044785,
+    "short_summary": {
+      "authorization": "DENY",
+      "outcome": null
+    },
+    "raw": {
+      "trace_id": "TRACE-e65ae4dc",
+      "exception_id": "EXC-104",
+      "proposal": {
+        "proposal_id": "PROP-14b3c8a1",
+        "exception_id": "EXC-104",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-e65ae4dc"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-a658e830",
+        "receipt_id": "RCP-bd85af3d",
+        "decision": "DENY",
+        "reason_codes": [
+          "FRAUD_POSITIVE"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-bd85af3d",
+        "authorization_id": "AUTH-a658e830",
+        "request_id": "REQ-205c1faa",
+        "trace_id": "TRACE-e65ae4dc",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-104",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "FRAUD_POSITIVE"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "DENY",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "NOT_EXECUTED",
+        "outcome_reason": "DENIED_BY_POLICY",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": null,
+      "status": "DENIED"
+    }
+  },
+  {
+    "trace_id": "TRACE-92c9a60b",
+    "exception_id": "EXC-100",
+    "status": "FAILED",
+    "timestamp": 1787046025,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-92c9a60b",
+      "exception_id": "EXC-100",
+      "proposal": {
+        "proposal_id": "PROP-39be7aed",
+        "exception_id": "EXC-100",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-92c9a60b"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-98fe06c5",
+        "receipt_id": "RCP-1014af82",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-1014af82",
+        "authorization_id": "AUTH-98fe06c5",
+        "request_id": "REQ-7863212c",
+        "trace_id": "TRACE-92c9a60b",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-100",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-339dbf34",
+        "trace_id": "TRACE-92c9a60b",
+        "exception_id": "EXC-100",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-83a02cd5",
+        "verified": true,
+        "started_at": "2026-08-18T09:40:25Z",
+        "completed_at": "2026-08-18T09:40:25Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-100",
+        "trace_id": "TRACE-fce990a7",
+        "nodes": [
+          {
+            "id": "TXN-f5f5432d",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-100",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-962fb387",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-6aae8296",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-433806d3",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-634eb659",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-48fcc633",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-f5f5432d",
+            "target": "EXC-100",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-100",
+            "target": "EVD-962fb387",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-6aae8296",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-6aae8296",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-6aae8296",
+            "target": "AUTH-433806d3",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-433806d3",
+            "target": "EXEC-634eb659",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-634eb659",
+            "target": "RCP-48fcc633",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-48fcc633",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-5389814f",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787046028,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-5389814f",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-245ef97a",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-5389814f"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-084bbdfe",
+        "receipt_id": "RCP-3ae02906",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-3ae02906",
+        "authorization_id": "AUTH-084bbdfe",
+        "request_id": "REQ-2b47fb68",
+        "trace_id": "TRACE-5389814f",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-ede90cb3",
+        "trace_id": "TRACE-5389814f",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-d103a722",
+        "verified": true,
+        "started_at": "2026-08-18T09:40:27Z",
+        "completed_at": "2026-08-18T09:40:27Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-d7efc89e",
+        "nodes": [
+          {
+            "id": "TXN-4722102f",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-b986370c",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-ef9bd272",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-84bc9fe4",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-66b99daa",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-a3576a71",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-4722102f",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-b986370c",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-ef9bd272",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-ef9bd272",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-ef9bd272",
+            "target": "AUTH-84bc9fe4",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-84bc9fe4",
+            "target": "EXEC-66b99daa",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-66b99daa",
+            "target": "RCP-a3576a71",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-a3576a71",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-17cf5d11",
+    "exception_id": "EXC-102",
+    "status": "FAILED",
+    "timestamp": 1787046030,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-17cf5d11",
+      "exception_id": "EXC-102",
+      "proposal": {
+        "proposal_id": "PROP-0fb71a9d",
+        "exception_id": "EXC-102",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-17cf5d11"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-764df0c0",
+        "receipt_id": "RCP-a977ecc8",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-a977ecc8",
+        "authorization_id": "AUTH-764df0c0",
+        "request_id": "REQ-03f4b881",
+        "trace_id": "TRACE-17cf5d11",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-102",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-137b8fff",
+        "trace_id": "TRACE-17cf5d11",
+        "exception_id": "EXC-102",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-5c30e5b3",
+        "verified": true,
+        "started_at": "2026-08-18T09:40:30Z",
+        "completed_at": "2026-08-18T09:40:30Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-102",
+        "trace_id": "TRACE-ecc8c719",
+        "nodes": [
+          {
+            "id": "TXN-4a01fc1f",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-102",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-eab54c64",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-0292fb26",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-6ac9d2c2",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-e42ba5fd",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-176623b4",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-4a01fc1f",
+            "target": "EXC-102",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-102",
+            "target": "EVD-eab54c64",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-0292fb26",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-0292fb26",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-0292fb26",
+            "target": "AUTH-6ac9d2c2",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-6ac9d2c2",
+            "target": "EXEC-e42ba5fd",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-e42ba5fd",
+            "target": "RCP-176623b4",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-176623b4",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-736c4b95",
+    "exception_id": "EXC-103",
+    "status": "SUCCESS",
+    "timestamp": 1787046032,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-736c4b95",
+      "exception_id": "EXC-103",
+      "proposal": {
+        "proposal_id": "PROP-d60de704",
+        "exception_id": "EXC-103",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-736c4b95"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-afa3e16e",
+        "receipt_id": "RCP-4a616b59",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-4a616b59",
+        "authorization_id": "AUTH-afa3e16e",
+        "request_id": "REQ-07d8265f",
+        "trace_id": "TRACE-736c4b95",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-103",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-4ab61707",
+        "trace_id": "TRACE-736c4b95",
+        "exception_id": "EXC-103",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-c2886e68",
+        "verified": true,
+        "started_at": "2026-08-18T09:40:32Z",
+        "completed_at": "2026-08-18T09:40:32Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-103",
+        "trace_id": "TRACE-b7327b18",
+        "nodes": [
+          {
+            "id": "TXN-c72d6dd5",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-103",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-5ee9d9cd",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-6a22f12f",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-072dfbfa",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-32e4655b",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-1e1838cb",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-c72d6dd5",
+            "target": "EXC-103",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-103",
+            "target": "EVD-5ee9d9cd",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-6a22f12f",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-6a22f12f",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-6a22f12f",
+            "target": "AUTH-072dfbfa",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-072dfbfa",
+            "target": "EXEC-32e4655b",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-32e4655b",
+            "target": "RCP-1e1838cb",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-1e1838cb",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-be84b266",
+    "exception_id": "EXC-100",
+    "status": "FAILED",
+    "timestamp": 1787046299,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-be84b266",
+      "exception_id": "EXC-100",
+      "proposal": {
+        "proposal_id": "PROP-d2ee128d",
+        "exception_id": "EXC-100",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-be84b266"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-85df1b47",
+        "receipt_id": "RCP-16194e4b",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-16194e4b",
+        "authorization_id": "AUTH-85df1b47",
+        "request_id": "REQ-e6f4d1c7",
+        "trace_id": "TRACE-be84b266",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-100",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-decdc70e",
+        "trace_id": "TRACE-be84b266",
+        "exception_id": "EXC-100",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-f4d4905f",
+        "verified": true,
+        "started_at": "2026-08-18T09:44:59Z",
+        "completed_at": "2026-08-18T09:44:59Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-100",
+        "trace_id": "TRACE-ba8c3573",
+        "nodes": [
+          {
+            "id": "TXN-de4a6d24",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-100",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-33166286",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-22ac303b",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-4f0bce27",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-db8d4d93",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-1a1fcec5",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-de4a6d24",
+            "target": "EXC-100",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-100",
+            "target": "EVD-33166286",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-22ac303b",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-22ac303b",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-22ac303b",
+            "target": "AUTH-4f0bce27",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-4f0bce27",
+            "target": "EXEC-db8d4d93",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-db8d4d93",
+            "target": "RCP-1a1fcec5",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-1a1fcec5",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-87f60961",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787046301,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-87f60961",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-fec49ed3",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-87f60961"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-4e8a138e",
+        "receipt_id": "RCP-ce7a9dc0",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-ce7a9dc0",
+        "authorization_id": "AUTH-4e8a138e",
+        "request_id": "REQ-270a7dc9",
+        "trace_id": "TRACE-87f60961",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-cae3da65",
+        "trace_id": "TRACE-87f60961",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-23f444cc",
+        "verified": true,
+        "started_at": "2026-08-18T09:45:01Z",
+        "completed_at": "2026-08-18T09:45:01Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-6a58ca77",
+        "nodes": [
+          {
+            "id": "TXN-b9e6b87a",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-7023dc0f",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-9981c52b",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-89f81029",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-f1d15c1b",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-c1e41433",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-b9e6b87a",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-7023dc0f",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-9981c52b",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-9981c52b",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-9981c52b",
+            "target": "AUTH-89f81029",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-89f81029",
+            "target": "EXEC-f1d15c1b",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-f1d15c1b",
+            "target": "RCP-c1e41433",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-c1e41433",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-3fdca092",
+    "exception_id": "EXC-102",
+    "status": "FAILED",
+    "timestamp": 1787046303,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-3fdca092",
+      "exception_id": "EXC-102",
+      "proposal": {
+        "proposal_id": "PROP-274e017a",
+        "exception_id": "EXC-102",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-3fdca092"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-5a0eb2a5",
+        "receipt_id": "RCP-13fa18e5",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-13fa18e5",
+        "authorization_id": "AUTH-5a0eb2a5",
+        "request_id": "REQ-8a9de0b6",
+        "trace_id": "TRACE-3fdca092",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-102",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-1e5d917e",
+        "trace_id": "TRACE-3fdca092",
+        "exception_id": "EXC-102",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-2bd7e575",
+        "verified": true,
+        "started_at": "2026-08-18T09:45:03Z",
+        "completed_at": "2026-08-18T09:45:03Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-102",
+        "trace_id": "TRACE-5d7d183b",
+        "nodes": [
+          {
+            "id": "TXN-566ff8b3",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-102",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-1cfdd478",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-7a553566",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-f791bc31",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-8ef3aa1f",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-b4aa869e",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-566ff8b3",
+            "target": "EXC-102",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-102",
+            "target": "EVD-1cfdd478",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-7a553566",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-7a553566",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-7a553566",
+            "target": "AUTH-f791bc31",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-f791bc31",
+            "target": "EXEC-8ef3aa1f",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-8ef3aa1f",
+            "target": "RCP-b4aa869e",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-b4aa869e",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-1dd74526",
+    "exception_id": "EXC-103",
+    "status": "SUCCESS",
+    "timestamp": 1787046305,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-1dd74526",
+      "exception_id": "EXC-103",
+      "proposal": {
+        "proposal_id": "PROP-e10b8518",
+        "exception_id": "EXC-103",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-1dd74526"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-f630607e",
+        "receipt_id": "RCP-d4fe506a",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-d4fe506a",
+        "authorization_id": "AUTH-f630607e",
+        "request_id": "REQ-e794287d",
+        "trace_id": "TRACE-1dd74526",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-103",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-f3b4ec6d",
+        "trace_id": "TRACE-1dd74526",
+        "exception_id": "EXC-103",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-6103ad73",
+        "verified": true,
+        "started_at": "2026-08-18T09:45:05Z",
+        "completed_at": "2026-08-18T09:45:05Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-103",
+        "trace_id": "TRACE-ea692992",
+        "nodes": [
+          {
+            "id": "TXN-82d85cd5",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-103",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-6cbb66f4",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-839b0f1f",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-21401ebc",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-c93e2b39",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-81b17a6a",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-82d85cd5",
+            "target": "EXC-103",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-103",
+            "target": "EVD-6cbb66f4",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-839b0f1f",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-839b0f1f",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-839b0f1f",
+            "target": "AUTH-21401ebc",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-21401ebc",
+            "target": "EXEC-c93e2b39",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-c93e2b39",
+            "target": "RCP-81b17a6a",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-81b17a6a",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-c0605587",
+    "exception_id": "EXC-100",
+    "status": "FAILED",
+    "timestamp": 1787046719,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-c0605587",
+      "exception_id": "EXC-100",
+      "proposal": {
+        "proposal_id": "PROP-68068e44",
+        "exception_id": "EXC-100",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-c0605587"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-d81ef6d9",
+        "receipt_id": "RCP-1a5f3306",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-1a5f3306",
+        "authorization_id": "AUTH-d81ef6d9",
+        "request_id": "REQ-fdcf1400",
+        "trace_id": "TRACE-c0605587",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-100",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-95115f74",
+        "trace_id": "TRACE-c0605587",
+        "exception_id": "EXC-100",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-486807b6",
+        "verified": true,
+        "started_at": "2026-08-18T09:51:59Z",
+        "completed_at": "2026-08-18T09:51:59Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-100",
+        "trace_id": "TRACE-0cafb822",
+        "nodes": [
+          {
+            "id": "TXN-5bf55ec7",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-100",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-de7d27a6",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-79f27028",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-61d6af1a",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-fa209edd",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-bda50461",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-5bf55ec7",
+            "target": "EXC-100",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-100",
+            "target": "EVD-de7d27a6",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-79f27028",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-79f27028",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-79f27028",
+            "target": "AUTH-61d6af1a",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-61d6af1a",
+            "target": "EXEC-fa209edd",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-fa209edd",
+            "target": "RCP-bda50461",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-bda50461",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-9bd864b8",
+    "exception_id": "EXC-101",
+    "status": "SUCCESS",
+    "timestamp": 1787046721,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-9bd864b8",
+      "exception_id": "EXC-101",
+      "proposal": {
+        "proposal_id": "PROP-e4edbca6",
+        "exception_id": "EXC-101",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-9bd864b8"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-0f8fba3e",
+        "receipt_id": "RCP-2321562e",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-2321562e",
+        "authorization_id": "AUTH-0f8fba3e",
+        "request_id": "REQ-7b3edc0c",
+        "trace_id": "TRACE-9bd864b8",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-101",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-3ac771ed",
+        "trace_id": "TRACE-9bd864b8",
+        "exception_id": "EXC-101",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-b3d543da",
+        "verified": true,
+        "started_at": "2026-08-18T09:52:01Z",
+        "completed_at": "2026-08-18T09:52:01Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-101",
+        "trace_id": "TRACE-6d40362b",
+        "nodes": [
+          {
+            "id": "TXN-4c4e5288",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-101",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-7fa8519e",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-bca4c1ac",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-9f655a74",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-3fde479d",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-c0d98487",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-4c4e5288",
+            "target": "EXC-101",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-101",
+            "target": "EVD-7fa8519e",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-bca4c1ac",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-bca4c1ac",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-bca4c1ac",
+            "target": "AUTH-9f655a74",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-9f655a74",
+            "target": "EXEC-3fde479d",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-3fde479d",
+            "target": "RCP-c0d98487",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-c0d98487",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  },
+  {
+    "trace_id": "TRACE-e608a442",
+    "exception_id": "EXC-102",
+    "status": "FAILED",
+    "timestamp": 1787046724,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "FAILED"
+    },
+    "raw": {
+      "trace_id": "TRACE-e608a442",
+      "exception_id": "EXC-102",
+      "proposal": {
+        "proposal_id": "PROP-99cadc36",
+        "exception_id": "EXC-102",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-e608a442"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-d8804e43",
+        "receipt_id": "RCP-7388ded4",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-7388ded4",
+        "authorization_id": "AUTH-d8804e43",
+        "request_id": "REQ-4c7512cb",
+        "trace_id": "TRACE-e608a442",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-102",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "FAILED",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-37de41d5",
+        "trace_id": "TRACE-e608a442",
+        "exception_id": "EXC-102",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "FAILED",
+        "reference": "SIM-5153fdd7",
+        "verified": true,
+        "started_at": "2026-08-18T09:52:04Z",
+        "completed_at": "2026-08-18T09:52:04Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-102",
+        "trace_id": "TRACE-ce5e209c",
+        "nodes": [
+          {
+            "id": "TXN-cb2a57ef",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-102",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-b973ca5e",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-a49c5fa5",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-700d548e",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-f7111391",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-c681ba56",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-cb2a57ef",
+            "target": "EXC-102",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-102",
+            "target": "EVD-b973ca5e",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-a49c5fa5",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-a49c5fa5",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-a49c5fa5",
+            "target": "AUTH-700d548e",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-700d548e",
+            "target": "EXEC-f7111391",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-f7111391",
+            "target": "RCP-c681ba56",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-c681ba56",
+        "completeness": 1.0
+      },
+      "status": "FAILED"
+    }
+  },
+  {
+    "trace_id": "TRACE-bb97b920",
+    "exception_id": "EXC-103",
+    "status": "SUCCESS",
+    "timestamp": 1787046726,
+    "short_summary": {
+      "authorization": "ALLOW",
+      "outcome": "SUCCESS"
+    },
+    "raw": {
+      "trace_id": "TRACE-bb97b920",
+      "exception_id": "EXC-103",
+      "proposal": {
+        "proposal_id": "PROP-b4fa4414",
+        "exception_id": "EXC-103",
+        "agent_id": "resolveone-investigator-fake",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "reason_codes": [
+          "TECHNICAL_GLITCH",
+          "FIRST_RETRY"
+        ],
+        "explanation": "Deterministic fake: eligible for sandbox retry.",
+        "policy_id": "POL-TECH-001",
+        "policy_version": "1.0",
+        "citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "confidence": 0.99,
+        "trace_id": "TRACE-bb97b920"
+      },
+      "authorization": {
+        "authorization_id": "AUTH-d65f7320",
+        "receipt_id": "RCP-59ceb893",
+        "decision": "ALLOW",
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "requires_human": false,
+        "required_approver_role": null,
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ]
+      },
+      "receipt": {
+        "receipt_id": "RCP-59ceb893",
+        "authorization_id": "AUTH-d65f7320",
+        "request_id": "REQ-7bd1062b",
+        "trace_id": "TRACE-bb97b920",
+        "tenant_id": "TENANT-DEMO",
+        "exception_id": "EXC-103",
+        "user_id": "ops_01",
+        "canonical_role": "OPERATIONS_ANALYST",
+        "agent_id": "resolveone-investigator-fake",
+        "policy_citations": [
+          "POL-TECH-001@1.0"
+        ],
+        "evidence_ids": [],
+        "reason_codes": [
+          "LOW_RISK",
+          "FIRST_RETRY"
+        ],
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "authorization": "ALLOW",
+        "approval_id": null,
+        "receipt_state": "FINAL",
+        "outcome": "SUCCESS",
+        "outcome_reason": "EXECUTED",
+        "integrity_hash": "sha256:fake",
+        "timestamp": null
+      },
+      "execution": {
+        "execution_id": "EXEC-b085e6b0",
+        "trace_id": "TRACE-bb97b920",
+        "exception_id": "EXC-103",
+        "action": "SIMULATE_RETRY_PAYMENT",
+        "status": "SUCCESS",
+        "reference": "SIM-8fa7da9b",
+        "verified": true,
+        "started_at": "2026-08-18T09:52:06Z",
+        "completed_at": "2026-08-18T09:52:06Z"
+      },
+      "lineage": {
+        "exception_id": "EXC-103",
+        "trace_id": "TRACE-297c743c",
+        "nodes": [
+          {
+            "id": "TXN-5dc025b4",
+            "type": "Transaction",
+            "label": "Transaction",
+            "properties": {}
+          },
+          {
+            "id": "EXC-103",
+            "type": "Exception",
+            "label": "Exception",
+            "properties": {}
+          },
+          {
+            "id": "EVD-ada6486b",
+            "type": "EvidenceSnapshot",
+            "label": "Evidence",
+            "properties": {}
+          },
+          {
+            "id": "POL-TECH-001@1.0",
+            "type": "PolicyVersion",
+            "label": "Policy",
+            "properties": {}
+          },
+          {
+            "id": "AGENT-FAKE",
+            "type": "Agent",
+            "label": "Agent",
+            "properties": {}
+          },
+          {
+            "id": "PROP-55fc2c94",
+            "type": "ProposedAction",
+            "label": "Proposal",
+            "properties": {}
+          },
+          {
+            "id": "AUTH-dd6a8cdc",
+            "type": "AuthorizationDecision",
+            "label": "Authorization",
+            "properties": {}
+          },
+          {
+            "id": "EXEC-e23366f8",
+            "type": "ExecutionAttempt",
+            "label": "Execution",
+            "properties": {}
+          },
+          {
+            "id": "RCP-80ee2ea8",
+            "type": "GovernanceReceipt",
+            "label": "Receipt",
+            "properties": {}
+          }
+        ],
+        "edges": [
+          {
+            "source": "TXN-5dc025b4",
+            "target": "EXC-103",
+            "type": "CAUSES"
+          },
+          {
+            "source": "EXC-103",
+            "target": "EVD-ada6486b",
+            "type": "SUPPORTED_BY"
+          },
+          {
+            "source": "POL-TECH-001@1.0",
+            "target": "PROP-55fc2c94",
+            "type": "GROUNDS"
+          },
+          {
+            "source": "AGENT-FAKE",
+            "target": "PROP-55fc2c94",
+            "type": "PROPOSED"
+          },
+          {
+            "source": "PROP-55fc2c94",
+            "target": "AUTH-dd6a8cdc",
+            "type": "EVALUATED_BY"
+          },
+          {
+            "source": "AUTH-dd6a8cdc",
+            "target": "EXEC-e23366f8",
+            "type": "AUTHORIZES"
+          },
+          {
+            "source": "EXEC-e23366f8",
+            "target": "RCP-80ee2ea8",
+            "type": "PRODUCES"
+          }
+        ],
+        "receipt_id": "RCP-80ee2ea8",
+        "completeness": 1.0
+      },
+      "status": "SUCCESS"
+    }
+  }
+]

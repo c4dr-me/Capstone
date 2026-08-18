@@ -1,6 +1,15 @@
 """Stable values used across governance, agent, and orchestration boundaries."""
 
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except Exception:
+    # Python <3.11 fallback for StrEnum
+    from enum import Enum
+
+
+    class StrEnum(str, Enum):
+        def __str__(self) -> str:  # pragma: no cover - simple compat shim
+            return str(self.value)
 
 
 class Action(StrEnum):

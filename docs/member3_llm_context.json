@@ -1,0 +1,110 @@
+{
+  "name": "ResolveOne Member 3 - LLM Integration Context",
+  "version": "2026-08-18",
+  "purpose": "Provide a complete, standalone context for an LLM to implement Member 3 (integration, orchestration, execution, UI) without reading the repository.",
+  "workflow": [
+    "Receive synthetic PAYMENT_EXCEPTION_CREATED event (event includes exception_id and trace_id)",
+    "Load canonical Case by exception_id (validate required fields)",
+    "Call Member 2: investigate_exception(case) => ProposedAction (validate schema)",
+    "Obtain/transport validated AccessContext (from Member 1) — do not mint client-side", 
+    "Build AuthorizationRequest and call Member 1: authorize_action(request, access_context) => AuthorizationResponse",
+    "Persist or reference initial GovernanceReceipt (create_governance_receipt) if not already created",
+    "Branch on AuthorizationResponse.decision: ALLOW | DENY | REQUIRE_APPROVAL",
+    "If ALLOW: check Member 3 kill-switch state; when enabled and autonomy allowed call retry_payment(request) (sandbox only)",
+    "Verify ExecutionResult (verifier) and call Member 1: finalize_governance_receipt(receipt_id, execution_result, ...)",
+    "Refresh lineage via Member 1: get_case_lineage(exception_id) and emit UI/metrics/telemetry"
+  ],
+  "public_apis": {
+    "member2": {
+      "investigate_exception": {
+        "signature": "investigate_exception(case) -> ProposedAction",
+        "purpose": "Return a structured proposed action for a Case; never grant authority"
+      },
+      "handle_chat": {
+        "signature": "handle_chat(request, access_context) -> ChatResponse",
+        "purpose": "Support EXPLAIN / QUERY / ACT intents; ACT returns ProposedAction"
+      }
+    },
+    "member1": {
+      "mint_access_context": "mint_access_context(session) -> AccessContext",
+      "validate_access_context": "validate_access_context(context) -> AccessContext",
+      "authorize_action": "authorize_action(request, access_context) -> AuthorizationResponse",
+      "create_governance_receipt": "create_governance_receipt(...) -> GovernanceReceipt",
+      "finalize_governance_receipt": "finalize_governance_receipt(receipt_id, execution_result, ...) -> GovernanceReceipt",
+      "get_case_lineage": "get_case_lineage(exception_id, access_context) -> CaseLineage"
+    },
+    "member3": {
+      "retry_payment": "retry_payment(request) -> ExecutionResult (SANDBOX ONLY)",
+      "orchestrator_entry": "integration/orchestrator.py (single entrypoint to wire the flow)"
+    }
+  },
+  "contracts": {
+    "Case": ["exception_id","transaction_id","exception_type","amount","fraud_label","risk","severity","masked_card_id","retry_count","status"],
+    "AccessContext": ["context_id","user_id","canonical_role","allowed_queues","can_view_risk_fields","tenant_id","issued_at","expires_at","integrity_hash"],
+    "ProposedAction": ["proposal_id","exception_id","agent_id","action","reason_codes","explanation","policy_id","policy_version","citations","confidence"],
+    "AuthorizationRequest": ["request_id","access_context_id","agent_id","exception_id","action","policy_id","asserted_case_context"],
+    "AuthorizationResponse": ["authorization_id","receipt_id","decision","reason_codes","requires_human","required_approver_role","policy_citations"],
+    "ExecutionResult": ["execution_id","trace_id","exception_id","action","status","reference","verified","started_at","completed_at"],
+    "GovernanceReceipt": ["receipt_id","authorization_id","request_id","trace_id","tenant_id","exception_id","user_id","canonical_role","agent_id","policy_citations","evidence_ids","reason_codes","action","authorization","approval_id","receipt_state","outcome","outcome_reason","integrity_hash","timestamp"]
+  },
+  "constraints": [
+    "Never call real payment rails; only use sandbox retry_payment",
+    "Do not accept role or identity from UI; derive from validated AccessContext only",
+    "ProposedAction is advisory only; authorization must be requested from Member 1",
+    "AuthorizationRequest.access_context_id must match validated AccessContext.context_id",
+    "Check kill-switch immediately before any execution call",
+    "All receipt revisions are handled by Member 1; Member 3 requests create/finalize only"
+  ],
+  "fakes_and_adapters": {
+    "integration_fakes_dir": "integration/fakes/",
+    "recommended_fakes": ["fake_agent.py","fake_governance.py","fake_access_context.py","fake_lineage.py"],
+    "execution": "use local sandbox implementation in execution/ (no external network)"
+  },
+  "run_commands": [
+    "py -m pytest tests/integration/ -q",
+    "py -m pytest tests/execution/ -q",
+    "py app.py",
+    "streamlit run app.py"
+  ],
+  "environment_variables": [
+    {"name":"RESOLVEONE_LLM_PROVIDER","note":"member2 LLM provider (groq|openrouter)"},
+    {"name":"RESOLVEONE_LLM_MODEL","note":"frozen model identifier for evaluation"},
+    {"name":"GROQ_API_KEY","note":"do not include secret in prompts"},
+    {"name":"OPENROUTER_API_KEY","note":"do not include secret in prompts"},
+    {"name":"RESOLVEONE_LLM_TIMEOUT_SECONDS","note":"LLM call timeout"},
+    {"name":"RESOLVEONE_KILL_SWITCH","note":"optional override for autonomy in demo"}
+  ],
+  "golden_fixtures": [
+    "tests/fixtures/golden_case_exc101.json",
+    "tests/governance/fixtures/*.json",
+    "tests/agent_v2/fixtures/*.json"
+  ],
+  "acceptance_criteria": [
+    "End-to-end Technical Glitch golden scenario: event->investigate->authorize->(ALLOW)->sandbox retry->verify->finalize receipt",
+    "Kill switch OFF: execution call count = 0 and receipt outcome = NOT_EXECUTED with AUTONOMY_DISABLED",
+    "REQUIRE_APPROVAL produces pending receipt and no execution until approval recorded",
+    "DENY produces final receipt with NOT_EXECUTED outcome",
+    "Fakes and real adapters are interchangeable without business-logic changes"
+  ],
+  "telemetry_metrics": ["trace_id","run_id","start_time","end_time","latency_ms","model_calls","input_tokens","output_tokens","retrieval_calls","authorization_calls","execution_calls","status","estimated_cost"],
+  "implementation_tasks": [
+    {"id":1,"task":"implement orchestrator entrypoint that wires event->investigate->authorize->branch"},
+    {"id":2,"task":"implement kill-switch state store and enforcement in execution/kill_switch.py"},
+    {"id":3,"task":"implement sandbox retry_payment(request) that returns deterministic SUCCESS/FAILED fixtures"},
+    {"id":4,"task":"implement verifier to validate ExecutionResult and mark verification"},
+    {"id":5,"task":"call Member 1 APIs to create and finalize receipts and to fetch lineage for UI"},
+    {"id":6,"task":"emit telemetry and persist runtime metrics (p50,p95,cost,success)"},
+    {"id":7,"task":"add integration tests using fakes for ALLOW, DENY, REQUIRE_APPROVAL"}
+  ],
+  "example_scenarios": {
+    "allowed_autonomous_recovery": {
+      "case": {"exception_id":"EXC-101","exception_type":"Technical Glitch","fraud_label":"No","amount":120.0,"retry_count":0},
+      "expected_flow": ["investigate -> ProposedAction SIMULATE_RETRY_PAYMENT","authorize -> ALLOW","kill-switch enabled","retry_payment -> SUCCESS","finalize_receipt -> SUCCESS"]
+    },
+    "kill_switch_disabled": {
+      "case": {"exception_id":"EXC-102","exception_type":"Technical Glitch","fraud_label":"No","amount":120.0,"retry_count":0},
+      "expected_flow": ["authorize -> ALLOW","kill-switch disabled","no execution call","finalize_receipt -> NOT_EXECUTED with AUTONOMY_DISABLED"]
+    }
+  },
+  "notes_for_llm": "This JSON is the only input file. Implement pure orchestration, defensive validation, kill-switch enforcement, sandbox execution, receipt lifecycle calls to Member 1, and preserve all cited IDs and evidence. Do not embed secrets or call any external payment rails."
+}

@@ -1,6 +1,15 @@
 """Canonical role and agent permissions."""
 
-from enum import StrEnum
+try:
+    from enum import StrEnum
+except Exception:
+    from enum import Enum
+
+
+    class StrEnum(str, Enum):
+        def __str__(self) -> str:  # pragma: no cover - compatibility shim
+            return str(self.value)
+
 
 from contracts.enums import Action, CanonicalRole
 
