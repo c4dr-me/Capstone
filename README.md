@@ -172,8 +172,7 @@ Create or activate the project environment:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r agent\requirements.txt
-python -m pip install -r requirements\member1.txt
+python -m pip install -r requirements.txt
 python -m pip install streamlit plotly
 ```
 

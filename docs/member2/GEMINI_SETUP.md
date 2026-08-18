@@ -22,7 +22,7 @@ pip install google-generativeai
 Or install via requirements:
 
 ```bash
-pip install -r requirements/member2.txt
+pip install -r requirements.txt
 ```
 
 ### Step 3: Set Environment Variables

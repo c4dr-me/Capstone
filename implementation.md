@@ -396,7 +396,7 @@ tests/governance/
 tests/trust_graph/
 docs/member1/
 reports/member1/
-requirements/member1.txt
+requirements.txt
 ~~~
 
 ### M1.1 Canonical identities and roles
@@ -699,7 +699,7 @@ tests/agent_v2/
 tests/chat/
 docs/member2/
 reports/member2/
-requirements/member2.txt
+requirements.txt
 ~~~
 
 ### M2.1 Automatic investigation API
@@ -832,7 +832,7 @@ OPENROUTER_API_KEY=<secret>
 RESOLVEONE_LLM_TIMEOUT_SECONDS=30
 ~~~
 
-API keys must remain in the ignored `.env` or deployment secret store. They must never be committed, sent to the browser, written to receipts, or included in logs. Add one OpenAI-compatible client dependency to `requirements/member2.txt`; do not install both vendor SDKs unless a verified provider feature requires them.
+API keys must remain in the ignored `.env` or deployment secret store. They must never be committed, sent to the browser, written to receipts, or included in logs. Add one OpenAI-compatible client dependency to `requirements.txt`; do not install both vendor SDKs unless a verified provider feature requires them.
 
 The LLM is permitted to perform only Member 2 intelligence tasks:
 
@@ -1097,7 +1097,7 @@ tests/integration/
 tests/ui_v2/
 docs/member3/
 reports/member3/
-requirements/member3.txt
+requirements.txt
 ~~~
 
 Member 3 is the only member who edits the hackathon entry point and UI composition.
@@ -1433,7 +1433,7 @@ ResolveOne/
 ├── tests/trust_graph/         ← MEMBER 1 ONLY
 ├── docs/member1/              ← MEMBER 1 ONLY
 ├── reports/member1/           ← MEMBER 1 ONLY
-├── requirements/member1.txt   ← MEMBER 1 ONLY
+├── requirements.txt   ← MEMBER 1 ONLY
 │
 ├── agent_v2/                  ← MEMBER 2 ONLY
 ├── chat/                      ← MEMBER 2 ONLY
@@ -1441,7 +1441,7 @@ ResolveOne/
 ├── tests/chat/                ← MEMBER 2 ONLY
 ├── docs/member2/              ← MEMBER 2 ONLY
 ├── reports/member2/           ← MEMBER 2 ONLY
-├── requirements/member2.txt   ← MEMBER 2 ONLY
+├── requirements.txt   ← MEMBER 2 ONLY
 │
 ├── events/                    ← MEMBER 3 ONLY
 ├── execution/                 ← MEMBER 3 ONLY
@@ -1454,7 +1454,7 @@ ResolveOne/
 ├── tests/ui_v2/               ← MEMBER 3 ONLY
 ├── docs/member3/              ← MEMBER 3 ONLY
 ├── reports/member3/           ← MEMBER 3 ONLY
-├── requirements/member3.txt   ← MEMBER 3 ONLY
+├── requirements.txt   ← MEMBER 3 ONLY
 │
 ├── data/                      ← EXISTING; READ-ONLY DURING PARALLEL BUILD
 ├── policies/                  ← EXISTING; READ-ONLY DURING PARALLEL BUILD

@@ -9,7 +9,7 @@ tamper-evident receipt plus scoped lineage in Neo4j.
 Use the project environment from the repository root:
 
 ```powershell
-.venv\Scripts\python.exe -m pip install -r requirements\member1.txt
+.venv\Scripts\python.exe -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 

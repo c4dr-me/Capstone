@@ -21,7 +21,7 @@ If Redis isn't running: `redis-server --daemonize yes`.
 
 ```bash
 cd /home/labuser/Desktop/Persistent_Folder/Capstone
-pip install --user -r agent/requirements.txt
+pip install --user -r requirements.txt
 ```
 
 This installs: `langgraph`, `langchain-core`, `pandas`, `pyarrow`, `numpy`,

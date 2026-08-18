@@ -17,9 +17,18 @@ scikit-learn>=1.5
 joblib>=1.4
 pyyaml>=6.0
 
+# APIs and validation
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2,<3
+prometheus-client>=0.21
+structlog>=24.0
+google-generativeai>=0.8
+
 # Databases / vector stores
 psycopg2-binary>=2.9
 pgvector>=0.5
+neo4j>=5.0
 redis>=5.0
 
 # Visualization / UI
