@@ -1,20 +1,7 @@
-name: Member3 CI
-
+name: ResolveOne CI
 on:
   push:
-    paths:
-      - 'integration/**'
-      - 'execution/**'
-      - 'member3/**'
-      - 'requirements/**'
-      - 'tests/**'
   pull_request:
-    paths:
-      - 'integration/**'
-      - 'execution/**'
-      - 'member3/**'
-      - 'requirements/**'
-      - 'tests/**'
 
 jobs:
   test:
