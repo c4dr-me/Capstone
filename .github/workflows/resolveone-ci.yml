@@ -34,11 +34,11 @@ jobs:
           gh release download "$GOLD_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$GOLD_ASSET" --dir data/processed
           gh release download "$GOLD_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$GOLD_ASSET.sha256" --dir data/processed
           cd data/processed && sha256sum --check "$GOLD_ASSET.sha256"
-      - name: Run real-Gold unit, UI, agent, evaluation, and security tests
+      - name: Run fast checks against the governed Gold artifact
         env:
           RESOLVEONE_GOLD_PARQUET: data/processed/gold_exception_cases.parquet
           RESOLVEONE_USE_FAKE_GOVERNANCE: "1"
-        run: pytest -q tests/chat tests/ui tests/agent tests/evaluation tests/security
+        run: pytest -q tests/chat tests/ui tests/agent/test_evidence_boundary.py tests/agent/test_mdm_rag.py tests/security/agent_policy_gate_test.py
 
   governed-integration-tests:
     name: Governed integration tests

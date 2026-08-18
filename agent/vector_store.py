@@ -19,7 +19,11 @@ TABLE_NAME = "policy_chunks"
 
 
 def get_connection():
+    """Connect to pgvector, initializing the extension for a fresh database."""
     conn = psycopg2.connect(PG_DSN)
+    with conn.cursor() as cur:
+        cur.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+    conn.commit()
     register_vector(conn)
     return conn
 
