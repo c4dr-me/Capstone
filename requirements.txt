@@ -1,0 +1,42 @@
+# Consolidated project requirements for the Capstone workspace
+# Use a virtual environment and then install with:
+#   py -3 -m venv .venv
+#   .\.venv\Scripts\Activate.ps1  (PowerShell) or .\.venv\Scripts\activate.bat (cmd)
+#   pip install -r requirements.txt
+
+# Agent (LangGraph + retrieval + data)
+langgraph>=1.2
+langchain-core>=1.4
+langgraph-sdk>=0.4
+
+# Data science / storage
+pandas>=2.2
+pyarrow>=17.0
+numpy>=2.0
+scikit-learn>=1.5
+joblib>=1.4
+pyyaml>=6.0
+
+# Databases / vector stores
+psycopg2-binary>=2.9
+pgvector>=0.5
+redis>=5.0
+
+# Visualization / UI
+streamlit>=1.20
+plotly>=5.8
+networkx>=3.0
+
+# Performance / helpers
+xxhash>=4.0
+orjson>=3.12
+websockets>=14.0
+
+# Testing
+pytest>=8.0
+
+# Optional / platform-specific (include when building production images)
+# zstandard, requests-toolbelt are pulled in by transitive deps; keep here as hints
+zstandard>=0.23
+requests-toolbelt>=1.0
+requests>=2.34.0

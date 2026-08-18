@@ -1,0 +1,11 @@
+streamlit
+pandas
+plotly
+pytest
+networkx
+fastapi
+uvicorn[standard]
+prometheus-client
+pydantic
+structlog
+neo4j

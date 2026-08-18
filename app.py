@@ -8,7 +8,12 @@ from typing import Any
 
 import pandas as pd
 import plotly.graph_objects as go
+import requests
 import streamlit as st
+try:
+    import networkx as nx
+except Exception:
+    nx = None
 
 from utils.agent_adapter import run_investigation
 from utils.data_loader import (
@@ -21,6 +26,36 @@ from utils.data_loader import (
     search_cases,
 )
 from utils.runtime_store import RuntimeStore
+
+# Optional integration orchestrator (Member 3)
+try:
+    from integration.orchestrator import process_event as integration_process_event
+except Exception:
+    integration_process_event = None
+
+
+# Read/remember optional remote endpoints for Member 2 (chat) and Member 3 (orchestrator)
+if "member2_url" not in st.session_state:
+    st.session_state.member2_url = None
+if "member3_url" not in st.session_state:
+    st.session_state.member3_url = None
+
+
+def _call_member2_http(url: str, text: str, exception_id: str | None, access_context: dict | None) -> dict:
+    payload = {"text": text}
+    if exception_id:
+        payload["exception_id"] = exception_id
+    if access_context:
+        payload["access_context"] = access_context
+    resp = requests.post(url, json=payload, timeout=10)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def _call_member3_http(url: str, event: dict) -> dict:
+    resp = requests.post(url, json=event, timeout=20)
+    resp.raise_for_status()
+    return resp.json()
 
 
 st.set_page_config(
@@ -397,6 +432,56 @@ def _render_investigation(data: pd.DataFrame, store: RuntimeStore) -> None:
             args=("Recommendation & Approval", exception_id),
         )
 
+    # Chat panel (Member 2) — use fake access context for demo if governance not available
+    st.markdown("#### Ask ResolveOne (chat)")
+    chat_col1, chat_col2 = st.columns([3, 1])
+    with chat_col1:
+        chat_input = st.text_area("Message to ResolveOne", key=f"chat_input_{exception_id}")
+    with chat_col2:
+        st.write(" ")
+        if st.button("Send to chat", key=f"chat_send_{exception_id}"):
+            # Build a demo AccessContext for chat.api.handle_chat
+            try:
+                from datetime import datetime, timezone, timedelta
+                from contracts.access import AccessContext
+                from contracts.enums import CanonicalRole
+                from chat.adapters.fake_access_context import validate_access_context_offline
+                from chat.schemas import ChatRequest
+                from chat.api import handle_chat
+
+                now = datetime.now(timezone.utc)
+                demo_ctx = AccessContext(
+                    context_id=f"CTX-DEMO-{exception_id}",
+                    user_id="ops_01",
+                    canonical_role=CanonicalRole.OPERATIONS_ANALYST,
+                    tenant_id="TENANT-DEMO",
+                    allowed_queues=("Payment Operations",),
+                    can_view_risk_fields=False,
+                    issued_at=now,
+                    expires_at=now + timedelta(minutes=30),
+                    integrity_hash="sha256:demo",
+                )
+                # validate offline (raises on invalid)
+                validate_access_context_offline(demo_ctx)
+                req = ChatRequest(text=chat_input or "Explain this case.", exception_id=exception_id)
+                # If a remote Member 2 endpoint is configured, call it instead
+                if st.session_state.get("member2_url"):
+                    try:
+                        payload_ctx = demo_ctx.model_dump(mode="json")
+                        resp_json = _call_member2_http(st.session_state.get("member2_url"), chat_input or "Explain this case.", exception_id, payload_ctx)
+                        st.session_state.last_chat_response = resp_json
+                    except Exception as e:
+                        st.session_state.last_chat_response = {"error": str(e)}
+                else:
+                    resp = handle_chat(req, demo_ctx)
+                    st.session_state.last_chat_response = resp.model_dump(mode="json")
+            except Exception as e:
+                st.session_state.last_chat_response = {"error": str(e)}
+
+    if st.session_state.get("last_chat_response"):
+        with st.expander("Latest chat response", expanded=True):
+            st.json(st.session_state.get("last_chat_response"))
+
     result = st.session_state.investigation_results.get(exception_id)
     if result:
         with st.expander("Latest structured investigation result", expanded=True):
@@ -481,6 +566,95 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
         submitted = st.form_submit_button(
             "Record decision", type="primary", width="stretch"
         )
+    # Member 3 auto-resolve button
+    if integration_process_event is not None or st.session_state.get("member3_url"):
+        st.write("")
+        if st.button("Auto Resolve (Member 3) — sandbox"):
+            with st.spinner("Running orchestrator (Member 3)..."):
+                event = {"exception_id": exception_id, "trace_id": f"TRACE-{exception_id}", "case": {"exception_id": exception_id, "exception_type": str(case.get("primary_exception_type", ""))}}
+                try:
+                    if st.session_state.get("member3_url"):
+                        # include demo access context if present
+                        access_ctx = st.session_state.get("demo_access_context")
+                        if access_ctx:
+                            event["access_context"] = access_ctx
+                        orchestration_result = _call_member3_http(st.session_state.get("member3_url"), event)
+                    else:
+                        orchestration_result = integration_process_event(event)
+                    st.success("Orchestrator completed")
+                    st.json(orchestration_result)
+                    # store last orchestration in session for visibility
+                    st.session_state.last_orchestration = orchestration_result
+
+                    # Render lineage visualization when available (force-directed if networkx installed)
+                    lineage = orchestration_result.get("lineage")
+                    if lineage and lineage.get("nodes"):
+                        nodes = lineage.get("nodes", [])
+                        edges = lineage.get("edges", [])
+                        try:
+                            if nx is not None and nodes:
+                                G = nx.DiGraph()
+                                for n in nodes:
+                                    nid = n.get("id")
+                                    G.add_node(nid, **n)
+                                for e in edges:
+                                    src = e.get("source")
+                                    tgt = e.get("target")
+                                    if src and tgt:
+                                        G.add_edge(src, tgt)
+
+                                pos = nx.spring_layout(G, seed=42)
+                                node_x = [pos[n.get("id")][0] for n in nodes]
+                                node_y = [pos[n.get("id")][1] for n in nodes]
+                                edge_x = []
+                                edge_y = []
+                                for u, v in G.edges():
+                                    x0, y0 = pos[u]
+                                    x1, y1 = pos[v]
+                                    edge_x += [x0, x1, None]
+                                    edge_y += [y0, y1, None]
+
+                                fig = go.Figure()
+                                if edge_x:
+                                    fig.add_trace(
+                                        go.Scatter(x=edge_x, y=edge_y, mode="lines", line=dict(color="#888", width=2), hoverinfo="none")
+                                    )
+                                hover_text = [f"{n.get('type','node')}\nID: {n.get('id')}" for n in nodes]
+                                fig.add_trace(
+                                    go.Scatter(x=node_x, y=node_y, mode="markers+text", marker=dict(size=36, color="#167d8d"), text=[n.get('id') for n in nodes], textposition="bottom center", hovertext=hover_text, hoverinfo="text")
+                                )
+                                fig.update_layout(showlegend=False, margin=dict(l=10, r=10, t=10, b=10), height=360)
+                                st.plotly_chart(fig, use_container_width=True)
+                            else:
+                                # fallback linear layout
+                                x = list(range(len(nodes)))
+                                y = [0] * len(nodes)
+                                edge_x = []
+                                edge_y = []
+                                if edges:
+                                    id_index = {n.get('id'): i for i, n in enumerate(nodes)}
+                                    for e in edges:
+                                        s = id_index.get(e.get('source'))
+                                        t = id_index.get(e.get('target'))
+                                        if s is None or t is None:
+                                            continue
+                                        edge_x += [x[s], x[t], None]
+                                        edge_y += [y[s], y[t], None]
+                                else:
+                                    for i in range(len(nodes) - 1):
+                                        edge_x += [x[i], x[i + 1], None]
+                                        edge_y += [y[i], y[i + 1], None]
+                                fig = go.Figure()
+                                if edge_x:
+                                    fig.add_trace(go.Scatter(x=edge_x, y=edge_y, mode="lines", line=dict(color="#888", width=2), hoverinfo="none"))
+                                fig.add_trace(go.Scatter(x=x, y=y, mode="markers+text", marker=dict(size=36, color="#167d8d"), text=[n.get('id') for n in nodes], textposition="bottom center"))
+                                fig.update_layout(showlegend=False, xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), margin=dict(l=10, r=10, t=10, b=10), height=240)
+                                st.plotly_chart(fig, use_container_width=True)
+                        except Exception:
+                            st.caption("Lineage visualization failed to render; showing raw lineage below.")
+                            st.json(lineage)
+                except Exception as e:
+                    st.error(f"Orchestrator failed: {e}")
     if submitted:
         if not reason.strip():
             st.error("An analyst reason is required for the audit trail.")
@@ -619,6 +793,40 @@ if "selected_exception_id" not in st.session_state:
     st.session_state.selected_exception_id = str(
         technical.iloc[0]["exception_id"] if not technical.empty else data.iloc[0]["exception_id"]
     )
+
+# Demo access context minting (Member 1 exposed behavior)
+with st.sidebar.expander("Demo identity / access context", expanded=False):
+    if st.button("Mint demo access context"):
+        try:
+            from datetime import datetime, timezone, timedelta
+            from contracts.access import AccessContext
+            from contracts.enums import CanonicalRole
+
+            now = datetime.now(timezone.utc)
+            demo_ctx = AccessContext(
+                context_id=f"CTX-DEMO-{st.session_state.selected_exception_id}",
+                user_id="ops_01",
+                canonical_role=CanonicalRole.OPERATIONS_ANALYST,
+                tenant_id="TENANT-DEMO",
+                allowed_queues=("Payment Operations",),
+                can_view_risk_fields=False,
+                issued_at=now,
+                expires_at=now + timedelta(minutes=30),
+                integrity_hash="sha256:demo",
+            )
+            st.session_state.demo_access_context = demo_ctx.model_dump(mode="json")
+            st.success(f"Minted {demo_ctx.context_id}")
+        except Exception as e:
+            st.error(f"Could not mint demo context: {e}")
+
+    st.markdown("---")
+    st.markdown("**Remote endpoints (optional)**")
+    m2 = st.text_input("Member 2 chat endpoint (full URL)", value=st.session_state.get("member2_url") or "", placeholder="https://member2.example/api/chat")
+    m3 = st.text_input("Member 3 orchestrator endpoint (full URL)", value=st.session_state.get("member3_url") or "", placeholder="https://member3.example/api/orchestrate")
+    if st.button("Save endpoints"):
+        st.session_state.member2_url = m2.strip() or None
+        st.session_state.member3_url = m3.strip() or None
+        st.success("Saved endpoints to session")
 
 PAGES = [
     "Exception Queue",
