@@ -3,7 +3,7 @@
 Run the offline safety and contract suite:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest tests\chat tests\agent_v2 -q
+.\.venv\Scripts\python.exe -m pytest tests\chat -q
 .\.venv\Scripts\python.exe -m chat.evaluation
 ```
 

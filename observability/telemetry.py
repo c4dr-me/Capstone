@@ -6,7 +6,7 @@ from pathlib import Path
 from time import time
 from typing import Any, Dict
 
-REPORTS_DIR = Path("reports") / "member3"
+REPORTS_DIR = Path("reports") / "orchestration"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 RUNTIME_FILE = REPORTS_DIR / "runtime_results.json"
 

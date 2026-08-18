@@ -673,7 +673,7 @@ Member 2 answers:
 ### Exclusive directories
 
 ~~~text
-agent_v2/
+agent/
 ├── api.py
 ├── graph.py
 ├── state.py
@@ -695,7 +695,7 @@ chat/
 ├── schemas.py
 └── adapters/
 
-tests/agent_v2/
+tests/agent/
 tests/chat/
 docs/member2/
 reports/member2/
@@ -979,8 +979,8 @@ Neo4j context is optional for Member 2's standalone branch. A fake **LineageCont
 Member 2 must provide:
 
 ~~~text
-agent_v2/adapters/fake_case_repository.py
-agent_v2/adapters/fake_policy_retriever.py
+agent/adapters/fake_case_repository.py
+agent/adapters/fake_policy_retriever.py
 chat/adapters/fake_lineage_context.py
 tests/chat/fixtures/access_context_ops.json
 tests/chat/fixtures/access_context_auditor.json
@@ -1096,7 +1096,7 @@ tests/execution/
 tests/integration/
 tests/ui_v2/
 docs/member3/
-reports/member3/
+reports/orchestration/
 requirements.txt
 ~~~
 
@@ -1435,9 +1435,9 @@ ResolveOne/
 ├── reports/member1/           ← MEMBER 1 ONLY
 ├── requirements.txt   ← MEMBER 1 ONLY
 │
-├── agent_v2/                  ← MEMBER 2 ONLY
+├── agent/                  ← MEMBER 2 ONLY
 ├── chat/                      ← MEMBER 2 ONLY
-├── tests/agent_v2/            ← MEMBER 2 ONLY
+├── tests/agent/            ← MEMBER 2 ONLY
 ├── tests/chat/                ← MEMBER 2 ONLY
 ├── docs/member2/              ← MEMBER 2 ONLY
 ├── reports/member2/           ← MEMBER 2 ONLY
@@ -1453,7 +1453,7 @@ ResolveOne/
 ├── tests/integration/         ← MEMBER 3 ONLY
 ├── tests/ui_v2/               ← MEMBER 3 ONLY
 ├── docs/member3/              ← MEMBER 3 ONLY
-├── reports/member3/           ← MEMBER 3 ONLY
+├── reports/orchestration/           ← MEMBER 3 ONLY
 ├── requirements.txt   ← MEMBER 3 ONLY
 │
 ├── data/                      ← EXISTING; READ-ONLY DURING PARALLEL BUILD

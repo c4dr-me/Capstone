@@ -4,7 +4,7 @@ from fastapi import FastAPI, Response
 from fastapi.responses import PlainTextResponse
 from integration.orchestrator import process_event
 
-from member3.config import settings
+from orchestration.config import settings
 
 import logging
 try:
@@ -14,7 +14,7 @@ except Exception:
     structlog = None
 
 app = FastAPI()
-logger = logging.getLogger("member3")
+logger = logging.getLogger("orchestration")
 
 
 @app.get("/healthz")
@@ -67,4 +67,4 @@ if __name__ == "__main__":
 
     host = settings.MEMBER3_HOST
     port = settings.MEMBER3_PORT
-    uvicorn.run("member3_server:app", host=host, port=port)
+    uvicorn.run("orchestration_server:app", host=host, port=port)
