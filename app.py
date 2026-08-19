@@ -75,6 +75,25 @@ def _call_member3_http(url: str, event: dict) -> dict:
     return resp.json()
 
 
+def _governed_recovery_error(error: Exception, case: pd.Series, recommendation: dict[str, Any]) -> str:
+    """Translate trusted governance scope failures into an actionable UI message."""
+    error_text = str(error).lower()
+    if "outside the principal" not in error_text and "case_scope_denied" not in error_text:
+        return f"Governed recovery could not complete: {error}"
+
+    route = str(recommendation.get("recommended_queue") or "the governed case queue")
+    is_fraud_route = "fraud" in route.lower() or str(case.get("fraud_label", "")).lower() == "yes"
+    if is_fraud_route:
+        return (
+            "This case requires Risk Analyst access because it is in the governed Fraud queue. "
+            "The current Operations Analyst context is intentionally blocked; ResolveOne does not switch roles automatically."
+        )
+    return (
+        f"This case is routed to {route}, which is outside the current Operations Analyst scope. "
+        "ResolveOne does not switch roles automatically; use an authorized analyst identity to continue."
+    )
+
+
 st.set_page_config(
     page_title="ResolveOne | Exception Operations",
     page_icon="◆",
@@ -874,6 +893,36 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
     if current_status:
         st.info(f"Latest recorded decision for {exception_id}: {current_status}")
 
+    with st.form(f"analyst_approval_{exception_id}", clear_on_submit=True):
+        analyst_decision = st.radio(
+            "Analyst decision",
+            ["Approve recommendation", "Send back for review"],
+            horizontal=True,
+        )
+        analyst_reason = st.text_area(
+            "Decision rationale",
+            placeholder="Record the evidence or policy basis for this review decision.",
+        )
+        analyst_submitted = st.form_submit_button("Record analyst decision", type="primary")
+    if analyst_submitted:
+        if not analyst_reason.strip():
+            st.error("A decision rationale is required.")
+        else:
+            decision = "APPROVED" if analyst_decision == "Approve recommendation" else "REJECTED"
+            try:
+                recorded = store.record_decision(
+                    exception_id=exception_id,
+                    decision=decision,
+                    analyst_reason=analyst_reason,
+                    recommendation=result,
+                )
+                st.success(
+                    f"Recommendation {recorded['decision'].lower()} and recorded. "
+                    "This did not start governed recovery or execute an action."
+                )
+            except Exception as error:
+                st.error(f"The analyst decision could not be recorded: {error}")
+
     st.markdown("#### Governed recovery")
     st.caption("This runs the governed recovery path: investigate → authorize → execute → verify → receipt → Neo4j lineage.")
     recovery_by_case = st.session_state.setdefault("orchestration_results", {})
@@ -921,7 +970,7 @@ def _render_recommendation(data: pd.DataFrame, store: RuntimeStore) -> None:
             recovery_by_case[exception_id] = recovery
             st.rerun()
         except Exception as error:
-            recovery_slot.error(f"Governed recovery could not complete: {error}")
+            recovery_slot.error(_governed_recovery_error(error, case, result))
     if recovery:
         status = str(recovery.get("status", "UNKNOWN")).replace("_", " ").title()
         st.success(f"Governed recovery finished: {status}")
